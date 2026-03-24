@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>亲近自然指南 · 净足时光</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fce5c4 0%, #c8e0f0 50%, #e8d4f0 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Noto Sans', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nature-container {
+            max-width: 1600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.28);
+            backdrop-filter: blur(4px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .main-title {
+            text-align: center;
+            font-size: clamp(1.8rem, 8vw, 3rem);
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #2c5a2e, #5b8c5a, #c7a252);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .main-title::after {
+            content: '👣';
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
+            background: linear-gradient(135deg, #2c5a2e, #5b8c5a, #c7a252);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.05);
+            display: inline-block;
+        }
+        .main-title::before {
+            content: '🌿';
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
+            background: linear-gradient(135deg, #2c5a2e, #5b8c5a, #c7a252);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.05);
+            display: inline-block;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        .left-panel {
+            flex: 1.45;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .date-control-mobile {
+            background: rgba(255,255,245,0.55);
+            backdrop-filter: blur(8px);
+            padding: 8px 18px;
+            border-radius: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+            border: 1px solid rgba(210,190,130,0.5);
+        }
+        .date-control-mobile input {
+            padding: 8px 14px;
+            border-radius: 40px;
+            border: 1px solid #c7b280;
+            background: rgba(255,255,250,0.95);
+            font-family: inherit;
+            font-size: 0.9rem;
+            flex: 1;
+            min-width: 130px;
+        }
+        .date-control-mobile button {
+            background: #6b8c5c;
+            border: none;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: 0.1s;
+        }
+        .date-control-mobile button:active { transform: scale(0.96); }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(14px);
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.5rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255,255,240,0.7);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 1rem;
+        }
+        .card-header h3 {
+            font-size: clamp(1.3rem, 5vw, 1.7rem);
+            font-weight: 600;
+            color: #2c3e2f;
+            border-left: 5px solid #ffb347;
+            padding-left: 0.8rem;
+            margin: 0;
+        }
+        .location-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .city-picker-btn {
+            background: #6b8c5c;
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .auto-locate-btn { background: #b48c48; }
+
+        .city-selector-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .city-selector-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .city-selector-panel {
+            background: rgba(255, 255, 245, 0.97);
+            backdrop-filter: blur(20px);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            border-radius: 1.8rem;
+            padding: 1.2rem;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+            overflow-y: auto;
+            border: 1px solid rgba(255,240,180,0.8);
+        }
+        .city-search {
+            margin-bottom: 1rem;
+        }
+        .city-search input {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 40px;
+            border: 1px solid #ddcca8;
+            background: #fffef7;
+            font-size: 1rem;
+            outline: none;
+        }
+        .city-selector-panel h4 { font-size: 1.3rem; margin-bottom: 1rem; color: #3b5c2a; }
+        .city-results {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        .city-result-item {
+            background: #f5efdf;
+            padding: 8px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.1s;
+            font-size: 0.9rem;
+        }
+        .city-result-item:hover { background: #e2d2af; }
+        .loading-tip {
+            text-align: center;
+            padding: 20px;
+            color: #6b5a3a;
+        }
+        .hot-cities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+            justify-content: center;
+        }
+        .hot-city-btn {
+            background: #e8e0c8;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.1s;
+            color: #3a5a2a;
+        }
+        .hot-city-btn:hover {
+            background: #cfc49e;
+            transform: scale(1.02);
+        }
+
+        .temp-block {
+            background: rgba(245, 245, 235, 0.5);
+            border-radius: 1.2rem;
+            padding: 0.6rem 1rem;
+            margin-bottom: 1rem;
+        }
+        .temp-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.4rem 0;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+            line-height: 1.3;
+        }
+        .temp-item span:first-child { font-weight: 400; color: #2c4b32; }
+        .temp-item span:last-child {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: #2c3e2f;
+        }
+        .data-tag {
+            background: rgba(60, 80, 50, 0.6);
+            backdrop-filter: blur(4px);
+            color: white !important;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            white-space: nowrap;
+            display: inline-block;
+            flex-shrink: 0;
+            letter-spacing: 0.5px;
+        }
+        .temp-value {
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .surface-list { margin-top: 0.5rem; }
+        .surface-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-size: 0.85rem;
+            min-height: 48px;
+            gap: 8px;
+            flex-wrap: nowrap;
+        }
+        .surface-name { 
+            font-weight: 600; 
+            color: #4a5b44; 
+            width: 65px; 
+            flex-shrink: 0;
+            font-size: 0.85rem;
+        }
+        .surface-info { 
+            font-weight: 500; 
+            text-align: right; 
+            color: #2f5e3a; 
+            flex: 1; 
+            white-space: nowrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+            font-size: 0.8rem;
+        }
+        .unsuitable { color: #bc6f42; font-weight: 600; background: rgba(188, 111, 66, 0.1); padding: 0.2rem 0.5rem; border-radius: 30px; display: inline-block; white-space: nowrap; }
+
+        .comfort-card {
+            background: rgba(255, 255, 245, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 1.3rem;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(255,240,200,0.7);
+        }
+        .timeline-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #4a6741;
+        }
+        .timeline-container {
+            position: relative;
+            width: 100%;
+            margin: 0.2rem 0;
+        }
+        canvas#timelineCanvas {
+            width: 100%;
+            height: 48px;
+            background: #e8e0d0;
+            border-radius: 28px;
+            display: block;
+        }
+        .timeline-labels-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+            font-size: 0.65rem;
+            color: #5c4b2c;
+            font-weight: 500;
+            padding: 0 4px;
+        }
+        .timeline-time-markers {
+            position: relative;
+            width: 100%;
+            height: 18px;
+            margin-top: 2px;
+            font-size: 0.65rem;
+            color: #5c4b2c;
+        }
+        .time-marker {
+            position: absolute;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-weight: 500;
+            background: rgba(255,255,220,0.7);
+            padding: 0 3px;
+            border-radius: 10px;
+            bottom: 0;
+        }
+        .slider-info {
+            font-size: 0.65rem;
+            text-align: center;
+            margin-top: 4px;
+            color: #4a6741;
+        }
+
+        .wheel-area {
+            flex: 2;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .wheel-bg {
+            position: absolute;
+            width: 100%;
+            max-width: 550px;
+            aspect-ratio: 1 / 1;
+            background: rgba(255, 255, 245, 0.5);
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        canvas {
+            width: 100%;
+            max-width: 550px;
+            height: auto;
+            border-radius: 50%;
+            cursor: grab;
+            position: relative;
+            z-index: 1;
+            background: transparent;
+        }
+        canvas:active { cursor: grabbing; }
+
+        .loading-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 40, 30, 0.95);
+            backdrop-filter: blur(20px);
+            color: #f9f2e0;
+            padding: 24px 32px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+            z-index: 1100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            pointer-events: auto;
+            font-family: monospace;
+            letter-spacing: 1px;
+            min-width: 280px;
+            text-align: center;
+        }
+        .loading-toast.show {
+            display: flex;
+        }
+        .toast-message {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .toast-message::before {
+            content: "⏳";
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            font-size: 1.4rem;
+        }
+        .toast-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+        }
+        .toast-btn {
+            background: rgba(255,255,220,0.2);
+            border: 1px solid rgba(255,255,200,0.5);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .toast-btn:hover {
+            background: rgba(255,255,220,0.4);
+            transform: scale(1.02);
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 修复底部卡片灰色BUG：增加稳定背景色+轻量毛玻璃，确保横竖屏切换正常 */
+        .footer-info {
+            margin-top: 2rem;
+            padding: 1rem 1rem 0.5rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #4a3b28;
+            border-top: 1px solid rgba(150,120,80,0.4);
+            border-radius: 1rem;
+            background: rgba(250, 245, 235, 0.75);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: background 0.1s ease;
+            /* 确保重绘稳定 */
+            will-change: transform;
+        }
+        .footer-info p {
+            margin: 0.2rem 0;
+            line-height: 1.4;
+        }
+        .footer-info a {
+            color: #5b8c5a;
+            text-decoration: none;
+        }
+        .footer-info a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 880px) {
+            .dashboard { flex-direction: column; }
+            .wheel-area { order: 3; margin-top: 1rem; }
+            .left-panel { order: 2; }
+            .loading-toast { font-size: 1rem; padding: 18px 24px; width: 80%; }
+            .toast-buttons { gap: 12px; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 0.8rem; }
+            .nature-container { padding: 1rem; }
+            .info-card { padding: 1rem; }
+            .surface-row { font-size: 0.75rem; }
+            .footer-info { font-size: 0.65rem; }
+            .temp-item span:last-child { gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+            .data-tag { font-size: 0.7rem; padding: 2px 6px; }
+        }
+    </style>
+</head>
+<body>
+<div class="nature-container">
+    <h1 class="main-title">亲近自然指南</h1>
+    <div class="dashboard">
+        <div class="left-panel">
+            <div class="date-control-mobile">
+                <input type="date" id="datePickerMobile" value="">
+                <button id="todayBtnMobile">📅 今天</button>
+            </div>
+            <div class="info-card" id="mainInfoCard">
+                <div class="card-header">
+                    <h3 id="cityTitle">📍 北京 · 自然足感</h3>
+                    <div class="location-actions">
+                        <button class="city-picker-btn" id="openCityPickerBtn">📌 城市</button>
+                        <button class="city-picker-btn auto-locate-btn" id="autoLocateBtn">📍 定位</button>
+                    </div>
+                </div>
+                <div class="temp-block">
+                    <div class="temp-item"><span>🌡️ 空气温度</span><span id="airTempRange"></span></div>
+                    <div class="temp-item"><span>🏃‍♂️ 体感温度</span><span id="feelsLikeTemp"></span></div>
+                    <div class="temp-item" id="groundTempItem"><span>🔥 地面温度</span><span id="groundTempRange"></span></div>
+                </div>
+                <div class="surface-list" id="surfaceList"></div>
+            </div>
+            <div class="comfort-card">
+                <div class="timeline-title">✨ 综合适宜光脚时段 (20℃~40℃)</div>
+                <div class="timeline-container">
+                    <div class="timeline-labels-top" id="timelineLabelsTop"></div>
+                    <canvas id="timelineCanvas" width="800" height="48" style="width:100%; height:48px"></canvas>
+                    <div class="timeline-time-markers" id="timelineMarkers"></div>
+                </div>
+                <div class="slider-info" id="sliderHint">🎯 拖动指针 · 实时更新</div>
+            </div>
+        </div>
+        <div class="wheel-area">
+            <div class="wheel-bg"></div>
+            <canvas id="seasonWheelCanvas" width="600" height="600"></canvas>
+        </div>
+    </div>
+    <div class="footer-info">
+        <p>🌤️ 天气数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> 全球气象服务（空气温度、体感温度、地表温度）</p>
+        <p>🧘 户外赤足提示：请在确认地面安全、无尖锐物且温度适宜（20~40℃）的情况下尝试，初次赤足请循序渐进。若出现不适或受伤，请立即停止并就医。</p>
+        <p>⚠️ 本指南仅供健康参考，不承担任何责任，实际体验请结合自身状况与场地环境。如感疼痛或异常，请及时就医。</p>
+        <p>👮‍♀️ 本网页仅用于代码学习，不可用于任何商业用途，不可用于任何非法目的的活动。</p>
+        <p>📄 网页代码：主要由DeepSeek编写，天气数据相关代码由通义千问编写 | 数据实时更新</p>
+    </div>
+</div>
+
+<div id="citySelectorOverlay" class="city-selector-overlay">
+    <div class="city-selector-panel">
+        <h4>🌆 搜索城市 (中文 / 拼音)</h4>
+        <div class="city-search">
+            <input type="text" id="citySearchInput" placeholder="例如：北京市 / 上海 / Hangzhou">
+        </div>
+        <div class="hot-cities">
+            <button class="hot-city-btn" data-city="北京" data-lat="39.9042" data-lng="116.4074">🏙️ 北京</button>
+            <button class="hot-city-btn" data-city="上海" data-lat="31.2304" data-lng="121.4737">🌆 上海</button>
+            <button class="hot-city-btn" data-city="广州" data-lat="23.1291" data-lng="113.2644">🌴 广州</button>
+            <button class="hot-city-btn" data-city="深圳" data-lat="22.5431" data-lng="114.0579">🏙️ 深圳</button>
+            <button class="hot-city-btn" data-city="杭州" data-lat="30.2741" data-lng="120.1551">🌸 杭州</button>
+            <button class="hot-city-btn" data-city="成都" data-lat="30.5728" data-lng="104.0668">🐼 成都</button>
+        </div>
+        <div id="cityResultsList" class="city-results"></div>
+        <div style="text-align:right; margin-top:1rem;"><button id="closeCityPicker" style="background:#bbaa7a; border:none; padding:5px 16px; border-radius:40px; cursor:pointer;">关闭</button></div>
+    </div>
+</div>
+
+<div id="loadingToast" class="loading-toast">
+    <div class="toast-message">正在获取实时天气数据...</div>
+    <div class="toast-buttons" style="display: none;">
+        <button id="retryBtn" class="toast-btn">🔄 重试</button>
+        <button id="estimateBtn" class="toast-btn">📊 使用估算</button>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ======================= 全局变量 =======================
+        let currentLocation = { name: "北京", lat: 39.9042, lng: 116.4074 };
+        let currentYear = new Date().getFullYear();
+        let monthDays = [];
+        let totalDays = 365;
+        let dailyTempCache = [];
+        
+        let currentRealWeather = {
+            airMin: null, airMax: null,
+            feelsMin: null, feelsMax: null,
+            groundMin: null, groundMax: null,
+            isReal: false, dateStr: null, source: ""
+        };
+        
+        let canvasWheel = document.getElementById('seasonWheelCanvas');
+        let ctx = canvasWheel.getContext('2d');
+        let size = 600;
+        canvasWheel.width = size; canvasWheel.height = size;
+        let centerX = size/2, centerY = size/2;
+        let radiusOuter = 243;
+        let radiusInner = 90;
+        let pointerLength = radiusOuter - 18;
+        let pointerAngle = Math.PI/2;
+        let currentDayIndex = 0;
+        
+        let pendingWeatherTimeout = null;
+        let currentAbortController = null;
+        let currentLocateController = null;
+        let toast = document.getElementById('loadingToast');
+        let toastMessageDiv = toast.querySelector('.toast-message');
+        let toastButtonsDiv = toast.querySelector('.toast-buttons');
+        
+        // 颜色插值辅助 (原逻辑保留)
+        function hexToRgb(hex) { let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16); return [r,g,b]; }
+        function interpolateColor(c1,c2,t){ let rgb1=hexToRgb(c1),rgb2=hexToRgb(c2); return `rgb(${Math.round(rgb1[0]+(rgb2[0]-rgb1[0])*t)},${Math.round(rgb1[1]+(rgb2[1]-rgb1[1])*t)},${Math.round(rgb1[2]+(rgb2[2]-rgb1[2])*t)})`; }
+        function getAngleGradientColor(deg) {
+            const points = [{ deg:45, color:'#b0e1fa'},{ deg:135, color:'#bcda8b'},{ deg:225, color:'#fff999'},{ deg:315, color:'#ffce81'},{ deg:405, color:'#b0e1fa'}];
+            let target = deg; if(target<45) target+=360;
+            let extended = []; for(let p of points){ extended.push({deg:p.deg,color:p.color}); extended.push({deg:p.deg+360,color:p.color});}
+            extended.sort((a,b)=>a.deg-b.deg);
+            for(let i=0;i<extended.length-1;i++){ let p1=extended[i],p2=extended[i+1]; if(target>=p1.deg && target<=p2.deg){ let t=(target-p1.deg)/(p2.deg-p1.deg); return interpolateColor(p1.color,p2.color,t);} }
+            return '#b0e1fa';
+        }
+        
+        // 日历辅助
+        function updateCalendar() { let isLeap = (currentYear%4===0&&currentYear%100!==0)||(currentYear%400===0); monthDays=[31,isLeap?29:28,31,30,31,30,31,31,30,31,30,31]; totalDays=monthDays.reduce((a,b)=>a+b,0); }
+        function getDayIndex(month,day){ let idx=0; for(let i=1;i<month;i++) idx+=monthDays[i-1]; return idx+day-1; }
+        function getDateFromIndex(idx){ let r=idx; for(let m=0;m<12;m++){ if(r<monthDays[m]) return {year:currentYear, month:m+1, day:r+1}; r-=monthDays[m];} return {year:currentYear, month:12, day:31}; }
+        function formatDate(idx){ let d=getDateFromIndex(idx); return `${d.month}月${d.day}日`; }
+        function getDateStrFromIdx(idx){ let d=getDateFromIndex(idx); return `${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`; }
+        
+        // 天气获取
+        async function fetchRealWeatherRange(lat, lng, targetDate, signal) {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm&timezone=auto&past_days=1&forecast_days=7`;
+                const response = await fetch(url, { signal });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                if (!data.hourly || !data.hourly.time) return null;
+                const times = data.hourly.time;
+                const airTemps = data.hourly.temperature_2m;
+                const feels = data.hourly.apparent_temperature;
+                const grounds = data.hourly.soil_temperature_0cm;
+                let indices = [];
+                for (let i = 0; i < times.length; i++) if (times[i].startsWith(targetDate)) indices.push(i);
+                if (indices.length === 0) return null;
+                let airVals = [], feelsVals = [], groundVals = [];
+                for (let idx of indices) {
+                    if (airTemps[idx] !== undefined && airTemps[idx] !== null) airVals.push(airTemps[idx]);
+                    if (feels[idx] !== undefined && feels[idx] !== null) feelsVals.push(feels[idx]);
+                    if (grounds[idx] !== undefined && grounds[idx] !== null) groundVals.push(grounds[idx]);
+                }
+                if (airVals.length === 0) return null;
+                return { airMin: Math.min(...airVals), airMax: Math.max(...airVals), feelsMin: feelsVals.length ? Math.min(...feelsVals) : null, feelsMax: feelsVals.length ? Math.max(...feelsVals) : null, groundMin: groundVals.length ? Math.min(...groundVals) : null, groundMax: groundVals.length ? Math.max(...groundVals) : null, isReal: true, source: "Open-Meteo" };
+            } catch(e) { if(e.name==='AbortError') throw e; throw e; }
+        }
+        
+        function estimateDailyTemp(idx) { let rad=(idx/totalDays)*2*Math.PI; let latFactor=Math.abs(currentLocation.lat); let avg=15,amp=18; if(latFactor>35){ avg=11; amp=20;} else if(latFactor<25){ avg=22; amp=12;} let mean=avg+amp*Math.sin(rad-Math.PI/2); return { min:mean-3.5, max:mean+3.5 }; }
+        function useEstimateData() { let est=estimateDailyTemp(currentDayIndex); dailyTempCache[currentDayIndex]={ min:est.min, max:est.max, real:false, source:"气候估算"}; currentRealWeather={ isReal:false, dateStr:null}; updateLeftPanelAndTimeline(currentDayIndex); toast.classList.remove('show'); if(currentAbortController){ currentAbortController.abort(); currentAbortController=null;} }
+        
+        // 以下核心更新函数与原逻辑一致，但保留完整性（略作保留）
+        async function refreshWeatherForCurrentDate(showToast=true){ /* 与之前一致但保持简洁 */ if(pendingWeatherTimeout)clearTimeout(pendingWeatherTimeout); if(currentAbortController)currentAbortController.abort(); if(showToast){ toastMessageDiv.innerHTML='<span class="toast-spinner"> </span> 正在获取实时天气数据...'; toastButtonsDiv.style.display='none'; toast.classList.add('show'); } const targetDate=getDateStrFromIdx(currentDayIndex); const controller=new AbortController(); currentAbortController=controller; let timeoutId=setTimeout(()=>{ if(!controller.signal.aborted) controller.abort(); },10000); try{ const realData=await fetchRealWeatherRange(currentLocation.lat,currentLocation.lng,targetDate,controller.signal); clearTimeout(timeoutId); if(realData&&realData.isReal){ currentRealWeather={...realData,dateStr:targetDate}; dailyTempCache[currentDayIndex]={ min:realData.airMin, max:realData.airMax, real:true, source:realData.source}; }else{ let est=estimateDailyTemp(currentDayIndex); dailyTempCache[currentDayIndex]={ min:est.min, max:est.max, real:false, source:"气候估算"}; currentRealWeather={ isReal:false, dateStr:null}; } updateLeftPanelAndTimeline(currentDayIndex); if(showToast) toast.classList.remove('show'); }catch(err){ clearTimeout(timeoutId); if(err.message==='aborted') return; toastMessageDiv.innerHTML='⏰ 请求超时 (10秒)'; toastButtonsDiv.style.display='flex'; const retryBtn=document.getElementById('retryBtn'), estimateBtn=document.getElementById('estimateBtn'); const retryHandler=()=>{ retryBtn.removeEventListener('click',retryHandler); estimateBtn.removeEventListener('click',estimateHandler); refreshWeatherForCurrentDate(true);}; const estimateHandler=()=>{ retryBtn.removeEventListener('click',retryHandler); estimateBtn.removeEventListener('click',estimateHandler); useEstimateData();}; retryBtn.addEventListener('click',retryHandler); estimateBtn.addEventListener('click',estimateHandler); }finally{ if(currentAbortController===controller) currentAbortController=null; } }
+        
+        function updateDateOnly(dayIdx){ currentDayIndex=dayIdx; pointerAngle=getAngleFromDayIndex(dayIdx); drawWheel(); let d=getDateFromIndex(dayIdx); let yyyymmdd=`${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`; document.getElementById('datePickerMobile').value=yyyymmdd; }
+        async function updateByDateIndexWithWeather(dayIdx, showToast=true){ if(pendingWeatherTimeout)clearTimeout(pendingWeatherTimeout); updateDateOnly(dayIdx); await refreshWeatherForCurrentDate(showToast); }
+        function calculateFeelsLike(airMin,airMax,groundMin,groundMax){ let min=airMin*0.6+groundMin*0.4; let max=airMax*0.6+groundMax*0.4; return {min,max}; }
+        function getMaterialTempRange(airMin,airMax,type){ let offMin=0,offMax=0; if(type==='grass'){ offMin=-1; offMax=1;} else if(type==='soil'){ offMin=1; offMax=3;} else if(type==='sand'){ offMin=2; offMax=5;} else if(type==='brick'){ offMin=3; offMax=6;} else if(type==='asphalt'){ offMin=5; offMax=10;} return { min:airMin+offMin, max:airMax+offMax }; }
+        function hourlyTemp(airMin,airMax,hour){ let mid=(airMin+airMax)/2, amp=(airMax-airMin)/2; let hourAngle=(hour-14)*Math.PI/12; let temp=mid+amp*Math.cos(hourAngle); return Math.min(airMax+2,Math.max(airMin-1,temp)); }
+        function getSuitablePeriodsForMaterial(airMin,airMax,type){ let periods=[], inRange=false, startHour=0; let range=getMaterialTempRange(airMin,airMax,type); for(let h=0;h<=24;h++){ let hourTemp=hourlyTemp(airMin,airMax,h); let offset=(range.min+range.max)/2-(airMin+airMax)/2; let finalTemp=hourTemp+offset; let suitable=(finalTemp>=20&&finalTemp<=40); if(suitable&&!inRange){ inRange=true; startHour=h;} if(!suitable&&inRange){ periods.push({start:startHour,end:h}); inRange=false;}} if(inRange) periods.push({start:startHour,end:24}); let tempMin=Infinity,tempMax=-Infinity; for(let p of periods) for(let h=p.start;h<=p.end;h++){ let hourTemp=hourlyTemp(airMin,airMax,h); let offset=(range.min+range.max)/2-(airMin+airMax)/2; let ft=hourTemp+offset; tempMin=Math.min(tempMin,ft); tempMax=Math.max(tempMax,ft);} if(periods.length===0){ for(let h=0;h<=24;h++){ let hourTemp=hourlyTemp(airMin,airMax,h); let offset=(range.min+range.max)/2-(airMin+airMax)/2; let ft=hourTemp+offset; tempMin=Math.min(tempMin,ft); tempMax=Math.max(tempMax,ft);}} return { periods, tempRange:{ min:tempMin, max:tempMax } }; }
+        function getCombinedSuitablePeriods(airMin,airMax){ let allPeriods=[]; ['grass','soil','sand','brick','asphalt'].forEach(mat=>{ let res=getSuitablePeriodsForMaterial(airMin,airMax,mat); allPeriods.push(...res.periods);}); if(allPeriods.length===0) return []; allPeriods.sort((a,b)=>a.start-b.start); let merged=[]; for(let p of allPeriods){ if(merged.length===0||p.start>merged[merged.length-1].end) merged.push({start:p.start,end:p.end}); else merged[merged.length-1].end=Math.max(merged[merged.length-1].end,p.end);} return merged; }
+        function updateLeftPanelAndTimeline(dayIdx){ /* 复用原逻辑，保证功能 */ let air=dailyTempCache[dayIdx]||{min:15,max:25,real:false}; let airMin=air.min,airMax=air.max,airReal=air.real; let targetDate=getDateStrFromIdx(dayIdx), useReal=(currentRealWeather.isReal&&currentRealWeather.dateStr===targetDate); document.getElementById('airTempRange').innerHTML=`<span class="data-tag">${airReal?"真实数据":"估算数据"}</span><span class="temp-value">${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃</span>`; let feelsTag,feelsValue; if(useReal&&currentRealWeather.feelsMin!==null){ feelsTag="真实数据"; feelsValue=`${currentRealWeather.feelsMin.toFixed(1)} ~ ${currentRealWeather.feelsMax.toFixed(1)} ℃`;} else { let groundMinEst=airMin+1,groundMaxEst=airMax+3; let feelsEst=calculateFeelsLike(airMin,airMax,groundMinEst,groundMaxEst); feelsValue=`${feelsEst.min.toFixed(1)} ~ ${feelsEst.max.toFixed(1)} ℃`; feelsTag="估算数据";} document.getElementById('feelsLikeTemp').innerHTML=`<span class="data-tag">${feelsTag}</span><span class="temp-value">${feelsValue}</span>`; let groundTag,groundValue; if(useReal&&currentRealWeather.groundMin!==null){ groundTag="真实数据"; groundValue=`${currentRealWeather.groundMin.toFixed(1)} ~ ${currentRealWeather.groundMax.toFixed(1)} ℃`;} else { let groundMinEst=airMin+1,groundMaxEst=airMax+3; groundValue=`${groundMinEst.toFixed(1)} ~ ${groundMaxEst.toFixed(1)} ℃`; groundTag="估算数据";} document.getElementById('groundTempRange').innerHTML=`<span class="data-tag">${groundTag}</span><span class="temp-value">${groundValue}</span>`; let materials=[{name:'🌱 草地',type:'grass'},{name:'🟫 土地',type:'soil'},{name:'🏖️ 沙滩',type:'sand'},{name:'🧱 地砖',type:'brick'},{name:'🛣️ 马路',type:'asphalt'}]; let matsHtml=''; for(let m of materials){ let res=getSuitablePeriodsForMaterial(airMin,airMax,m.type); let periods=res.periods; let tempRange=res.tempRange; let timeStr=periods.length?periods.map(p=>`${Math.floor(p.start)}:${(p.start%1===0?'00':'30')}-${Math.floor(p.end)}:00`).join(', '):'不适宜'; let tempInfo=`${tempRange.min.toFixed(1)}~${tempRange.max.toFixed(1)}℃`; let suitabilityClass=(timeStr==='不适宜')?'unsuitable':''; matsHtml+=`<div class="surface-row"><span class="surface-name">${m.name}</span><span class="surface-info ${suitabilityClass}">${tempInfo} · ${timeStr}</span></div>`;} document.getElementById('surfaceList').innerHTML=matsHtml; drawTimeline(airMin,airMax); }
+        let timelineCanvas=document.getElementById('timelineCanvas'); function drawTimeline(airMin,airMax){ let w=timelineCanvas.parentElement.clientWidth,h=48; timelineCanvas.width=w; timelineCanvas.height=h; let tCtx=timelineCanvas.getContext('2d'); function getColorFromHour(hour){ let r,g,b; if(hour<=5){ let t=hour/5; r=0+135*t; g=0+206*t; b=80+155*t;} else if(hour<=10){ let t=(hour-5)/5; r=135+(70-135)*t; g=206+(130-206)*t; b=235+(200-235)*t;} else if(hour<=12){ let t=(hour-10)/2; r=70+(255-70)*t; g=130+(220-130)*t; b=200+(100-200)*t;} else if(hour<=14){ let t=(hour-12)/2; r=255+(70-255)*t; g=220+(130-220)*t; b=100+(200-100)*t;} else if(hour<=18){ let t=(hour-14)/4; r=70+(255-70)*t; g=130+(140-130)*t; b=200+(100-200)*t;} else if(hour<=20){ let t=(hour-18)/2; r=255+(25-255)*t; g=140+(25-140)*t; b=100+(112-100)*t;} else { let t=Math.min(1,(hour-20)/2); r=25+(0-25)*t; g=25+(0-25)*t; b=112+(80-112)*t;} return `rgb(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)})`; } for(let x=0;x<w;x++){ let hour=(x/w)*24; tCtx.fillStyle=getColorFromHour(hour); tCtx.fillRect(x,0,1,h);} tCtx.globalCompositeOperation='lighter'; tCtx.fillStyle='rgba(255,245,200,0.08)'; tCtx.fillRect(0,0,w,h); tCtx.globalCompositeOperation='source-over'; let periods=getCombinedSuitablePeriods(airMin,airMax); tCtx.fillStyle='rgba(255,255,230,0.7)'; for(let p of periods){ let startX=(p.start/24)*w,endX=(p.end/24)*w; if(endX-startX>0){ tCtx.beginPath(); tCtx.roundRect(startX,4,endX-startX,h-8,(h-8)/2); tCtx.fill();}} tCtx.strokeStyle='rgba(80,60,30,0.4)'; tCtx.lineWidth=1; for(let i=0;i<=24;i+=2){ let x=(i/24)*w; tCtx.beginPath(); tCtx.moveTo(x,6); tCtx.lineTo(x,14); tCtx.stroke();} let markersDiv=document.getElementById('timelineMarkers'); markersDiv.innerHTML=''; for(let p of periods){ let startX=(p.start/24)*w,endX=(p.end/24)*w; let startStr=`${Math.floor(p.start)}:${(p.start%1===0?'00':'30')}`; let endStr=`${Math.floor(p.end)}:00`; let startSpan=document.createElement('div'); startSpan.className='time-marker'; startSpan.style.left=`${startX}px`; startSpan.textContent=startStr; let endSpan=document.createElement('div'); endSpan.className='time-marker'; endSpan.style.left=`${endX}px`; endSpan.textContent=endStr; markersDiv.appendChild(startSpan); markersDiv.appendChild(endSpan);} let labelsHtml=''; for(let i=0;i<=24;i+=2) labelsHtml+=`<span style="width:12px; text-align:center;">${i}</span>`; document.getElementById('timelineLabelsTop').innerHTML=labelsHtml; }
+        if (!CanvasRenderingContext2D.prototype.roundRect) { CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r) { if (w<2*r) r=w/2; if(h<2*r) r=h/2; this.moveTo(x+r,y); this.lineTo(x+w-r,y); this.quadraticCurveTo(x+w,y,x+w,y+r); this.lineTo(x+w,y+h-r); this.quadraticCurveTo(x+w,y+h,x+w-r,y+h); this.lineTo(x+r,y+h); this.quadraticCurveTo(x,y+h,x,y+h-r); this.lineTo(x,y+r); this.quadraticCurveTo(x,y,x+r,y); return this; }; }
+        function getAngleFromDayIndex(dayIdx){ return (dayIdx/totalDays)*2*Math.PI; }
+        function drawWheel(){ if(!ctx) return; ctx.clearRect(0,0,size,size); let dec1Idx=getDayIndex(12,1); let angleOffset=-Math.PI/2-getAngleFromDayIndex(dec1Idx); function adjAngle(dayIdx){ return getAngleFromDayIndex(dayIdx)+angleOffset;} for(let i=0;i<360;i++){ let angStart=(i/360)*2*Math.PI,angEnd=((i+1)/360)*2*Math.PI; let midAng=(angStart+angEnd)/2; let deg=(midAng*180/Math.PI+90+360)%360; let color=getAngleGradientColor(deg); ctx.beginPath(); ctx.moveTo(centerX,centerY); ctx.arc(centerX,centerY,radiusOuter,angStart,angEnd); ctx.closePath(); ctx.fillStyle=color; ctx.fill();} ctx.save(); ctx.lineWidth=3; ctx.strokeStyle='#FFFFFF'; for(let m=1;m<=12;m++){ let idx=getDayIndex(m,1); let ang=adjAngle(idx); let x1=centerX+(radiusOuter-28)*Math.cos(ang),y1=centerY+(radiusOuter-28)*Math.sin(ang),x2=centerX+(radiusOuter-5)*Math.cos(ang),y2=centerY+(radiusOuter-5)*Math.sin(ang); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();} ctx.lineWidth=1.5; for(let d=7;d<=totalDays;d+=7){ let ang=adjAngle(d); let x1=centerX+(radiusOuter-22)*Math.cos(ang),y1=centerY+(radiusOuter-22)*Math.sin(ang),x2=centerX+(radiusOuter-5)*Math.cos(ang),y2=centerY+(radiusOuter-5)*Math.sin(ang); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); let dateObj=getDateFromIndex(d); let rLabel=radiusOuter+8; let xLabel=centerX+rLabel*Math.cos(ang),yLabel=centerY+rLabel*Math.sin(ang); ctx.font='bold 10px "Segoe UI"'; ctx.fillStyle='#4a5b44'; ctx.fillText(dateObj.day.toString(),xLabel-6,yLabel+3);} ctx.lineWidth=0.9; for(let d=1;d<=totalDays;d++){ if(d%7!==0){ let ang=adjAngle(d); let x1=centerX+(radiusOuter-12)*Math.cos(ang),y1=centerY+(radiusOuter-12)*Math.sin(ang),x2=centerX+(radiusOuter-5)*Math.cos(ang),y2=centerY+(radiusOuter-5)*Math.sin(ang); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();}} ctx.font='bold 13px "Segoe UI"'; ctx.fillStyle='#2c4b32'; for(let m=1;m<=12;m++){ let idx=getDayIndex(m,1); let ang=adjAngle(idx); let r=radiusOuter+24; let x=centerX+r*Math.cos(ang),y=centerY+r*Math.sin(ang); ctx.fillText(`${m}月`,x-12,y+5);} let terms=[[3,20,'春分'],[6,21,'夏至'],[9,23,'秋分'],[12,21,'冬至']]; ctx.font='bold 9px sans-serif'; ctx.fillStyle='#8b6946'; for(let [m,d,name] of terms){ let idx=getDayIndex(m,d); let ang=adjAngle(idx); let r=radiusOuter-24; let x=centerX+r*Math.cos(ang),y=centerY+r*Math.sin(ang); ctx.fillText(name,x-12,y-2);} let pAng=pointerAngle+angleOffset; let px=centerX+pointerLength*Math.cos(pAng),py=centerY+pointerLength*Math.sin(pAng); ctx.beginPath(); ctx.moveTo(centerX,centerY); ctx.lineTo(px,py); ctx.lineWidth=5; ctx.strokeStyle='#e34234'; ctx.stroke(); ctx.beginPath(); ctx.arc(px,py,8,0,2*Math.PI); ctx.fillStyle='#e34c26'; ctx.fill(); ctx.fillStyle='white'; ctx.arc(px,py,3,0,2*Math.PI); ctx.fill(); ctx.beginPath(); ctx.arc(centerX,centerY,radiusInner,0,2*Math.PI); ctx.fillStyle='#fff8ed'; ctx.fill(); ctx.strokeStyle='#d9c48b'; ctx.lineWidth=2.5; ctx.stroke(); ctx.font=`bold ${Math.floor(radiusInner*0.32)}px "Segoe UI"`; ctx.fillStyle='#3c5e2b'; let dateText=formatDate(currentDayIndex); ctx.fillText(dateText,centerX-ctx.measureText(dateText).width/2,centerY+radiusInner*0.12); ctx.restore(); }
+        
+        // ---------- 增强定位 (多源 + 回退浏览器地理位置) ----------
+        async function fetchWithTimeout(url, timeout=8000) { const controller = new AbortController(); const id = setTimeout(() => controller.abort(), timeout); try { const res = await fetch(url, { signal: controller.signal }); clearTimeout(id); return res; } catch(e) { clearTimeout(id); throw e; } }
+        async function getLocationByIpApi() { try { const res = await fetchWithTimeout('https://ip-api.com/json/?fields=status,lat,lon,city,regionName&lang=zh-CN', 5000); const data = await res.json(); if(data.status === 'success' && data.lat && data.lon) { let city = data.city || data.regionName || '未知城市'; if(city.endsWith('市')) city = city.slice(0,-1); return { name: city, lat: data.lat, lng: data.lon }; } } catch(e) { console.warn('ip-api失败',e); } return null; }
+        async function getLocationByIpApiCo() { try { const res = await fetchWithTimeout('https://ipapi.co/json/', 5000); const data = await res.json(); if(data.latitude && data.longitude) { let city = data.city || data.region || '当前位置'; if(city.endsWith('市')) city = city.slice(0,-1); return { name: city, lat: data.latitude, lng: data.longitude }; } } catch(e) { console.warn('ipapi.co失败',e); } return null; }
+        async function getLocationByBrowserGeo() { return new Promise((resolve) => { if(!navigator.geolocation) resolve(null); else { navigator.geolocation.getCurrentPosition(async (pos) => { let lat=pos.coords.latitude, lng=pos.coords.longitude; try { const revRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`); const revData = await revRes.json(); let city = revData.city || revData.locality || revData.principalSubdivision || '当前位置'; if(city.endsWith('市')) city=city.slice(0,-1); resolve({ name: city, lat, lng }); } catch(e) { resolve({ name: '当前位置', lat, lng }); } }, () => resolve(null), { timeout: 8000 }); } }); }
+        async function autoLocateByIP() { if(currentLocateController) { currentLocateController.abort(); currentLocateController=null; } const btn = document.getElementById('autoLocateBtn'); const originalText = btn.innerText; btn.innerText = '定位中...'; btn.disabled = true; toastMessageDiv.innerHTML = '正在获取您的位置...'; toastButtonsDiv.style.display = 'none'; toast.classList.add('show'); try { let location = await getLocationByIpApi(); if(!location) location = await getLocationByIpApiCo(); if(!location) location = await getLocationByBrowserGeo(); if(location && location.lat && location.lng) { await setCity({ name: location.name, lat: location.lat, lng: location.lng }); } else { throw new Error('所有定位方式均失败'); } } catch(err) { console.warn(err); alert('无法获取您的位置，请检查网络或手动选择城市。'); } finally { toast.classList.remove('show'); btn.innerText = originalText; btn.disabled = false; if(currentLocateController) currentLocateController=null; } }
+        
+        async function setCity(city) { if(currentLocateController) currentLocateController?.abort(); if(pendingWeatherTimeout) clearTimeout(pendingWeatherTimeout); if(currentAbortController) currentAbortController.abort(); currentLocation = { name: city.name, lat: city.lat, lng: city.lng }; document.getElementById('cityTitle').innerHTML = `📍 ${city.name} · 自然足感`; updateCalendar(); currentRealWeather = { isReal: false, dateStr: null }; for(let idx=0; idx<totalDays; idx++) { let est = estimateDailyTemp(idx); dailyTempCache[idx] = { min: est.min, max: est.max, real: false, source: "气候估算" }; } await refreshWeatherForCurrentDate(true); updateDateOnly(currentDayIndex); }
+        
+        // 城市搜索等
+        async function searchCitiesOpenMeteo(keyword) { if(!keyword.trim()||keyword.length<2) return []; try { let url=`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(keyword)}&count=15&language=zh&format=json`; let resp=await fetch(url); let data=await resp.json(); if(data.results) return data.results.map(c=>({ name:c.name, admin1:c.admin1||'', country:c.country||'', lat:c.latitude, lng:c.longitude, display:`${c.name}${c.admin1?` · ${c.admin1}`:''}${c.country?` · ${c.country}`:''}` })); return []; } catch(e){ return []; } }
+        let searchDebounce=null; function renderCitySelector(filterText=''){ let resultsDiv=document.getElementById('cityResultsList'); if(filterText.length<2){ resultsDiv.innerHTML='<div class="loading-tip">请输入至少2个字符搜索 (中/英)</div>'; return; } resultsDiv.innerHTML='<div class="loading-tip">⏳ 检索中...</div>'; searchCitiesOpenMeteo(filterText).then(cities=>{ if(cities.length===0){ resultsDiv.innerHTML='<div class="loading-tip">未找到城市，试试其他名称</div>'; return; } resultsDiv.innerHTML=cities.map(c=>`<div class="city-result-item" data-lat="${c.lat}" data-lng="${c.lng}" data-name="${c.name}">${c.display}</div>`).join(''); document.querySelectorAll('.city-result-item').forEach(el=>{ el.addEventListener('click',()=>{ let name=el.dataset.name; let lat=parseFloat(el.dataset.lat); let lng=parseFloat(el.dataset.lng); setCity({ name, lat, lng }); document.getElementById('citySelectorOverlay').classList.remove('active'); }); }); }); }
+        
+        // 交互事件绑定
+        canvasWheel.addEventListener('mousedown',()=>{ drag=true; }); let drag=false;
+        function handleDragMove(e){ if(!drag) return; let rect=canvasWheel.getBoundingClientRect(); let clientX=e.clientX??(e.touches?e.touches[0].clientX:0); let clientY=e.clientY??(e.touches?e.touches[0].clientY:0); let mx=(clientX-rect.left)*size/rect.width; let my=(clientY-rect.top)*size/rect.height; let ang=Math.atan2(my-centerY,mx-centerX); let dec1Idx=getDayIndex(12,1); let angleOffset=-Math.PI/2-getAngleFromDayIndex(dec1Idx); let rawAng=ang-angleOffset; let dayIdx=Math.round((rawAng%(2*Math.PI))/(2*Math.PI)*totalDays)%totalDays; if(dayIdx<0) dayIdx+=totalDays; updateDateOnly(dayIdx); if(pendingWeatherTimeout) clearTimeout(pendingWeatherTimeout); pendingWeatherTimeout=setTimeout(async()=>{ await refreshWeatherForCurrentDate(true); pendingWeatherTimeout=null; },1000); }
+        window.addEventListener('mousemove',handleDragMove); window.addEventListener('mouseup',()=>{ drag=false; }); canvasWheel.addEventListener('touchstart',(e)=>{ drag=true; handleDragMove(e.touches[0]); e.preventDefault();}); window.addEventListener('touchmove',(e)=>{ if(drag){ handleDragMove(e.touches[0]); e.preventDefault();}}); window.addEventListener('touchend',()=>{ drag=false; });
+        canvasWheel.addEventListener('click',(e)=>{ let rect=canvasWheel.getBoundingClientRect(); let mx=(e.clientX-rect.left)*size/rect.width; let my=(e.clientY-rect.top)*size/rect.height; if(Math.hypot(mx-centerX,my-centerY)<=radiusInner){ let now=new Date(); let idx=getDayIndex(now.getMonth()+1,now.getDate()); updateByDateIndexWithWeather(idx,true); } });
+        document.getElementById('datePickerMobile').addEventListener('change',(e)=>{ let date=new Date(e.target.value); if(!isNaN(date)){ let idx=getDayIndex(date.getMonth()+1,date.getDate()); if(pendingWeatherTimeout)clearTimeout(pendingWeatherTimeout); updateByDateIndexWithWeather(idx,true); } });
+        document.getElementById('todayBtnMobile').addEventListener('click',()=>{ let now=new Date(); let idx=getDayIndex(now.getMonth()+1,now.getDate()); if(pendingWeatherTimeout)clearTimeout(pendingWeatherTimeout); updateByDateIndexWithWeather(idx,true); });
+        document.getElementById('openCityPickerBtn').addEventListener('click',()=>{ document.getElementById('citySearchInput').value=''; document.getElementById('cityResultsList').innerHTML='<div class="loading-tip">输入城市名搜索</div>'; document.getElementById('citySelectorOverlay').classList.add('active'); });
+        document.getElementById('autoLocateBtn').addEventListener('click',autoLocateByIP);
+        document.getElementById('closeCityPicker').addEventListener('click',()=>{ document.getElementById('citySelectorOverlay').classList.remove('active'); });
+        document.getElementById('citySearchInput').addEventListener('input',(e)=>{ if(searchDebounce)clearTimeout(searchDebounce); searchDebounce=setTimeout(()=>renderCitySelector(e.target.value),300); });
+        document.querySelectorAll('.hot-city-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ let cityName=btn.dataset.city; let lat=parseFloat(btn.dataset.lat); let lng=parseFloat(btn.dataset.lng); setCity({ name:cityName, lat, lng }); document.getElementById('citySelectorOverlay').classList.remove('active'); }); });
+        
+        updateCalendar(); for(let idx=0; idx<totalDays; idx++){ let est=estimateDailyTemp(idx); dailyTempCache[idx]={ min:est.min, max:est.max, real:false, source:"气候估算"}; }
+        let today=new Date(); let todayIdx=getDayIndex(today.getMonth()+1,today.getDate()); currentDayIndex=todayIdx; pointerAngle=getAngleFromDayIndex(todayIdx); drawWheel();
+        refreshWeatherForCurrentDate(true).then(()=>{ let d=getDateFromIndex(currentDayIndex); let yyyymmdd=`${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`; document.getElementById('datePickerMobile').value=yyyymmdd; });
+        // 横竖屏强制重绘footer-info背景（额外保险）
+        window.addEventListener('resize',()=>{ let footer=document.querySelector('.footer-info'); if(footer){ footer.style.transform='translateZ(0)'; setTimeout(()=>{ if(footer) footer.style.transform=''; },50); } });
+    })();
+</script>
+</body>
+</html>
