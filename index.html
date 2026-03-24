@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>亲近自然指南 · 净足时光</title>
-    <!-- 🌿 网页图标 (favicon) 使用内嵌 SVG，显示绿色小草 emoji -->
+    
+    <!-- 标准 favicon (🌿) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='70' font-size='72' text-anchor='middle' dominant-baseline='middle'%3E🌿%3C/text%3E%3C/svg%3E">
     
-    <!-- 微信分享 / 社交卡片 Meta 标签：封面图为 🌿 -->
+    <!-- Apple Touch Icon (iOS 分享时左上角显示) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%233c8c40'/%3E%3Ctext x='90' y='130' font-size='100' text-anchor='middle' dominant-baseline='middle' fill='white'%3E🌿%3C/text%3E%3C/svg%3E">
+    
+    <!-- Open Graph / Twitter Card (分享封面缩略图) -->
     <meta property="og:title" content="亲近自然指南 · 净足时光">
     <meta property="og:description" content="查看不同地面材质在全年中的赤足适宜时段，实时天气数据辅助决策。">
     <meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%233c8c40'/%3E%3Ctext x='100' y='150' font-size='110' text-anchor='middle' dominant-baseline='middle' fill='white'%3E🌿%3C/text%3E%3C/svg%3E">
@@ -512,12 +516,53 @@
             text-decoration: underline;
         }
 
+        /* 临时引导提示条 */
+        .locate-guide-tip {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(12px);
+            color: #fff8e7;
+            padding: 12px 18px;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            text-align: center;
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            pointer-events: auto;
+            font-weight: 500;
+            animation: fadeInUp 0.3s ease;
+        }
+        .locate-guide-tip button {
+            background: #ffb347;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            color: #2c3e2f;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .locate-guide-tip button:active { transform: scale(0.96); }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 880px) {
             .dashboard { flex-direction: column; }
             .wheel-area { order: 3; margin-top: 1rem; }
             .left-panel { order: 2; }
             .loading-toast { font-size: 1rem; padding: 18px 24px; width: 80%; }
             .toast-buttons { gap: 12px; }
+            .locate-guide-tip { bottom: 10px; left: 10px; right: 10px; font-size: 0.75rem; }
         }
         @media (max-width: 480px) {
             body { padding: 0.8rem; }
@@ -639,6 +684,10 @@
         let toastMessageDiv = toast.querySelector('.toast-message');
         let toastButtonsDiv = toast.querySelector('.toast-buttons');
         
+        // 自动定位标志 & 超时引导
+        let autoLocateDone = false;
+        let autoLocateTimeoutId = null;
+        
         function hexToRgb(hex) { let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16); return [r,g,b]; }
         function interpolateColor(c1,c2,t){ let rgb1=hexToRgb(c1),rgb2=hexToRgb(c2); return `rgb(${Math.round(rgb1[0]+(rgb2[0]-rgb1[0])*t)},${Math.round(rgb1[1]+(rgb2[1]-rgb1[1])*t)},${Math.round(rgb1[2]+(rgb2[2]-rgb1[2])*t)})`; }
         function getAngleGradientColor(deg) {
@@ -702,10 +751,10 @@
         function drawSeasonTexts() {
             if(!ctx) return;
             const seasons = [
-                { name: "春", month: 4, day: 15, color: "#2a7a2e" },   // 深绿
-                { name: "夏", month: 7, day: 15, color: "#d69d2a" },   // 金黄
-                { name: "秋", month: 10, day: 15, color: "#cc5720" },  // 橙红
-                { name: "冬", month: 1, day: 15, color: "#2a73a5" }     // 湛蓝
+                { name: "春", month: 4, day: 15, color: "#2a7a2e" },
+                { name: "夏", month: 7, day: 15, color: "#d69d2a" },
+                { name: "秋", month: 10, day: 15, color: "#cc5720" },
+                { name: "冬", month: 1, day: 15, color: "#2a73a5" }
             ];
             let dec1Idx = getDayIndex(12,1);
             let angleOffset = -Math.PI/2 - getAngleFromDayIndex(dec1Idx);
@@ -734,6 +783,7 @@
             drawSeasonTexts();
             let pAng=pointerAngle+angleOffset; let px=centerX+pointerLength*Math.cos(pAng),py=centerY+pointerLength*Math.sin(pAng); ctx.beginPath(); ctx.moveTo(centerX,centerY); ctx.lineTo(px,py); ctx.lineWidth=5; ctx.strokeStyle='#e34234'; ctx.stroke(); ctx.beginPath(); ctx.arc(px,py,8,0,2*Math.PI); ctx.fillStyle='#e34c26'; ctx.fill(); ctx.fillStyle='white'; ctx.arc(px,py,3,0,2*Math.PI); ctx.fill(); ctx.beginPath(); ctx.arc(centerX,centerY,radiusInner,0,2*Math.PI); ctx.fillStyle='#fff8ed'; ctx.fill(); ctx.strokeStyle='#d9c48b'; ctx.lineWidth=2.5; ctx.stroke(); ctx.font=`bold ${Math.floor(radiusInner*0.32)}px "Segoe UI"`; ctx.fillStyle='#3c5e2b'; let dateText=formatDate(currentDayIndex); ctx.fillText(dateText,centerX-ctx.measureText(dateText).width/2,centerY+radiusInner*0.12); ctx.restore(); }
         
+        // ---------- 定位功能 (含首次自动定位超时引导) ----------
         async function getChineseCityName(lat, lng) {
             try {
                 const controller = new AbortController();
@@ -753,13 +803,81 @@
         async function getLocationByIpApiCo() { try { const res = await fetchWithTimeout('https://ipapi.co/json/', 5000); const data = await res.json(); if(data.latitude && data.longitude) { let city = data.city || data.region || '当前位置'; if(city.endsWith('市')) city = city.slice(0,-1); return { name: city, lat: data.latitude, lng: data.longitude }; } } catch(e) { console.warn('ipapi.co失败',e); } return null; }
         async function getLocationByBrowserGeo() { return new Promise((resolve) => { if(!navigator.geolocation) resolve(null); else { navigator.geolocation.getCurrentPosition(async (pos) => { let lat=pos.coords.latitude, lng=pos.coords.longitude; try { const revRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`); const revData = await revRes.json(); let city = revData.city || revData.locality || revData.principalSubdivision || '当前位置'; if(city.endsWith('市')) city=city.slice(0,-1); resolve({ name: city, lat, lng }); } catch(e) { resolve({ name: '当前位置', lat, lng }); } }, () => resolve(null), { timeout: 8000 }); } }); }
         
-        async function autoLocateByIP() { if(currentLocateController) { currentLocateController.abort(); currentLocateController=null; } const btn = document.getElementById('autoLocateBtn'); const originalText = btn.innerText; btn.innerText = '定位中...'; btn.disabled = true; toastMessageDiv.innerHTML = '正在获取您的位置...'; toastButtonsDiv.style.display = 'none'; toast.classList.add('show'); try { let location = await getLocationByIpApi(); if(!location) location = await getLocationByIpApiCo(); if(!location) location = await getLocationByBrowserGeo(); if(location && location.lat && location.lng) { const chineseName = await getChineseCityName(location.lat, location.lng); if(chineseName) location.name = chineseName; await setCity({ name: location.name, lat: location.lat, lng: location.lng }); } else { throw new Error('所有定位方式均失败'); } } catch(err) { console.warn(err); alert('无法获取您的位置，请检查网络或手动选择城市。'); } finally { toast.classList.remove('show'); btn.innerText = originalText; btn.disabled = false; if(currentLocateController) currentLocateController=null; } }
+        // 显示引导提示条 (超时后出现)
+        function showLocateTimeoutGuide() {
+            if(document.querySelector('.locate-guide-tip')) return;
+            const tip = document.createElement('div');
+            tip.className = 'locate-guide-tip';
+            tip.innerHTML = `<span>📍 自动定位超时，请点击「城市」按钮手动选择</span><button id="guideCityBtn">选择城市</button>`;
+            document.body.appendChild(tip);
+            const guideBtn = document.getElementById('guideCityBtn');
+            guideBtn.addEventListener('click', () => {
+                document.getElementById('openCityPickerBtn').click();
+                tip.remove();
+            });
+            // 5秒后自动消失
+            setTimeout(() => { if(tip && tip.remove) tip.remove(); }, 8000);
+        }
         
-        async function setCity(city) { if(currentLocateController) currentLocateController?.abort(); if(pendingWeatherTimeout) clearTimeout(pendingWeatherTimeout); if(currentAbortController) currentAbortController.abort(); currentLocation = { name: city.name, lat: city.lat, lng: city.lng }; document.getElementById('cityTitle').innerHTML = `📍 ${city.name} · 自然足感`; updateCalendar(); currentRealWeather = { isReal: false, dateStr: null }; for(let idx=0; idx<totalDays; idx++) { let est = estimateDailyTemp(idx); dailyTempCache[idx] = { min: est.min, max: est.max, real: false, source: "气候估算" }; } await refreshWeatherForCurrentDate(true); updateDateOnly(currentDayIndex); }
+        async function autoLocateByIP(isFirstLoad = false) { 
+            if(currentLocateController) { currentLocateController.abort(); currentLocateController=null; }
+            const btn = document.getElementById('autoLocateBtn');
+            const originalText = btn.innerText;
+            btn.innerText = '定位中...';
+            btn.disabled = true;
+            toastMessageDiv.innerHTML = '正在获取您的位置...';
+            toastButtonsDiv.style.display = 'none';
+            toast.classList.add('show');
+            let locateSuccess = false;
+            try { 
+                let location = await getLocationByIpApi(); 
+                if(!location) location = await getLocationByIpApiCo(); 
+                if(!location) location = await getLocationByBrowserGeo(); 
+                if(location && location.lat && location.lng) { 
+                    const chineseName = await getChineseCityName(location.lat, location.lng); 
+                    if(chineseName) location.name = chineseName; 
+                    await setCity({ name: location.name, lat: location.lat, lng: location.lng }); 
+                    locateSuccess = true;
+                } else { 
+                    throw new Error('所有定位方式均失败'); 
+                } 
+            } catch(err) { 
+                console.warn(err); 
+                if(!isFirstLoad) alert('无法获取您的位置，请检查网络或手动选择城市。');
+            } finally { 
+                toast.classList.remove('show'); 
+                btn.innerText = originalText; 
+                btn.disabled = false; 
+                if(currentLocateController) currentLocateController=null;
+                if(isFirstLoad && !locateSuccess && autoLocateTimeoutId) {
+                    clearTimeout(autoLocateTimeoutId);
+                    autoLocateTimeoutId = null;
+                    showLocateTimeoutGuide();
+                }
+                autoLocateDone = true;
+            } 
+        }
+        
+        async function setCity(city) { 
+            if(currentLocateController) currentLocateController?.abort(); 
+            if(pendingWeatherTimeout) clearTimeout(pendingWeatherTimeout); 
+            if(currentAbortController) currentAbortController.abort(); 
+            currentLocation = { name: city.name, lat: city.lat, lng: city.lng }; 
+            document.getElementById('cityTitle').innerHTML = `📍 ${city.name} · 自然足感`; 
+            updateCalendar(); 
+            currentRealWeather = { isReal: false, dateStr: null }; 
+            for(let idx=0; idx<totalDays; idx++) { 
+                let est = estimateDailyTemp(idx); 
+                dailyTempCache[idx] = { min: est.min, max: est.max, real: false, source: "气候估算" }; 
+            } 
+            await refreshWeatherForCurrentDate(true); 
+            updateDateOnly(currentDayIndex); 
+        }
         
         async function searchCitiesOpenMeteo(keyword) { if(!keyword.trim()||keyword.length<2) return []; try { let url=`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(keyword)}&count=15&language=zh&format=json`; let resp=await fetch(url); let data=await resp.json(); if(data.results) return data.results.map(c=>({ name:c.name, admin1:c.admin1||'', country:c.country||'', lat:c.latitude, lng:c.longitude, display:`${c.name}${c.admin1?` · ${c.admin1}`:''}${c.country?` · ${c.country}`:''}` })); return []; } catch(e){ return []; } }
         let searchDebounce=null; function renderCitySelector(filterText=''){ let resultsDiv=document.getElementById('cityResultsList'); if(filterText.length<2){ resultsDiv.innerHTML='<div class="loading-tip">请输入至少2个字符搜索 (中/英)</div>'; return; } resultsDiv.innerHTML='<div class="loading-tip">⏳ 检索中...</div>'; searchCitiesOpenMeteo(filterText).then(cities=>{ if(cities.length===0){ resultsDiv.innerHTML='<div class="loading-tip">未找到城市，试试其他名称</div>'; return; } resultsDiv.innerHTML=cities.map(c=>`<div class="city-result-item" data-lat="${c.lat}" data-lng="${c.lng}" data-name="${c.name}">${c.display}</div>`).join(''); document.querySelectorAll('.city-result-item').forEach(el=>{ el.addEventListener('click',()=>{ let name=el.dataset.name; let lat=parseFloat(el.dataset.lat); let lng=parseFloat(el.dataset.lng); setCity({ name, lat, lng }); document.getElementById('citySelectorOverlay').classList.remove('active'); }); }); }); }
         
+        // 交互事件绑定
         canvasWheel.addEventListener('mousedown',()=>{ drag=true; }); let drag=false;
         function handleDragMove(e){ if(!drag) return; let rect=canvasWheel.getBoundingClientRect(); let clientX=e.clientX??(e.touches?e.touches[0].clientX:0); let clientY=e.clientY??(e.touches?e.touches[0].clientY:0); let mx=(clientX-rect.left)*size/rect.width; let my=(clientY-rect.top)*size/rect.height; let ang=Math.atan2(my-centerY,mx-centerX); let dec1Idx=getDayIndex(12,1); let angleOffset=-Math.PI/2-getAngleFromDayIndex(dec1Idx); let rawAng=ang-angleOffset; let dayIdx=Math.round((rawAng%(2*Math.PI))/(2*Math.PI)*totalDays)%totalDays; if(dayIdx<0) dayIdx+=totalDays; updateDateOnly(dayIdx); if(pendingWeatherTimeout) clearTimeout(pendingWeatherTimeout); pendingWeatherTimeout=setTimeout(async()=>{ await refreshWeatherForCurrentDate(true); pendingWeatherTimeout=null; },1000); }
         window.addEventListener('mousemove',handleDragMove); window.addEventListener('mouseup',()=>{ drag=false; }); canvasWheel.addEventListener('touchstart',(e)=>{ drag=true; handleDragMove(e.touches[0]); e.preventDefault();}); window.addEventListener('touchmove',(e)=>{ if(drag){ handleDragMove(e.touches[0]); e.preventDefault();}}); window.addEventListener('touchend',()=>{ drag=false; });
@@ -767,14 +885,29 @@
         document.getElementById('datePickerMobile').addEventListener('change',(e)=>{ let date=new Date(e.target.value); if(!isNaN(date)){ let idx=getDayIndex(date.getMonth()+1,date.getDate()); if(pendingWeatherTimeout)clearTimeout(pendingWeatherTimeout); updateByDateIndexWithWeather(idx,true); } });
         document.getElementById('todayBtnMobile').addEventListener('click',()=>{ let now=new Date(); let idx=getDayIndex(now.getMonth()+1,now.getDate()); if(pendingWeatherTimeout)clearTimeout(pendingWeatherTimeout); updateByDateIndexWithWeather(idx,true); });
         document.getElementById('openCityPickerBtn').addEventListener('click',()=>{ document.getElementById('citySearchInput').value=''; document.getElementById('cityResultsList').innerHTML='<div class="loading-tip">输入城市名搜索</div>'; document.getElementById('citySelectorOverlay').classList.add('active'); });
-        document.getElementById('autoLocateBtn').addEventListener('click',autoLocateByIP);
+        document.getElementById('autoLocateBtn').addEventListener('click',()=>autoLocateByIP(false));
         document.getElementById('closeCityPicker').addEventListener('click',()=>{ document.getElementById('citySelectorOverlay').classList.remove('active'); });
         document.getElementById('citySearchInput').addEventListener('input',(e)=>{ if(searchDebounce)clearTimeout(searchDebounce); searchDebounce=setTimeout(()=>renderCitySelector(e.target.value),300); });
         document.querySelectorAll('.hot-city-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ let cityName=btn.dataset.city; let lat=parseFloat(btn.dataset.lat); let lng=parseFloat(btn.dataset.lng); setCity({ name:cityName, lat, lng }); document.getElementById('citySelectorOverlay').classList.remove('active'); }); });
         
+        // 初始化
         updateCalendar(); for(let idx=0; idx<totalDays; idx++){ let est=estimateDailyTemp(idx); dailyTempCache[idx]={ min:est.min, max:est.max, real:false, source:"气候估算"}; }
         let today=new Date(); let todayIdx=getDayIndex(today.getMonth()+1,today.getDate()); currentDayIndex=todayIdx; pointerAngle=getAngleFromDayIndex(todayIdx); drawWheel();
         refreshWeatherForCurrentDate(true).then(()=>{ let d=getDateFromIndex(currentDayIndex); let yyyymmdd=`${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`; document.getElementById('datePickerMobile').value=yyyymmdd; });
+        
+        // 首次加载自动定位（5秒超时引导）
+        setTimeout(() => {
+            if(!autoLocateDone) {
+                autoLocateByIP(true);
+                autoLocateTimeoutId = setTimeout(() => {
+                    if(!autoLocateDone) {
+                        showLocateTimeoutGuide();
+                    }
+                    autoLocateTimeoutId = null;
+                }, 5000);
+            }
+        }, 500); // 稍延迟确保页面核心渲染完成
+        
         window.addEventListener('resize',()=>{ let footer=document.querySelector('.footer-info'); if(footer){ footer.style.transform='translateZ(0)'; setTimeout(()=>{ if(footer) footer.style.transform=''; },50); } });
     })();
 </script>
