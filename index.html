@@ -905,21 +905,47 @@
             }
         }, 500);
         
-        // ========== 修复时间条宽度自适应：窗口大小变化时重绘 ==========
+        // ========== 修复时间条宽度自适应：使用 ResizeObserver 精确监听父容器尺寸变化 ==========
+        const timelineContainer = document.querySelector('.timeline-container');
+        let resizeObserver = null;
+        if (window.ResizeObserver) {
+            resizeObserver = new ResizeObserver(() => {
+                // 容器尺寸变化时，使用 requestAnimationFrame 确保在下一帧重绘，避免布局抖动
+                requestAnimationFrame(() => {
+                    if (dailyTempCache[currentDayIndex]) {
+                        drawTimeline(dailyTempCache[currentDayIndex].min, dailyTempCache[currentDayIndex].max);
+                    } else {
+                        // 降级：使用估算值重绘
+                        let est = estimateDailyTemp(currentDayIndex);
+                        drawTimeline(est.min, est.max);
+                    }
+                });
+            });
+            if (timelineContainer) {
+                resizeObserver.observe(timelineContainer);
+            }
+        }
+        // 同时保留 window resize 作为后备，并在页面完全加载后再次强制重绘一次，确保初始宽度正确
         window.addEventListener('resize', () => {
-            // 重绘时间条，确保与卡片宽度对齐
-            if (dailyTempCache && dailyTempCache[currentDayIndex]) {
-                drawTimeline(dailyTempCache[currentDayIndex].min, dailyTempCache[currentDayIndex].max);
-            } else {
-                // 降级使用默认温度范围（15~25℃）
-                drawTimeline(15, 25);
-            }
-            // 保留原有的 footer 防白边效果（可选）
-            let footer = document.querySelector('.footer-info');
-            if(footer) {
-                footer.style.transform = 'translateZ(0)';
-                setTimeout(() => { if(footer) footer.style.transform = ''; }, 50);
-            }
+            requestAnimationFrame(() => {
+                if (dailyTempCache[currentDayIndex]) {
+                    drawTimeline(dailyTempCache[currentDayIndex].min, dailyTempCache[currentDayIndex].max);
+                } else {
+                    let est = estimateDailyTemp(currentDayIndex);
+                    drawTimeline(est.min, est.max);
+                }
+            });
+        });
+        // 页面完全加载后重绘一次（解决初始布局未完成导致的宽度异常）
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                if (dailyTempCache[currentDayIndex]) {
+                    drawTimeline(dailyTempCache[currentDayIndex].min, dailyTempCache[currentDayIndex].max);
+                } else {
+                    let est = estimateDailyTemp(currentDayIndex);
+                    drawTimeline(est.min, est.max);
+                }
+            });
         });
     })();
 </script>
