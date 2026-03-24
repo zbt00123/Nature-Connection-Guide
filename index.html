@@ -741,7 +741,76 @@
         function getSuitablePeriodsForMaterial(airMin,airMax,type){ let periods=[], inRange=false, startHour=0; let range=getMaterialTempRange(airMin,airMax,type); for(let h=0;h<=24;h++){ let hourTemp=hourlyTemp(airMin,airMax,h); let offset=(range.min+range.max)/2-(airMin+airMax)/2; let finalTemp=hourTemp+offset; let suitable=(finalTemp>=20&&finalTemp<=40); if(suitable&&!inRange){ inRange=true; startHour=h;} if(!suitable&&inRange){ periods.push({start:startHour,end:h}); inRange=false;}} if(inRange) periods.push({start:startHour,end:24}); let tempMin=Infinity,tempMax=-Infinity; for(let p of periods) for(let h=p.start;h<=p.end;h++){ let hourTemp=hourlyTemp(airMin,airMax,h); let offset=(range.min+range.max)/2-(airMin+airMax)/2; let ft=hourTemp+offset; tempMin=Math.min(tempMin,ft); tempMax=Math.max(tempMax,ft);} if(periods.length===0){ for(let h=0;h<=24;h++){ let hourTemp=hourlyTemp(airMin,airMax,h); let offset=(range.min+range.max)/2-(airMin+airMax)/2; let ft=hourTemp+offset; tempMin=Math.min(tempMin,ft); tempMax=Math.max(tempMax,ft);}} return { periods, tempRange:{ min:tempMin, max:tempMax } }; }
         function getCombinedSuitablePeriods(airMin,airMax){ let allPeriods=[]; ['grass','soil','sand','brick','asphalt'].forEach(mat=>{ let res=getSuitablePeriodsForMaterial(airMin,airMax,mat); allPeriods.push(...res.periods);}); if(allPeriods.length===0) return []; allPeriods.sort((a,b)=>a.start-b.start); let merged=[]; for(let p of allPeriods){ if(merged.length===0||p.start>merged[merged.length-1].end) merged.push({start:p.start,end:p.end}); else merged[merged.length-1].end=Math.max(merged[merged.length-1].end,p.end);} return merged; }
         function updateLeftPanelAndTimeline(dayIdx){ let air=dailyTempCache[dayIdx]||{min:15,max:25,real:false}; let airMin=air.min,airMax=air.max,airReal=air.real; let targetDate=getDateStrFromIdx(dayIdx), useReal=(currentRealWeather.isReal&&currentRealWeather.dateStr===targetDate); document.getElementById('airTempRange').innerHTML=`<span class="data-tag">${airReal?"真实数据":"估算数据"}</span><span class="temp-value">${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃</span>`; let feelsTag,feelsValue; if(useReal&&currentRealWeather.feelsMin!==null){ feelsTag="真实数据"; feelsValue=`${currentRealWeather.feelsMin.toFixed(1)} ~ ${currentRealWeather.feelsMax.toFixed(1)} ℃`;} else { let groundMinEst=airMin+1,groundMaxEst=airMax+3; let feelsEst=calculateFeelsLike(airMin,airMax,groundMinEst,groundMaxEst); feelsValue=`${feelsEst.min.toFixed(1)} ~ ${feelsEst.max.toFixed(1)} ℃`; feelsTag="估算数据";} document.getElementById('feelsLikeTemp').innerHTML=`<span class="data-tag">${feelsTag}</span><span class="temp-value">${feelsValue}</span>`; let groundTag,groundValue; if(useReal&&currentRealWeather.groundMin!==null){ groundTag="真实数据"; groundValue=`${currentRealWeather.groundMin.toFixed(1)} ~ ${currentRealWeather.groundMax.toFixed(1)} ℃`;} else { let groundMinEst=airMin+1,groundMaxEst=airMax+3; groundValue=`${groundMinEst.toFixed(1)} ~ ${groundMaxEst.toFixed(1)} ℃`; groundTag="估算数据";} document.getElementById('groundTempRange').innerHTML=`<span class="data-tag">${groundTag}</span><span class="temp-value">${groundValue}</span>`; let materials=[{name:'🌱 草地',type:'grass'},{name:'🟫 土地',type:'soil'},{name:'🏖️ 沙滩',type:'sand'},{name:'🧱 地砖',type:'brick'},{name:'🛣️ 马路',type:'asphalt'}]; let matsHtml=''; for(let m of materials){ let res=getSuitablePeriodsForMaterial(airMin,airMax,m.type); let periods=res.periods; let tempRange=res.tempRange; let timeStr=periods.length?periods.map(p=>`${Math.floor(p.start)}:${(p.start%1===0?'00':'30')}-${Math.floor(p.end)}:00`).join(', '):'不适宜'; let tempInfo=`${tempRange.min.toFixed(1)}~${tempRange.max.toFixed(1)}℃`; let suitabilityClass=(timeStr==='不适宜')?'unsuitable':''; matsHtml+=`<div class="surface-row"><span class="surface-name">${m.name}</span><span class="surface-info ${suitabilityClass}">${tempInfo} · ${timeStr}</span></div>`;} document.getElementById('surfaceList').innerHTML=matsHtml; drawTimeline(airMin,airMax); }
-        let timelineCanvas=document.getElementById('timelineCanvas'); function drawTimeline(airMin,airMax){ let w=timelineCanvas.parentElement.clientWidth,h=48; timelineCanvas.width=w; timelineCanvas.height=h; let tCtx=timelineCanvas.getContext('2d'); function getColorFromHour(hour){ let r,g,b; if(hour<=5){ let t=hour/5; r=0+135*t; g=0+206*t; b=80+155*t;} else if(hour<=10){ let t=(hour-5)/5; r=135+(70-135)*t; g=206+(130-206)*t; b=235+(200-235)*t;} else if(hour<=12){ let t=(hour-10)/2; r=70+(255-70)*t; g=130+(220-130)*t; b=200+(100-200)*t;} else if(hour<=14){ let t=(hour-12)/2; r=255+(70-255)*t; g=220+(130-220)*t; b=100+(200-100)*t;} else if(hour<=18){ let t=(hour-14)/4; r=70+(255-70)*t; g=130+(140-130)*t; b=200+(100-200)*t;} else if(hour<=20){ let t=(hour-18)/2; r=255+(25-255)*t; g=140+(25-140)*t; b=100+(112-100)*t;} else { let t=Math.min(1,(hour-20)/2); r=25+(0-25)*t; g=25+(0-25)*t; b=112+(80-112)*t;} return `rgb(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)})`; } for(let x=0;x<w;x++){ let hour=(x/w)*24; tCtx.fillStyle=getColorFromHour(hour); tCtx.fillRect(x,0,1,h);} tCtx.globalCompositeOperation='lighter'; tCtx.fillStyle='rgba(255,245,200,0.08)'; tCtx.fillRect(0,0,w,h); tCtx.globalCompositeOperation='source-over'; let periods=getCombinedSuitablePeriods(airMin,airMax); tCtx.fillStyle='rgba(255,255,230,0.7)'; for(let p of periods){ let startX=(p.start/24)*w,endX=(p.end/24)*w; if(endX-startX>0){ tCtx.beginPath(); tCtx.roundRect(startX,4,endX-startX,h-8,(h-8)/2); tCtx.fill();}} tCtx.strokeStyle='rgba(80,60,30,0.4)'; tCtx.lineWidth=1; for(let i=0;i<=24;i+=2){ let x=(i/24)*w; tCtx.beginPath(); tCtx.moveTo(x,6); tCtx.lineTo(x,14); tCtx.stroke();} let markersDiv=document.getElementById('timelineMarkers'); markersDiv.innerHTML=''; for(let p of periods){ let startX=(p.start/24)*w,endX=(p.end/24)*w; let startStr=`${Math.floor(p.start)}:${(p.start%1===0?'00':'30')}`; let endStr=`${Math.floor(p.end)}:00`; let startSpan=document.createElement('div'); startSpan.className='time-marker'; startSpan.style.left=`${startX}px`; startSpan.textContent=startStr; let endSpan=document.createElement('div'); endSpan.className='time-marker'; endSpan.style.left=`${endX}px`; endSpan.textContent=endStr; markersDiv.appendChild(startSpan); markersDiv.appendChild(endSpan);} let labelsHtml=''; for(let i=0;i<=24;i+=2) labelsHtml+=`<span style="width:12px; text-align:center;">${i}</span>`; document.getElementById('timelineLabelsTop').innerHTML=labelsHtml; }
+        let timelineCanvas=document.getElementById('timelineCanvas'); 
+        function drawTimeline(airMin,airMax){ 
+            // 关键修复：获取父容器的实际宽度，确保 canvas 与卡片宽度完全一致
+            let parentEl = timelineCanvas.parentElement;
+            let w = parentEl ? parentEl.clientWidth : timelineCanvas.clientWidth;
+            if (!w || w <= 0) w = 300; // 后备宽度
+            let h = 48;
+            timelineCanvas.width = w;
+            timelineCanvas.height = h;
+            let tCtx = timelineCanvas.getContext('2d');
+            function getColorFromHour(hour){ 
+                let r,g,b; 
+                if(hour<=5){ let t=hour/5; r=0+135*t; g=0+206*t; b=80+155*t;} 
+                else if(hour<=10){ let t=(hour-5)/5; r=135+(70-135)*t; g=206+(130-206)*t; b=235+(200-235)*t;} 
+                else if(hour<=12){ let t=(hour-10)/2; r=70+(255-70)*t; g=130+(220-130)*t; b=200+(100-200)*t;} 
+                else if(hour<=14){ let t=(hour-12)/2; r=255+(70-255)*t; g=220+(130-220)*t; b=100+(200-100)*t;} 
+                else if(hour<=18){ let t=(hour-14)/4; r=70+(255-70)*t; g=130+(140-130)*t; b=200+(100-200)*t;} 
+                else if(hour<=20){ let t=(hour-18)/2; r=255+(25-255)*t; g=140+(25-140)*t; b=100+(112-100)*t;} 
+                else { let t=Math.min(1,(hour-20)/2); r=25+(0-25)*t; g=25+(0-25)*t; b=112+(80-112)*t;} 
+                return `rgb(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)})`; 
+            } 
+            for(let x=0;x<w;x++){ 
+                let hour=(x/w)*24; 
+                tCtx.fillStyle=getColorFromHour(hour); 
+                tCtx.fillRect(x,0,1,h);
+            } 
+            tCtx.globalCompositeOperation='lighter'; 
+            tCtx.fillStyle='rgba(255,245,200,0.08)'; 
+            tCtx.fillRect(0,0,w,h); 
+            tCtx.globalCompositeOperation='source-over'; 
+            let periods=getCombinedSuitablePeriods(airMin,airMax); 
+            tCtx.fillStyle='rgba(255,255,230,0.7)'; 
+            for(let p of periods){ 
+                let startX=(p.start/24)*w,endX=(p.end/24)*w; 
+                if(endX-startX>0){ 
+                    tCtx.beginPath(); 
+                    tCtx.roundRect(startX,4,endX-startX,h-8,(h-8)/2); 
+                    tCtx.fill();
+                } 
+            } 
+            tCtx.strokeStyle='rgba(80,60,30,0.4)'; 
+            tCtx.lineWidth=1; 
+            for(let i=0;i<=24;i+=2){ 
+                let x=(i/24)*w; 
+                tCtx.beginPath(); 
+                tCtx.moveTo(x,6); 
+                tCtx.lineTo(x,14); 
+                tCtx.stroke();
+            } 
+            let markersDiv=document.getElementById('timelineMarkers'); 
+            markersDiv.innerHTML=''; 
+            for(let p of periods){ 
+                let startX=(p.start/24)*w,endX=(p.end/24)*w; 
+                let startStr=`${Math.floor(p.start)}:${(p.start%1===0?'00':'30')}`; 
+                let endStr=`${Math.floor(p.end)}:00`; 
+                let startSpan=document.createElement('div'); 
+                startSpan.className='time-marker'; 
+                startSpan.style.left=`${startX}px`; 
+                startSpan.textContent=startStr; 
+                let endSpan=document.createElement('div'); 
+                endSpan.className='time-marker'; 
+                endSpan.style.left=`${endX}px`; 
+                endSpan.textContent=endStr; 
+                markersDiv.appendChild(startSpan); 
+                markersDiv.appendChild(endSpan);
+            } 
+            let labelsHtml=''; 
+            for(let i=0;i<=24;i+=2) labelsHtml+=`<span style="width:12px; text-align:center;">${i}</span>`; 
+            document.getElementById('timelineLabelsTop').innerHTML=labelsHtml; 
+        }
         if (!CanvasRenderingContext2D.prototype.roundRect) { CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r) { if (w<2*r) r=w/2; if(h<2*r) r=h/2; this.moveTo(x+r,y); this.lineTo(x+w-r,y); this.quadraticCurveTo(x+w,y,x+w,y+r); this.lineTo(x+w,y+h-r); this.quadraticCurveTo(x+w,y+h,x+w-r,y+h); this.lineTo(x+r,y+h); this.quadraticCurveTo(x,y+h,x,y+h-r); this.lineTo(x,y+r); this.quadraticCurveTo(x,y,x+r,y); return this; }; }
         function getAngleFromDayIndex(dayIdx){ return (dayIdx/totalDays)*2*Math.PI; }
         
@@ -905,47 +974,39 @@
             }
         }, 500);
         
-        // ========== 修复时间条宽度自适应：使用 ResizeObserver 精确监听父容器尺寸变化 ==========
-        const timelineContainer = document.querySelector('.timeline-container');
-        let resizeObserver = null;
-        if (window.ResizeObserver) {
-            resizeObserver = new ResizeObserver(() => {
-                // 容器尺寸变化时，使用 requestAnimationFrame 确保在下一帧重绘，避免布局抖动
-                requestAnimationFrame(() => {
-                    if (dailyTempCache[currentDayIndex]) {
-                        drawTimeline(dailyTempCache[currentDayIndex].min, dailyTempCache[currentDayIndex].max);
-                    } else {
-                        // 降级：使用估算值重绘
-                        let est = estimateDailyTemp(currentDayIndex);
-                        drawTimeline(est.min, est.max);
-                    }
-                });
-            });
-            if (timelineContainer) {
-                resizeObserver.observe(timelineContainer);
+        // ========== 修复时间条宽度自适应：防抖 + 确保布局完成后重绘 ==========
+        let resizeTimer;
+        function redrawTimelineWithCurrentData() {
+            if (dailyTempCache && dailyTempCache[currentDayIndex]) {
+                drawTimeline(dailyTempCache[currentDayIndex].min, dailyTempCache[currentDayIndex].max);
+            } else {
+                drawTimeline(15, 25); // 默认温度范围
             }
         }
-        // 同时保留 window resize 作为后备，并在页面完全加载后再次强制重绘一次，确保初始宽度正确
         window.addEventListener('resize', () => {
-            requestAnimationFrame(() => {
-                if (dailyTempCache[currentDayIndex]) {
-                    drawTimeline(dailyTempCache[currentDayIndex].min, dailyTempCache[currentDayIndex].max);
-                } else {
-                    let est = estimateDailyTemp(currentDayIndex);
-                    drawTimeline(est.min, est.max);
-                }
-            });
+            if (resizeTimer) clearTimeout(resizeTimer);
+            // 延迟执行，等待布局稳定；同时使用 requestAnimationFrame 确保重绘时机正确
+            resizeTimer = setTimeout(() => {
+                requestAnimationFrame(() => {
+                    redrawTimelineWithCurrentData();
+                });
+            }, 100);
         });
-        // 页面完全加载后重绘一次（解决初始布局未完成导致的宽度异常）
+        // 页面完全加载后强制对齐一次（避免初始渲染时宽度偏差）
         window.addEventListener('load', () => {
             requestAnimationFrame(() => {
-                if (dailyTempCache[currentDayIndex]) {
-                    drawTimeline(dailyTempCache[currentDayIndex].min, dailyTempCache[currentDayIndex].max);
-                } else {
-                    let est = estimateDailyTemp(currentDayIndex);
-                    drawTimeline(est.min, est.max);
-                }
+                redrawTimelineWithCurrentData();
             });
+        });
+        // 在用户切换城市或日期后，数据更新时也会触发 drawTimeline，无需额外处理
+        
+        // 原有的 footer 防白边效果（保留）
+        window.addEventListener('resize', () => {
+            let footer = document.querySelector('.footer-info');
+            if(footer) {
+                footer.style.transform = 'translateZ(0)';
+                setTimeout(() => { if(footer) footer.style.transform = ''; }, 50);
+            }
         });
     })();
 </script>
