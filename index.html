@@ -17,6 +17,7 @@
     <meta name="twitter:description" content="查看不同地面材质在全年中的赤足适宜时段，实时天气数据辅助决策。">
     <meta name="twitter:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%233c8c40'/%3E%3Ctext x='100' y='150' font-size='110' text-anchor='middle' dominant-baseline='middle' fill='white'%3E🌿%3C/text%3E%3C/svg%3E">
     <meta itemprop="image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%233c8c40'/%3E%3Ctext x='100' y='150' font-size='110' text-anchor='middle' dominant-baseline='middle' fill='white'%3E🌿%3C/text%3E%3C/svg%3E">
+    
     <style>
         * {
             margin: 0;
@@ -700,7 +701,6 @@
         // 绘制四季文字 (放在指针下层)
         function drawSeasonTexts() {
             if(!ctx) return;
-            // 定义四季代表日期 (月中) 春季4月15，夏季7月15，秋季10月15，冬季1月15
             const seasons = [
                 { name: "春", month: 4, day: 15, color: "#2a7a2e" },   // 深绿
                 { name: "夏", month: 7, day: 15, color: "#d69d2a" },   // 金黄
@@ -710,8 +710,7 @@
             let dec1Idx = getDayIndex(12,1);
             let angleOffset = -Math.PI/2 - getAngleFromDayIndex(dec1Idx);
             const adjAngle = (dayIdx) => getAngleFromDayIndex(dayIdx) + angleOffset;
-            const radiusText = (radiusInner + radiusOuter) / 2 + 10; // 约176，在内外环之间清晰可见
-            
+            const radiusText = (radiusInner + radiusOuter) / 2 + 10;
             ctx.save();
             ctx.font = "bold 24px 'Segoe UI', 'Noto Sans CJK SC', system-ui";
             ctx.shadowBlur = 0;
@@ -732,11 +731,9 @@
         }
         
         function drawWheel(){ if(!ctx) return; ctx.clearRect(0,0,size,size); let dec1Idx=getDayIndex(12,1); let angleOffset=-Math.PI/2-getAngleFromDayIndex(dec1Idx); function adjAngle(dayIdx){ return getAngleFromDayIndex(dayIdx)+angleOffset;} for(let i=0;i<360;i++){ let angStart=(i/360)*2*Math.PI,angEnd=((i+1)/360)*2*Math.PI; let midAng=(angStart+angEnd)/2; let deg=(midAng*180/Math.PI+90+360)%360; let color=getAngleGradientColor(deg); ctx.beginPath(); ctx.moveTo(centerX,centerY); ctx.arc(centerX,centerY,radiusOuter,angStart,angEnd); ctx.closePath(); ctx.fillStyle=color; ctx.fill();} ctx.save(); ctx.lineWidth=3; ctx.strokeStyle='#FFFFFF'; for(let m=1;m<=12;m++){ let idx=getDayIndex(m,1); let ang=adjAngle(idx); let x1=centerX+(radiusOuter-28)*Math.cos(ang),y1=centerY+(radiusOuter-28)*Math.sin(ang),x2=centerX+(radiusOuter-5)*Math.cos(ang),y2=centerY+(radiusOuter-5)*Math.sin(ang); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();} ctx.lineWidth=1.5; for(let d=7;d<=totalDays;d+=7){ let ang=adjAngle(d); let x1=centerX+(radiusOuter-22)*Math.cos(ang),y1=centerY+(radiusOuter-22)*Math.sin(ang),x2=centerX+(radiusOuter-5)*Math.cos(ang),y2=centerY+(radiusOuter-5)*Math.sin(ang); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); let dateObj=getDateFromIndex(d); let rLabel=radiusOuter+8; let xLabel=centerX+rLabel*Math.cos(ang),yLabel=centerY+rLabel*Math.sin(ang); ctx.font='bold 10px "Segoe UI"'; ctx.fillStyle='#4a5b44'; ctx.fillText(dateObj.day.toString(),xLabel-6,yLabel+3);} ctx.lineWidth=0.9; for(let d=1;d<=totalDays;d++){ if(d%7!==0){ let ang=adjAngle(d); let x1=centerX+(radiusOuter-12)*Math.cos(ang),y1=centerY+(radiusOuter-12)*Math.sin(ang),x2=centerX+(radiusOuter-5)*Math.cos(ang),y2=centerY+(radiusOuter-5)*Math.sin(ang); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();}} ctx.font='bold 13px "Segoe UI"'; ctx.fillStyle='#2c4b32'; for(let m=1;m<=12;m++){ let idx=getDayIndex(m,1); let ang=adjAngle(idx); let r=radiusOuter+24; let x=centerX+r*Math.cos(ang),y=centerY+r*Math.sin(ang); ctx.fillText(`${m}月`,x-12,y+5);} let terms=[[3,20,'春分'],[6,21,'夏至'],[9,23,'秋分'],[12,21,'冬至']]; ctx.font='bold 9px sans-serif'; ctx.fillStyle='#8b6946'; for(let [m,d,name] of terms){ let idx=getDayIndex(m,d); let ang=adjAngle(idx); let r=radiusOuter-24; let x=centerX+r*Math.cos(ang),y=centerY+r*Math.sin(ang); ctx.fillText(name,x-12,y-2);}
-            // 绘制四季文字 (箭头下层)
             drawSeasonTexts();
             let pAng=pointerAngle+angleOffset; let px=centerX+pointerLength*Math.cos(pAng),py=centerY+pointerLength*Math.sin(pAng); ctx.beginPath(); ctx.moveTo(centerX,centerY); ctx.lineTo(px,py); ctx.lineWidth=5; ctx.strokeStyle='#e34234'; ctx.stroke(); ctx.beginPath(); ctx.arc(px,py,8,0,2*Math.PI); ctx.fillStyle='#e34c26'; ctx.fill(); ctx.fillStyle='white'; ctx.arc(px,py,3,0,2*Math.PI); ctx.fill(); ctx.beginPath(); ctx.arc(centerX,centerY,radiusInner,0,2*Math.PI); ctx.fillStyle='#fff8ed'; ctx.fill(); ctx.strokeStyle='#d9c48b'; ctx.lineWidth=2.5; ctx.stroke(); ctx.font=`bold ${Math.floor(radiusInner*0.32)}px "Segoe UI"`; ctx.fillStyle='#3c5e2b'; let dateText=formatDate(currentDayIndex); ctx.fillText(dateText,centerX-ctx.measureText(dateText).width/2,centerY+radiusInner*0.12); ctx.restore(); }
         
-        // 辅助：通过经纬度获取中文城市名 (确保定位显示中文)
         async function getChineseCityName(lat, lng) {
             try {
                 const controller = new AbortController();
