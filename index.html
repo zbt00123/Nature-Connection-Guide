@@ -22,26 +22,27 @@
     <meta itemprop="description" content="查看不同地面材质在全年中的赤足适宜时段，实时天气数据辅助决策。">
     
     <style>
-        /* 修复手机端顶部/底部露白：背景渐变移至 html，body 透明，确保全视口覆盖 */
+        /* 确保 html 背景铺满整个屏幕，防止移动端 Safari 顶部/底部露白 */
         html {
+            height: 100%;
             background: linear-gradient(135deg, #fce5c4 0%, #c8e0f0 50%, #e8d4f0 100%);
-            min-height: 100%;
+            background-attachment: fixed;
         }
-        body {
-            background: transparent;
-            min-height: 100vh;
-            margin: 0;
-            padding: 1rem;
-            font-family: 'Segoe UI', 'Roboto', 'Noto Sans', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        /* 其余样式完全保持不变，仅确保背景不露白 */
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: transparent;  /* 背景透明，让 html 背景透出 */
+            font-family: 'Segoe UI', 'Roboto', 'Noto Sans', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .nature-container {
@@ -521,43 +522,53 @@
             text-decoration: underline;
         }
 
+        /* 居中定位提示框 */
         .locate-guide-tip {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(12px);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
             color: #fff8e7;
-            padding: 12px 18px;
-            border-radius: 60px;
-            font-size: 0.85rem;
+            padding: 20px 28px;
+            border-radius: 32px;
+            font-size: 1rem;
             text-align: center;
             z-index: 1050;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            gap: 16px;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.3);
             pointer-events: auto;
             font-weight: 500;
-            animation: fadeInUp 0.3s ease;
+            animation: fadeInUp 0.25s ease;
+            min-width: 260px;
+            max-width: 90%;
         }
         .locate-guide-tip button {
             background: #ffb347;
             border: none;
-            padding: 6px 16px;
+            padding: 8px 24px;
             border-radius: 40px;
             color: #2c3e2f;
             font-weight: bold;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+            margin-top: 4px;
         }
         .locate-guide-tip button:active { transform: scale(0.96); }
+        .locate-guide-tip .close-tip {
+            background: rgba(255,255,245,0.2);
+            color: #fff;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            margin-top: 0;
+        }
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
         }
 
         @media (max-width: 880px) {
@@ -566,9 +577,10 @@
             .left-panel { order: 2; }
             .loading-toast { font-size: 1rem; padding: 18px 24px; width: 80%; }
             .toast-buttons { gap: 12px; }
-            .locate-guide-tip { bottom: 10px; left: 10px; right: 10px; font-size: 0.75rem; }
+            .locate-guide-tip { padding: 16px 24px; font-size: 0.9rem; }
         }
         @media (max-width: 480px) {
+            body { padding: 0.8rem; }
             .nature-container { padding: 1rem; }
             .info-card { padding: 1rem; }
             .surface-row { font-size: 0.75rem; }
@@ -620,9 +632,9 @@
     <div class="footer-info">
         <p>🌤️ 天气数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> 全球气象服务（空气温度、体感温度、地表温度）</p>
         <p>🧘 户外赤足提示：请在确认地面安全、无尖锐物且温度适宜（20~40℃）的情况下尝试，初次赤足请循序渐进。若出现不适或受伤，请立即停止并就医。</p>
-        <p>⚠️ 本指南仅供健康参考，不承担任何责任，实际体验请结合自身状况与场地环境。如感疼痛或异常，请及时就医。</p>
-        <p>👮‍♀️ 本网页仅用于代码学习，不可用于任何商业用途，不可用于任何非法目的的活动。</p>
-        <p>📄 网页代码：主要由DeepSeek编写，天气数据相关代码由通义千问编写 | 数据实时更新</p>
+        <p>⚠️ 本指南仅供健康参考，不承担任何责任，以上温度均为AI估算，没有实地测量。环境因素复杂，实际体验请结合自身状况与场地环境，如感疼痛或异常，请及时就医。</p>
+        <p>👮‍♀️ 本网页仅用于代码学习，不可用于任何商业用途，不可用于任何非法活动，本网页作者不支持也不接受任何形式的捐赠。</p>
+        <p>📄 网页代码：主要由DeepSeek编写，天气数据相关代码由通义千问编写，网页图标由豆包AI生成。 | 数据实时更新</p>
     </div>
 </div>
 
@@ -655,11 +667,11 @@
 
 <script>
     (function(){
-        // ======================= 动态设置分享图片为根目录 icon.png 的绝对路径 =======================
+        // ======================= 动态设置分享图片为当前目录下的 icon.png 绝对路径 =======================
         function setShareImage() {
-            const baseUrl = window.location.origin;
-            const iconUrl = baseUrl + '/icon.png';
-            // 创建或更新 og:image
+            // 使用当前页面的 URL 构建 icon.png 的绝对路径
+            const iconUrl = new URL('icon.png', window.location.href).href;
+            // 设置 og:image
             let ogImage = document.querySelector('meta[property="og:image"]');
             if (!ogImage) {
                 ogImage = document.createElement('meta');
@@ -667,6 +679,21 @@
                 document.head.appendChild(ogImage);
             }
             ogImage.setAttribute('content', iconUrl);
+            // 可选尺寸，提高兼容性
+            let ogImageWidth = document.querySelector('meta[property="og:image:width"]');
+            if (!ogImageWidth) {
+                ogImageWidth = document.createElement('meta');
+                ogImageWidth.setAttribute('property', 'og:image:width');
+                document.head.appendChild(ogImageWidth);
+            }
+            ogImageWidth.setAttribute('content', '512');
+            let ogImageHeight = document.querySelector('meta[property="og:image:height"]');
+            if (!ogImageHeight) {
+                ogImageHeight = document.createElement('meta');
+                ogImageHeight.setAttribute('property', 'og:image:height');
+                document.head.appendChild(ogImageHeight);
+            }
+            ogImageHeight.setAttribute('content', '512');
             
             let twitterImage = document.querySelector('meta[name="twitter:image"]');
             if (!twitterImage) {
@@ -834,18 +861,26 @@
         async function getLocationByIpApiCo() { try { const res = await fetchWithTimeout('https://ipapi.co/json/', 5000); const data = await res.json(); if(data.latitude && data.longitude) { let city = data.city || data.region || '当前位置'; if(city.endsWith('市')) city = city.slice(0,-1); return { name: city, lat: data.latitude, lng: data.longitude }; } } catch(e) { console.warn('ipapi.co失败',e); } return null; }
         async function getLocationByBrowserGeo() { return new Promise((resolve) => { if(!navigator.geolocation) resolve(null); else { navigator.geolocation.getCurrentPosition(async (pos) => { let lat=pos.coords.latitude, lng=pos.coords.longitude; try { const revRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`); const revData = await revRes.json(); let city = revData.city || revData.locality || revData.principalSubdivision || '当前位置'; if(city.endsWith('市')) city=city.slice(0,-1); resolve({ name: city, lat, lng }); } catch(e) { resolve({ name: '当前位置', lat, lng }); } }, () => resolve(null), { timeout: 8000 }); } }); }
         
+        // 居中提示框
         function showLocateTimeoutGuide() {
             if(document.querySelector('.locate-guide-tip')) return;
             const tip = document.createElement('div');
             tip.className = 'locate-guide-tip';
-            tip.innerHTML = `<span>📍 自动定位超时，请点击「城市」按钮手动选择</span><button id="guideCityBtn">选择城市</button>`;
+            tip.innerHTML = `
+                <span>📍 自动定位超时，请手动选择城市</span>
+                <button id="guideCityBtn">选择城市</button>
+                <button id="guideCloseBtn" class="close-tip">暂不</button>
+            `;
             document.body.appendChild(tip);
             const guideBtn = document.getElementById('guideCityBtn');
+            const closeBtn = document.getElementById('guideCloseBtn');
             guideBtn.addEventListener('click', () => {
                 document.getElementById('openCityPickerBtn').click();
                 tip.remove();
             });
-            setTimeout(() => { if(tip && tip.remove) tip.remove(); }, 8000);
+            closeBtn.addEventListener('click', () => tip.remove());
+            // 15秒后自动消失
+            setTimeout(() => { if(tip && tip.remove) tip.remove(); }, 15000);
         }
         
         async function autoLocateByIP(isFirstLoad = false) { 
@@ -867,6 +902,11 @@
                     if(chineseName) location.name = chineseName; 
                     await setCity({ name: location.name, lat: location.lat, lng: location.lng }); 
                     locateSuccess = true;
+                    // 定位成功，清除超时定时器，避免显示提示
+                    if(autoLocateTimeoutId) {
+                        clearTimeout(autoLocateTimeoutId);
+                        autoLocateTimeoutId = null;
+                    }
                 } else { 
                     throw new Error('所有定位方式均失败'); 
                 } 
@@ -879,9 +919,7 @@
                 btn.disabled = false; 
                 if(currentLocateController) currentLocateController=null;
                 if(isFirstLoad && !locateSuccess && autoLocateTimeoutId) {
-                    clearTimeout(autoLocateTimeoutId);
-                    autoLocateTimeoutId = null;
-                    showLocateTimeoutGuide();
+                    // 超时后显示提示框（已在定时器中处理）
                 }
                 autoLocateDone = true;
             } 
@@ -922,6 +960,7 @@
         let today=new Date(); let todayIdx=getDayIndex(today.getMonth()+1,today.getDate()); currentDayIndex=todayIdx; pointerAngle=getAngleFromDayIndex(todayIdx); drawWheel();
         refreshWeatherForCurrentDate(true).then(()=>{ let d=getDateFromIndex(currentDayIndex); let yyyymmdd=`${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`; document.getElementById('datePickerMobile').value=yyyymmdd; });
         
+        // 首次加载自动定位（5秒超时显示居中提示）
         setTimeout(() => {
             if(!autoLocateDone) {
                 autoLocateByIP(true);
