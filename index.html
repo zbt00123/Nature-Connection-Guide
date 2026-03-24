@@ -357,14 +357,19 @@
             border-radius: 28px;
             display: block;
         }
+        /* 时间标签容器使用flex均匀分布，确保与canvas宽度自动对齐 */
         .timeline-labels-top {
             display: flex;
             justify-content: space-between;
+            width: 100%;
             margin-bottom: 2px;
             font-size: 0.65rem;
             color: #5c4b2c;
             font-weight: 500;
-            padding: 0 4px;
+        }
+        .timeline-labels-top span {
+            flex: 1;
+            text-align: center;
         }
         .timeline-time-markers {
             position: relative;
@@ -425,7 +430,6 @@
         }
         canvas:active { cursor: grabbing; }
 
-        /* 中心 loading 提示卡片（原样式已居中） */
         .loading-toast {
             position: fixed;
             top: 50%;
@@ -614,9 +618,9 @@
     <div class="footer-info">
         <p>🌤️ 天气数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> 全球气象服务（空气温度、体感温度、地表温度）</p>
         <p>🧘 户外赤足提示：请在确认地面安全、无尖锐物且温度适宜（20~40℃）的情况下尝试，初次赤足请循序渐进。若出现不适或受伤，请立即停止并就医。</p>
-        <p>⚠️ 本指南仅供健康参考，不承担任何责任，以上温度均为AI估算，没有实地测量。环境因素复杂，实际体验请结合自身状况与场地环境，如感疼痛或异常，请及时就医。</p>
-        <p>👮‍♀️ 本网页仅用于代码学习，不可用于任何商业用途，不可用于任何非法活动，本网页作者不支持也不接受任何形式的捐赠。</p>
-        <p>📄 网页代码：主要由DeepSeek编写，天气数据相关代码由通义千问编写，网页图标由豆包AI生成。 | 数据实时更新</p>
+        <p>⚠️ 本指南仅供健康参考，不承担任何责任，实际体验请结合自身状况与场地环境。如感疼痛或异常，请及时就医。</p>
+        <p>👮‍♀️ 本网页仅用于代码学习，不可用于任何商业用途，不可用于任何非法目的的活动。</p>
+        <p>📄 网页代码：主要由DeepSeek编写，天气数据相关代码由通义千问编写 | 数据实时更新</p>
     </div>
 </div>
 
@@ -741,7 +745,79 @@
         function getSuitablePeriodsForMaterial(airMin,airMax,type){ let periods=[], inRange=false, startHour=0; let range=getMaterialTempRange(airMin,airMax,type); for(let h=0;h<=24;h++){ let hourTemp=hourlyTemp(airMin,airMax,h); let offset=(range.min+range.max)/2-(airMin+airMax)/2; let finalTemp=hourTemp+offset; let suitable=(finalTemp>=20&&finalTemp<=40); if(suitable&&!inRange){ inRange=true; startHour=h;} if(!suitable&&inRange){ periods.push({start:startHour,end:h}); inRange=false;}} if(inRange) periods.push({start:startHour,end:24}); let tempMin=Infinity,tempMax=-Infinity; for(let p of periods) for(let h=p.start;h<=p.end;h++){ let hourTemp=hourlyTemp(airMin,airMax,h); let offset=(range.min+range.max)/2-(airMin+airMax)/2; let ft=hourTemp+offset; tempMin=Math.min(tempMin,ft); tempMax=Math.max(tempMax,ft);} if(periods.length===0){ for(let h=0;h<=24;h++){ let hourTemp=hourlyTemp(airMin,airMax,h); let offset=(range.min+range.max)/2-(airMin+airMax)/2; let ft=hourTemp+offset; tempMin=Math.min(tempMin,ft); tempMax=Math.max(tempMax,ft);}} return { periods, tempRange:{ min:tempMin, max:tempMax } }; }
         function getCombinedSuitablePeriods(airMin,airMax){ let allPeriods=[]; ['grass','soil','sand','brick','asphalt'].forEach(mat=>{ let res=getSuitablePeriodsForMaterial(airMin,airMax,mat); allPeriods.push(...res.periods);}); if(allPeriods.length===0) return []; allPeriods.sort((a,b)=>a.start-b.start); let merged=[]; for(let p of allPeriods){ if(merged.length===0||p.start>merged[merged.length-1].end) merged.push({start:p.start,end:p.end}); else merged[merged.length-1].end=Math.max(merged[merged.length-1].end,p.end);} return merged; }
         function updateLeftPanelAndTimeline(dayIdx){ let air=dailyTempCache[dayIdx]||{min:15,max:25,real:false}; let airMin=air.min,airMax=air.max,airReal=air.real; let targetDate=getDateStrFromIdx(dayIdx), useReal=(currentRealWeather.isReal&&currentRealWeather.dateStr===targetDate); document.getElementById('airTempRange').innerHTML=`<span class="data-tag">${airReal?"真实数据":"估算数据"}</span><span class="temp-value">${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃</span>`; let feelsTag,feelsValue; if(useReal&&currentRealWeather.feelsMin!==null){ feelsTag="真实数据"; feelsValue=`${currentRealWeather.feelsMin.toFixed(1)} ~ ${currentRealWeather.feelsMax.toFixed(1)} ℃`;} else { let groundMinEst=airMin+1,groundMaxEst=airMax+3; let feelsEst=calculateFeelsLike(airMin,airMax,groundMinEst,groundMaxEst); feelsValue=`${feelsEst.min.toFixed(1)} ~ ${feelsEst.max.toFixed(1)} ℃`; feelsTag="估算数据";} document.getElementById('feelsLikeTemp').innerHTML=`<span class="data-tag">${feelsTag}</span><span class="temp-value">${feelsValue}</span>`; let groundTag,groundValue; if(useReal&&currentRealWeather.groundMin!==null){ groundTag="真实数据"; groundValue=`${currentRealWeather.groundMin.toFixed(1)} ~ ${currentRealWeather.groundMax.toFixed(1)} ℃`;} else { let groundMinEst=airMin+1,groundMaxEst=airMax+3; groundValue=`${groundMinEst.toFixed(1)} ~ ${groundMaxEst.toFixed(1)} ℃`; groundTag="估算数据";} document.getElementById('groundTempRange').innerHTML=`<span class="data-tag">${groundTag}</span><span class="temp-value">${groundValue}</span>`; let materials=[{name:'🌱 草地',type:'grass'},{name:'🟫 土地',type:'soil'},{name:'🏖️ 沙滩',type:'sand'},{name:'🧱 地砖',type:'brick'},{name:'🛣️ 马路',type:'asphalt'}]; let matsHtml=''; for(let m of materials){ let res=getSuitablePeriodsForMaterial(airMin,airMax,m.type); let periods=res.periods; let tempRange=res.tempRange; let timeStr=periods.length?periods.map(p=>`${Math.floor(p.start)}:${(p.start%1===0?'00':'30')}-${Math.floor(p.end)}:00`).join(', '):'不适宜'; let tempInfo=`${tempRange.min.toFixed(1)}~${tempRange.max.toFixed(1)}℃`; let suitabilityClass=(timeStr==='不适宜')?'unsuitable':''; matsHtml+=`<div class="surface-row"><span class="surface-name">${m.name}</span><span class="surface-info ${suitabilityClass}">${tempInfo} · ${timeStr}</span></div>`;} document.getElementById('surfaceList').innerHTML=matsHtml; drawTimeline(airMin,airMax); }
-        let timelineCanvas=document.getElementById('timelineCanvas'); function drawTimeline(airMin,airMax){ let w=timelineCanvas.parentElement.clientWidth,h=48; timelineCanvas.width=w; timelineCanvas.height=h; let tCtx=timelineCanvas.getContext('2d'); function getColorFromHour(hour){ let r,g,b; if(hour<=5){ let t=hour/5; r=0+135*t; g=0+206*t; b=80+155*t;} else if(hour<=10){ let t=(hour-5)/5; r=135+(70-135)*t; g=206+(130-206)*t; b=235+(200-235)*t;} else if(hour<=12){ let t=(hour-10)/2; r=70+(255-70)*t; g=130+(220-130)*t; b=200+(100-200)*t;} else if(hour<=14){ let t=(hour-12)/2; r=255+(70-255)*t; g=220+(130-220)*t; b=100+(200-100)*t;} else if(hour<=18){ let t=(hour-14)/4; r=70+(255-70)*t; g=130+(140-130)*t; b=200+(100-200)*t;} else if(hour<=20){ let t=(hour-18)/2; r=255+(25-255)*t; g=140+(25-140)*t; b=100+(112-100)*t;} else { let t=Math.min(1,(hour-20)/2); r=25+(0-25)*t; g=25+(0-25)*t; b=112+(80-112)*t;} return `rgb(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)})`; } for(let x=0;x<w;x++){ let hour=(x/w)*24; tCtx.fillStyle=getColorFromHour(hour); tCtx.fillRect(x,0,1,h);} tCtx.globalCompositeOperation='lighter'; tCtx.fillStyle='rgba(255,245,200,0.08)'; tCtx.fillRect(0,0,w,h); tCtx.globalCompositeOperation='source-over'; let periods=getCombinedSuitablePeriods(airMin,airMax); tCtx.fillStyle='rgba(255,255,230,0.7)'; for(let p of periods){ let startX=(p.start/24)*w,endX=(p.end/24)*w; if(endX-startX>0){ tCtx.beginPath(); tCtx.roundRect(startX,4,endX-startX,h-8,(h-8)/2); tCtx.fill();}} tCtx.strokeStyle='rgba(80,60,30,0.4)'; tCtx.lineWidth=1; for(let i=0;i<=24;i+=2){ let x=(i/24)*w; tCtx.beginPath(); tCtx.moveTo(x,6); tCtx.lineTo(x,14); tCtx.stroke();} let markersDiv=document.getElementById('timelineMarkers'); markersDiv.innerHTML=''; for(let p of periods){ let startX=(p.start/24)*w,endX=(p.end/24)*w; let startStr=`${Math.floor(p.start)}:${(p.start%1===0?'00':'30')}`; let endStr=`${Math.floor(p.end)}:00`; let startSpan=document.createElement('div'); startSpan.className='time-marker'; startSpan.style.left=`${startX}px`; startSpan.textContent=startStr; let endSpan=document.createElement('div'); endSpan.className='time-marker'; endSpan.style.left=`${endX}px`; endSpan.textContent=endStr; markersDiv.appendChild(startSpan); markersDiv.appendChild(endSpan);} let labelsHtml=''; for(let i=0;i<=24;i+=2) labelsHtml+=`<span style="width:12px; text-align:center;">${i}</span>`; document.getElementById('timelineLabelsTop').innerHTML=labelsHtml; }
+        let timelineCanvas=document.getElementById('timelineCanvas'); 
+        // 改进后的 drawTimeline：标签使用 flex 均匀分布，自动对齐
+        function drawTimeline(airMin,airMax){ 
+            let container = timelineCanvas.parentElement;
+            let w = container.clientWidth;
+            let h = 48;
+            timelineCanvas.width = w; 
+            timelineCanvas.height = h; 
+            let tCtx = timelineCanvas.getContext('2d'); 
+            function getColorFromHour(hour){ 
+                let r,g,b; 
+                if(hour<=5){ let t=hour/5; r=0+135*t; g=0+206*t; b=80+155*t;} 
+                else if(hour<=10){ let t=(hour-5)/5; r=135+(70-135)*t; g=206+(130-206)*t; b=235+(200-235)*t;} 
+                else if(hour<=12){ let t=(hour-10)/2; r=70+(255-70)*t; g=130+(220-130)*t; b=200+(100-200)*t;} 
+                else if(hour<=14){ let t=(hour-12)/2; r=255+(70-255)*t; g=220+(130-220)*t; b=100+(200-100)*t;} 
+                else if(hour<=18){ let t=(hour-14)/4; r=70+(255-70)*t; g=130+(140-130)*t; b=200+(100-200)*t;} 
+                else if(hour<=20){ let t=(hour-18)/2; r=255+(25-255)*t; g=140+(25-140)*t; b=100+(112-100)*t;} 
+                else { let t=Math.min(1,(hour-20)/2); r=25+(0-25)*t; g=25+(0-25)*t; b=112+(80-112)*t;} 
+                return `rgb(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)})`; 
+            } 
+            for(let x=0;x<w;x++){ 
+                let hour=(x/w)*24; 
+                tCtx.fillStyle=getColorFromHour(hour); 
+                tCtx.fillRect(x,0,1,h);
+            } 
+            tCtx.globalCompositeOperation='lighter'; 
+            tCtx.fillStyle='rgba(255,245,200,0.08)'; 
+            tCtx.fillRect(0,0,w,h); 
+            tCtx.globalCompositeOperation='source-over'; 
+            let periods=getCombinedSuitablePeriods(airMin,airMax); 
+            tCtx.fillStyle='rgba(255,255,230,0.7)'; 
+            for(let p of periods){ 
+                let startX=(p.start/24)*w,endX=(p.end/24)*w; 
+                if(endX-startX>0){ 
+                    tCtx.beginPath(); 
+                    tCtx.roundRect(startX,4,endX-startX,h-8,(h-8)/2); 
+                    tCtx.fill();
+                }
+            } 
+            tCtx.strokeStyle='rgba(80,60,30,0.4)'; 
+            tCtx.lineWidth=1; 
+            for(let i=0;i<=24;i+=2){ 
+                let x=(i/24)*w; 
+                tCtx.beginPath(); 
+                tCtx.moveTo(x,6); 
+                tCtx.lineTo(x,14); 
+                tCtx.stroke();
+            } 
+            // 生成时间标记（适宜时段标签）
+            let markersDiv=document.getElementById('timelineMarkers'); 
+            markersDiv.innerHTML=''; 
+            for(let p of periods){ 
+                let startX=(p.start/24)*w,endX=(p.end/24)*w; 
+                let startStr=`${Math.floor(p.start)}:${(p.start%1===0?'00':'30')}`; 
+                let endStr=`${Math.floor(p.end)}:00`; 
+                let startSpan=document.createElement('div'); 
+                startSpan.className='time-marker'; 
+                startSpan.style.left=`${startX}px`; 
+                startSpan.textContent=startStr; 
+                let endSpan=document.createElement('div'); 
+                endSpan.className='time-marker'; 
+                endSpan.style.left=`${endX}px`; 
+                endSpan.textContent=endStr; 
+                markersDiv.appendChild(startSpan); 
+                markersDiv.appendChild(endSpan);
+            } 
+            // 生成时间轴刻度标签（使用 flex 均匀分布，自动适应宽度）
+            let labelsHtml = '';
+            for(let i=0;i<=24;i+=2) {
+                labelsHtml += `<span>${i}</span>`;
+            }
+            document.getElementById('timelineLabelsTop').innerHTML = labelsHtml;
+        }
         if (!CanvasRenderingContext2D.prototype.roundRect) { CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r) { if (w<2*r) r=w/2; if(h<2*r) r=h/2; this.moveTo(x+r,y); this.lineTo(x+w-r,y); this.quadraticCurveTo(x+w,y,x+w,y+r); this.lineTo(x+w,y+h-r); this.quadraticCurveTo(x+w,y+h,x+w-r,y+h); this.lineTo(x+r,y+h); this.quadraticCurveTo(x,y+h,x,y+h-r); this.lineTo(x,y+r); this.quadraticCurveTo(x,y,x+r,y); return this; }; }
         function getAngleFromDayIndex(dayIdx){ return (dayIdx/totalDays)*2*Math.PI; }
         
@@ -779,6 +855,14 @@
         function drawWheel(){ if(!ctx) return; ctx.clearRect(0,0,size,size); let dec1Idx=getDayIndex(12,1); let angleOffset=-Math.PI/2-getAngleFromDayIndex(dec1Idx); function adjAngle(dayIdx){ return getAngleFromDayIndex(dayIdx)+angleOffset;} for(let i=0;i<360;i++){ let angStart=(i/360)*2*Math.PI,angEnd=((i+1)/360)*2*Math.PI; let midAng=(angStart+angEnd)/2; let deg=(midAng*180/Math.PI+90+360)%360; let color=getAngleGradientColor(deg); ctx.beginPath(); ctx.moveTo(centerX,centerY); ctx.arc(centerX,centerY,radiusOuter,angStart,angEnd); ctx.closePath(); ctx.fillStyle=color; ctx.fill();} ctx.save(); ctx.lineWidth=3; ctx.strokeStyle='#FFFFFF'; for(let m=1;m<=12;m++){ let idx=getDayIndex(m,1); let ang=adjAngle(idx); let x1=centerX+(radiusOuter-28)*Math.cos(ang),y1=centerY+(radiusOuter-28)*Math.sin(ang),x2=centerX+(radiusOuter-5)*Math.cos(ang),y2=centerY+(radiusOuter-5)*Math.sin(ang); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();} ctx.lineWidth=1.5; for(let d=7;d<=totalDays;d+=7){ let ang=adjAngle(d); let x1=centerX+(radiusOuter-22)*Math.cos(ang),y1=centerY+(radiusOuter-22)*Math.sin(ang),x2=centerX+(radiusOuter-5)*Math.cos(ang),y2=centerY+(radiusOuter-5)*Math.sin(ang); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); let dateObj=getDateFromIndex(d); let rLabel=radiusOuter+8; let xLabel=centerX+rLabel*Math.cos(ang),yLabel=centerY+rLabel*Math.sin(ang); ctx.font='bold 10px "Segoe UI"'; ctx.fillStyle='#4a5b44'; ctx.fillText(dateObj.day.toString(),xLabel-6,yLabel+3);} ctx.lineWidth=0.9; for(let d=1;d<=totalDays;d++){ if(d%7!==0){ let ang=adjAngle(d); let x1=centerX+(radiusOuter-12)*Math.cos(ang),y1=centerY+(radiusOuter-12)*Math.sin(ang),x2=centerX+(radiusOuter-5)*Math.cos(ang),y2=centerY+(radiusOuter-5)*Math.sin(ang); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();}} ctx.font='bold 13px "Segoe UI"'; ctx.fillStyle='#2c4b32'; for(let m=1;m<=12;m++){ let idx=getDayIndex(m,1); let ang=adjAngle(idx); let r=radiusOuter+24; let x=centerX+r*Math.cos(ang),y=centerY+r*Math.sin(ang); ctx.fillText(`${m}月`,x-12,y+5);} let terms=[[3,20,'春分'],[6,21,'夏至'],[9,23,'秋分'],[12,21,'冬至']]; ctx.font='bold 9px sans-serif'; ctx.fillStyle='#8b6946'; for(let [m,d,name] of terms){ let idx=getDayIndex(m,d); let ang=adjAngle(idx); let r=radiusOuter-24; let x=centerX+r*Math.cos(ang),y=centerY+r*Math.sin(ang); ctx.fillText(name,x-12,y-2);}
             drawSeasonTexts();
             let pAng=pointerAngle+angleOffset; let px=centerX+pointerLength*Math.cos(pAng),py=centerY+pointerLength*Math.sin(pAng); ctx.beginPath(); ctx.moveTo(centerX,centerY); ctx.lineTo(px,py); ctx.lineWidth=5; ctx.strokeStyle='#e34234'; ctx.stroke(); ctx.beginPath(); ctx.arc(px,py,8,0,2*Math.PI); ctx.fillStyle='#e34c26'; ctx.fill(); ctx.fillStyle='white'; ctx.arc(px,py,3,0,2*Math.PI); ctx.fill(); ctx.beginPath(); ctx.arc(centerX,centerY,radiusInner,0,2*Math.PI); ctx.fillStyle='#fff8ed'; ctx.fill(); ctx.strokeStyle='#d9c48b'; ctx.lineWidth=2.5; ctx.stroke(); ctx.font=`bold ${Math.floor(radiusInner*0.32)}px "Segoe UI"`; ctx.fillStyle='#3c5e2b'; let dateText=formatDate(currentDayIndex); ctx.fillText(dateText,centerX-ctx.measureText(dateText).width/2,centerY+radiusInner*0.12); ctx.restore(); }
+        
+        // 辅助函数：窗口大小变化时重新绘制时间条
+        function refreshTimelineOnResize() {
+            let airData = dailyTempCache[currentDayIndex];
+            if (airData && typeof airData.min === 'number' && typeof airData.max === 'number') {
+                drawTimeline(airData.min, airData.max);
+            }
+        }
         
         // ----- 定位功能（防并发 + 成功即停止）-----
         async function getChineseCityName(lat, lng) {
@@ -827,7 +911,6 @@
             toast.classList.add('show');
             let locateSuccess = false;
             try { 
-                // 顺序尝试，只要一个成功就立即停止
                 let location = await getLocationByIpApi(); 
                 if(!location) location = await getLocationByIpApiCo(); 
                 if(!location) location = await getLocationByBrowserGeo(); 
@@ -905,7 +988,15 @@
             }
         }, 500);
         
-        window.addEventListener('resize',()=>{ let footer=document.querySelector('.footer-info'); if(footer){ footer.style.transform='translateZ(0)'; setTimeout(()=>{ if(footer) footer.style.transform=''; },50); } });
+        // 窗口大小变化时重绘时间条，确保与标签对齐
+        window.addEventListener('resize',()=>{ 
+            refreshTimelineOnResize();
+            let footer=document.querySelector('.footer-info'); 
+            if(footer){ 
+                footer.style.transform='translateZ(0)'; 
+                setTimeout(()=>{ if(footer) footer.style.transform=''; },50); 
+            } 
+        });
     })();
 </script>
 </body>
