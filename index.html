@@ -204,7 +204,18 @@
             gap: 12px;
             margin-bottom: 1rem;
         }
-        .card-header h3 { font-size: clamp(1.3rem, 5vw, 1.7rem); font-weight: 600; color: #2c3e2f; border-left: 5px solid #ffb347; padding-left: 0.8rem; margin: 0; }
+        .card-header h3 { 
+            font-size: clamp(1.3rem, 5vw, 1.7rem); 
+            font-weight: 600; 
+            color: #2c3e2f; 
+            border-left: 5px solid #ffb347; 
+            padding-left: 0.8rem; 
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
         .city-picker-btn, .auto-locate-btn { background: #6b8c5c; border: none; color: white; padding: 5px 12px; border-radius: 30px; cursor: pointer; font-weight: 500; }
         .auto-locate-btn { background: #b48c48; }
 
@@ -463,14 +474,35 @@
         }
         .loading-toast.show { display: flex; }
 
+        /* ========== 媒体查询：竖屏时调整卡片顺序 ========== */
         @media (max-width: 880px) {
-            .dashboard { flex-direction: column; }
-            .wheel-area { order: 4; }
-            .left-panel { order: 2; }
-            .current-card { order: 3; }
-            .footer-info { order: 5; }
-            .date-card { order: 1; }
+            .dashboard {
+                flex-direction: column;
+            }
+            .wheel-area {
+                order: 4;
+            }
+            .left-panel {
+                order: 2;
+            }
+            /* 日期卡片始终在最前 */
+            .date-card {
+                order: 1;
+            }
+            /* 当前温度卡片排在第二 */
+            .current-card {
+                order: 2;
+            }
+            /* 自然足感卡片（info-card）排在当前温度卡片下方 */
+            .info-card {
+                order: 3;
+            }
+            .footer-info {
+                order: 5;
+            }
         }
+
+        /* 针对极小屏幕的微调，不干扰卡片顺序 */
         @media (max-width: 480px) {
             .nature-container { padding: 1rem; }
             .material-row { font-size: 0.75rem; }
@@ -872,7 +904,7 @@
             }
         }
         
-        // 更新自然足感卡片
+        // 更新自然足感卡片（数据标注已移至标题旁）
         function updateLeftPanelAndTimeline(dayIdx){
             let air = dailyTempCache[dayIdx] || {min:15,max:25,real:false,isHistory:false};
             let airMin=air.min, airMax=air.max, airReal=air.real;
@@ -887,11 +919,22 @@
                 if (diffDays < 0) dataType = "历史数据";
                 else dataType = "预报数据";
             }
-            document.getElementById('airTempRange').innerHTML = `<span class="data-tag">${dataType}</span><span>${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃</span>`;
+            
+            // 在标题旁显示数据标注，移除三个温度项后面的标注
+            const cityName = currentLocation.name;
+            const titleElem = document.getElementById('cityTitle');
+            titleElem.innerHTML = `📍 ${cityName} · 自然足感 <span class="data-tag" style="font-size:0.7rem; background:#e67e22; margin-left:6px; vertical-align:middle;">${dataType}</span>`;
+            
+            // 空气温度：仅显示数值，无标注
+            document.getElementById('airTempRange').innerHTML = `<span>${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃</span>`;
+            
+            // 体感温度
             let feelsHtml = (useReal && currentRealWeather.feelsMin) ? `${currentRealWeather.feelsMin.toFixed(1)}~${currentRealWeather.feelsMax.toFixed(1)}℃` : `${(airMin+0.5).toFixed(1)}~${(airMax+2).toFixed(1)}℃`;
-            document.getElementById('feelsLikeTemp').innerHTML = `<span class="data-tag">${dataType}</span><span>${feelsHtml}</span>`;
+            document.getElementById('feelsLikeTemp').innerHTML = `<span>${feelsHtml}</span>`;
+            
+            // 地面温度
             let groundHtml = (useReal && currentRealWeather.groundMin) ? `${currentRealWeather.groundMin.toFixed(1)}~${currentRealWeather.groundMax.toFixed(1)}℃` : `${(airMin+1).toFixed(1)}~${(airMax+3).toFixed(1)}℃`;
-            document.getElementById('groundTempRange').innerHTML = `<span class="data-tag">${dataType}</span><span>${groundHtml}</span>`;
+            document.getElementById('groundTempRange').innerHTML = `<span>${groundHtml}</span>`;
             
             const materials = [
                 { name:'🌱 草地', offsetAvg:0 },
@@ -1054,6 +1097,7 @@
         // ---------- 城市相关 ----------
         async function setCity(city) {
             currentLocation = { name: city.name, lat: city.lat, lng: city.lng };
+            // 先更新标题（临时不带标注，之后refresh时会重新标注）
             document.getElementById('cityTitle').innerHTML = `📍 ${city.name} · 自然足感`;
             updateCalendar();
             for(let idx=0; idx<totalDays; idx++){ let est=estimateDailyTemp(idx); dailyTempCache[idx]={ min:est.min, max:est.max, real:false }; }
@@ -1086,13 +1130,11 @@
         
         // ---------- 定位核心：优先IP，失败后浏览器，再失败则浮动提示重试/选城市 ----------
         async function performLocation() {
-            // 显示定位浮动层
             locateToast.classList.add('show');
-            locateButtons.innerHTML = ''; // 清空按钮
+            locateButtons.innerHTML = '';
             locateMessage.innerHTML = '<span>📍 正在获取位置信息...</span>';
             
             let location = null;
-            // 1. IP定位 (ip-api.com)
             try {
                 const res = await fetch('https://ip-api.com/json/?fields=status,lat,lon,city&lang=zh-CN');
                 const data = await res.json();
@@ -1103,7 +1145,6 @@
                 }
             } catch(e) { console.warn('IP定位失败', e); }
             
-            // 2. 如果IP失败，尝试浏览器定位
             if (!location && navigator.geolocation) {
                 locateMessage.innerHTML = '<span>📍 尝试浏览器定位...</span>';
                 try {
@@ -1112,7 +1153,6 @@
                     });
                     const lat = pos.coords.latitude;
                     const lng = pos.coords.longitude;
-                    // 反向地理编码获取城市名
                     const revRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`);
                     const revData = await revRes.json();
                     let city = revData.city || revData.locality || revData.principalSubdivision || '当前位置';
@@ -1121,12 +1161,10 @@
                 } catch(e) { console.warn('浏览器定位失败', e); }
             }
             
-            // 3. 若成功，更新城市并关闭浮动层
             if (location && location.lat && location.lng) {
                 locateToast.classList.remove('show');
                 await setCity(location);
             } else {
-                // 全部失败，显示失败界面，带重试和选择城市按钮
                 locateMessage.innerHTML = '<span>⚠️ 定位失败，请重试或手动选择城市</span>';
                 locateButtons.innerHTML = `
                     <button class="locate-btn" id="locateRetryBtn">🔄 重试</button>
@@ -1137,16 +1175,15 @@
                 const closeLocate = () => locateToast.classList.remove('show');
                 retryBtn.addEventListener('click', () => {
                     closeLocate();
-                    performLocation(); // 重新执行定位
+                    performLocation();
                 });
                 selectBtn.addEventListener('click', () => {
                     closeLocate();
-                    document.getElementById('openCityPickerBtn').click(); // 打开城市选择器
+                    document.getElementById('openCityPickerBtn').click();
                 });
             }
         }
         
-        // 定位入口，调用核心定位函数
         function autoLocate() {
             performLocation();
         }
