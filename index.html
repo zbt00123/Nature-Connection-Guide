@@ -14,6 +14,84 @@
     <meta property="og:type" content="website">
     
     <style>
+        
+        /* 风险提示弹窗 */
+.risk-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s;
+}
+.risk-modal.active {
+    visibility: visible;
+    opacity: 1;
+}
+.risk-content {
+    max-width: 480px;
+    width: 85%;
+    background: rgba(255, 255, 245, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 2rem;
+    padding: 2rem 1.8rem;
+    box-shadow: 0 25px 40px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    border: 1px solid rgba(255, 240, 180, 0.8);
+    font-family: inherit;
+}
+.risk-content h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #2c5a2e, #c7a252);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+.risk-content p {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #3a2e22;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+.risk-content .risk-list {
+    text-align: left;
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+.risk-content .risk-list li {
+    margin-bottom: 0.5rem;
+    color: #6b4c2c;
+}
+.risk-button {
+    background: #6b8c5c;
+    border: none;
+    color: white;
+    padding: 12px 28px;
+    border-radius: 40px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: transform 0.1s, background 0.2s;
+}
+.risk-button:hover {
+    background: #5a7a4a;
+    transform: scale(1.02);
+}
+.risk-button:active {
+    transform: scale(0.98);
+}
+
         /* ========== 全屏“出血”背景 ========== */
         html {
             height: 100%;
@@ -574,7 +652,23 @@
         </div>
     </div>
 </div>
-
+<!-- 风险提示弹窗 -->
+<div id="riskModal" class="risk-modal">
+    <div class="risk-content">
+        <h3>⚠️ 赤足安全须知</h3>
+        <p>亲爱的自然爱好者：</p>
+        <p>户外赤足存在潜在风险，在使用本工具前，请务必了解并遵守以下安全提示：</p>
+        <ul class="risk-list">
+            <li>🌡️ <strong>温度适宜区间</strong>：建议地面温度在 <strong>20℃ ~ 40℃</strong> 之间尝试，避免过冷或过热损伤足部。</li>
+            <li>🧱 <strong>地面检查</strong>：务必确认地面无尖锐物（玻璃、钉子）、无化学污染、无虫蚁巢穴。</li>
+            <li>🚶 <strong>循序渐进</strong>：初次赤足请从短时间、柔软地面开始，让足部逐渐适应。</li>
+            <li>🩺 <strong>特殊人群</strong>：糖尿病、末梢神经病变、足部有伤口者请勿赤足，必要时咨询医生。</li>
+            <li>⚠️ <strong>遇痛即停</strong>：如感到刺痛、灼热或不适，请立即停止并检查足部。</li>
+        </ul>
+        <p>本工具提供的数据仅供参考，实际环境差异需由使用者自行判断。继续使用即表示您已知晓并同意承担相应风险。</p>
+        <button id="riskConfirmBtn" class="risk-button">我已知晓，继续探索 🌿</button>
+    </div>
+</div>
 <!-- 城市选择器浮层 -->
 <div id="citySelectorOverlay" class="city-selector-overlay">
     <div class="city-selector-panel">
@@ -605,6 +699,26 @@
 </div>
 
 <script>
+    // ----- 风险提示弹窗逻辑（首次加载显示，使用localStorage记录）-----
+const riskModal = document.getElementById('riskModal');
+const riskConfirmBtn = document.getElementById('riskConfirmBtn');
+
+// 检查是否已确认过
+if (!localStorage.getItem('riskAcknowledged')) {
+    // 未确认，显示弹窗
+    riskModal.classList.add('active');
+} else {
+    // 已确认，确保弹窗隐藏
+    riskModal.classList.remove('active');
+}
+
+// 确认按钮事件
+riskConfirmBtn.addEventListener('click', function() {
+    // 记录已确认状态
+    localStorage.setItem('riskAcknowledged', 'true');
+    // 隐藏弹窗
+    riskModal.classList.remove('active');
+});
     (function(){
         // ---------- 全局变量 ----------
         let currentLocation = { name: "北京", lat: 39.9042, lng: 116.4074 };
