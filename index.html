@@ -56,6 +56,14 @@
     -webkit-background-clip: text;
     color: transparent;
 }
+.risk-warning-icon {
+    background: none;                 /* 清除渐变背景 */
+    -webkit-background-clip: unset;  /* 重置剪裁 */
+    background-clip: unset;
+    color: #f4a261;                  /* 设置警告图标为橙色（或任何你喜欢的颜色） */
+    display: inline-block;
+    margin-right: 4px;               /* 可选，与文字拉开一点距离 */
+}
 .risk-content p {
     font-size: 1rem;
     line-height: 1.5;
@@ -655,7 +663,7 @@
 <!-- 风险提示弹窗 -->
 <div id="riskModal" class="risk-modal">
     <div class="risk-content">
-        <h3>⚠️ 赤足安全须知</h3>
+        <h3><span class="risk-warning-icon">⚠️</span> 赤足安全须知</h3>
         <p>亲爱的自然爱好者：</p>
         <p>户外赤足存在潜在风险，在使用本工具前，请务必了解并遵守以下安全提示：</p>
         <ul class="risk-list">
