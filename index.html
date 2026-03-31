@@ -656,7 +656,7 @@
         <p>👮 版权&用途:本网页仅供技术学习与个人使用，禁止用于商业目的或任何非法活动。</p>
         <p>🤖 核心交互与算法：DeepSeek | 天气数据集成：通义千问 | 网页图标:豆包AI</p>
         <div style="text-align: center; margin-top: 12px;">
-        <img src="https://visitor-badge.laobi.icu/badge?page_id=zbt00123.Nature-Connection-Guide&left_color=red&right_color=green&left_text=%F0%9F%8C%BF%20%20%E5%87%80%20%E8%B6%B3%20%E6%97%B6%20%E5%85%89%20" alt="访问量">
+        <img src="https://visitor-badge.laobi.icu/badge?page_id=zbt00123.Nature-Connection-Guide&left_color=red&right_color=green&left_text=Welcome" alt="访问量">
         </div>
     </div>
 </div>
@@ -726,6 +726,12 @@ riskConfirmBtn.addEventListener('click', function() {
     localStorage.setItem('riskAcknowledged', 'true');
     // 隐藏弹窗
     riskModal.classList.remove('active');
+    // 风险确认后，若尚未执行过自动定位，则触发一次自动定位
+    if (typeof window._autoLocated === 'undefined' || !window._autoLocated) {
+        if (typeof performLocation === 'function') {
+            performLocation();
+        }
+    }
 });
     (function(){
         // ---------- 全局变量 ----------
@@ -752,7 +758,137 @@ riskConfirmBtn.addEventListener('click', function() {
         let locateMessage = document.getElementById('locateMessage');
         let locateButtons = document.getElementById('locateButtons');
         
-        // ---------- 日历函数 ----------
+        // ---------- 反向地理编码 (中文城市名) ----------
+        async function reverseGeocode(lat, lng) {
+            try {
+                const revRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`);
+                const revData = await revRes.json();
+                let city = revData.city || revData.locality || revData.principalSubdivision || '当前位置';
+                if(city.endsWith('市')) city = city.slice(0,-1);
+                return city;
+            } catch(e) {
+                console.warn('反向地理编码失败', e);
+                return null;
+            }
+        }
+        
+        // ---------- 多源IP定位 (并行，最快成功且返回中文) ----------
+        async function tryMultiIpLocation() {
+            const timeoutMs = 5000;
+            const fetchWithTimeout = (url, options = {}) => {
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), timeoutMs);
+                return fetch(url, { ...options, signal: controller.signal })
+                    .finally(() => clearTimeout(id));
+            };
+            
+            // IP定位服务列表，返回 {name, lat, lng} 或 null
+            const ipServices = [
+                async () => {
+                    try {
+                        const res = await fetchWithTimeout('https://ip-api.com/json/?fields=status,lat,lon,city&lang=zh-CN');
+                        const data = await res.json();
+                        if (data.status === 'success' && data.lat && data.lon && data.city) {
+                            let city = data.city;
+                            if(city.endsWith('市')) city = city.slice(0,-1);
+                            return { name: city, lat: data.lat, lng: data.lon };
+                        }
+                        return null;
+                    } catch(e) { return null; }
+                },
+                async () => {
+                    try {
+                        const res = await fetchWithTimeout('https://ipapi.co/json/');
+                        const data = await res.json();
+                        if (data && data.latitude && data.longitude) {
+                            let city = data.city || data.region || '';
+                            // ipapi.co 城市名可能为英文，尝试反向地理编码获取中文
+                            if (city && data.latitude && data.longitude) {
+                                const cnName = await reverseGeocode(data.latitude, data.longitude);
+                                if (cnName) city = cnName;
+                                else if (city.endsWith('市')) city = city.slice(0,-1);
+                                return { name: city || '未知位置', lat: data.latitude, lng: data.longitude };
+                            }
+                        }
+                        return null;
+                    } catch(e) { return null; }
+                }
+            ];
+            
+            const promises = ipServices.map(fn => fn());
+            const results = await Promise.allSettled(promises);
+            for (const res of results) {
+                if (res.status === 'fulfilled' && res.value && res.value.lat && res.value.lng) {
+                    return res.value;
+                }
+            }
+            return null;
+        }
+        
+        // ---------- 浏览器定位 (优先高精度，返回中文城市) ----------
+        async function tryBrowserLocation() {
+            if (!navigator.geolocation) return null;
+            return new Promise((resolve) => {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    const cityName = await reverseGeocode(lat, lng);
+                    if (cityName) {
+                        resolve({ name: cityName, lat, lng });
+                    } else {
+                        resolve({ name: '当前位置', lat, lng });
+                    }
+                }, (err) => {
+                    console.warn('浏览器定位失败', err);
+                    resolve(null);
+                }, { timeout: 10000, enableHighAccuracy: false });
+            });
+        }
+        
+        // ---------- 增强版自动定位：多IP并行 → 浏览器定位 → 失败引导 ----------
+        async function performLocation() {
+            // 避免重复弹出
+            if (locateToast.classList.contains('show')) return;
+            locateToast.classList.add('show');
+            locateButtons.innerHTML = '';
+            locateMessage.innerHTML = '<span>📍 正在获取位置信息...</span>';
+            
+            let location = null;
+            // 1. 多源IP定位
+            locateMessage.innerHTML = '<span>🌏 通过IP定位中...</span>';
+            location = await tryMultiIpLocation();
+            // 2. IP失败则尝试浏览器定位
+            if (!location || !location.lat) {
+                locateMessage.innerHTML = '<span>📡 尝试浏览器定位...</span>';
+                location = await tryBrowserLocation();
+            }
+            
+            if (location && location.lat && location.lng) {
+                locateToast.classList.remove('show');
+                await setCity(location);
+                // 标记自动定位已执行
+                window._autoLocated = true;
+            } else {
+                locateMessage.innerHTML = '<span>⚠️ 定位失败，请重试或手动选择城市</span>';
+                locateButtons.innerHTML = `
+                    <button class="locate-btn" id="locateRetryBtn">🔄 重试</button>
+                    <button class="locate-btn primary" id="locateSelectCityBtn">📌 选择城市</button>
+                `;
+                const retryBtn = document.getElementById('locateRetryBtn');
+                const selectBtn = document.getElementById('locateSelectCityBtn');
+                const closeLocate = () => locateToast.classList.remove('show');
+                retryBtn.addEventListener('click', () => {
+                    closeLocate();
+                    performLocation();
+                });
+                selectBtn.addEventListener('click', () => {
+                    closeLocate();
+                    document.getElementById('openCityPickerBtn').click();
+                });
+            }
+        }
+        
+        // 日历函数等原有内容保持不变...
         function updateCalendar() { 
             let isLeap = (currentYear%4===0&&currentYear%100!==0)||(currentYear%400===0); 
             monthDays=[31,isLeap?29:28,31,30,31,30,31,31,30,31,30,31]; 
@@ -769,7 +905,6 @@ riskConfirmBtn.addEventListener('click', function() {
         function getDateStrFromIdx(idx){ let d=getDateFromIndex(idx); return `${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`; }
         function getAngleFromDayIndex(dayIdx){ return (dayIdx/totalDays)*2*Math.PI; }
         
-        // 估算日温
         function estimateDailyTemp(idx) { 
             let rad=(idx/totalDays)*2*Math.PI; 
             let latFactor=Math.abs(currentLocation.lat); 
@@ -779,7 +914,6 @@ riskConfirmBtn.addEventListener('click', function() {
             return { min:mean-3.5, max:mean+3.5 }; 
         }
         
-        // 获取逐小时真实数据（用于当前卡片）
         async function fetchHourlyWeather(lat, lng, targetDate, hour) {
             const targetDateObj = new Date(targetDate);
             const nowObj = new Date();
@@ -823,7 +957,6 @@ riskConfirmBtn.addEventListener('click', function() {
             return ['🌥️', '多云'];
         }
         
-        // 更新当前卡片（小时精度）
         async function updateCurrentCardByDateTime(dateTimeStr) {
             if (!dateTimeStr) return;
             const dt = new Date(dateTimeStr);
@@ -856,7 +989,6 @@ riskConfirmBtn.addEventListener('click', function() {
             document.getElementById('currentAirTempVal').innerHTML = (airTemp !== null && !isEstimated) ? `${airTemp.toFixed(1)}°C` : '--';
             document.getElementById('currentWeatherIcon').innerHTML = emoji;
             document.getElementById('currentWeatherDesc').innerHTML = (isEstimated && !hourlyData) ? '估算数据' : desc;
-            // 材质温度估算
             const materials = [
                 { name:'🌱 草地', offsetAvg:0 }, { name:'🟫 土地', offsetAvg:2 },
                 { name:'🏖️ 沙滩', offsetAvg:3.5 }, { name:'🧱 地砖', offsetAvg:4.5 },
@@ -885,7 +1017,6 @@ riskConfirmBtn.addEventListener('click', function() {
             document.getElementById('currentMaterialGrid').innerHTML = gridHtml;
         }
         
-        // 刷新全天温度极值（用于自然足感卡片）
         async function refreshWeatherForCurrentDate(showToast=true) {
             if(currentAbortController) currentAbortController.abort();
             if(showToast) toast.classList.add('show');
@@ -934,7 +1065,6 @@ riskConfirmBtn.addEventListener('click', function() {
             if(showToast) toast.classList.remove('show');
         }
         
-        // 计算每个小时材质温度
         function hourlyMaterialTemp(airMin, airMax, offsetAvg, hour) {
             let mid = (airMin+airMax)/2;
             let amp = (airMax-airMin)/2;
@@ -943,7 +1073,6 @@ riskConfirmBtn.addEventListener('click', function() {
             return airTemp + offsetAvg;
         }
         
-        // 绘制单个材质时间条
         function drawMaterialTimeline(canvasId, airMin, airMax, offsetAvg) {
             const canvas = document.getElementById(canvasId);
             if(!canvas) return;
@@ -1029,7 +1158,6 @@ riskConfirmBtn.addEventListener('click', function() {
             }
         }
         
-        // 更新自然足感卡片（数据标注已移至标题旁）
         function updateLeftPanelAndTimeline(dayIdx){
             let air = dailyTempCache[dayIdx] || {min:15,max:25,real:false,isHistory:false};
             let airMin=air.min, airMax=air.max, airReal=air.real;
@@ -1044,23 +1172,14 @@ riskConfirmBtn.addEventListener('click', function() {
                 if (diffDays < 0) dataType = "历史数据";
                 else dataType = "预报数据";
             }
-            
-            // 在标题旁显示数据标注，移除三个温度项后面的标注
             const cityName = currentLocation.name;
             const titleElem = document.getElementById('cityTitle');
             titleElem.innerHTML = `📍 ${cityName} · 自然足感 <span class="data-tag" style="font-size:0.7rem; background:#e67e22; margin-left:6px; vertical-align:middle;">${dataType}</span>`;
-            
-            // 空气温度：仅显示数值，无标注
             document.getElementById('airTempRange').innerHTML = `<span>${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃</span>`;
-            
-            // 体感温度
             let feelsHtml = (useReal && currentRealWeather.feelsMin) ? `${currentRealWeather.feelsMin.toFixed(1)}~${currentRealWeather.feelsMax.toFixed(1)}℃` : `${(airMin+0.5).toFixed(1)}~${(airMax+2).toFixed(1)}℃`;
             document.getElementById('feelsLikeTemp').innerHTML = `<span>${feelsHtml}</span>`;
-            
-            // 地面温度
             let groundHtml = (useReal && currentRealWeather.groundMin) ? `${currentRealWeather.groundMin.toFixed(1)}~${currentRealWeather.groundMax.toFixed(1)}℃` : `${(airMin+1).toFixed(1)}~${(airMax+3).toFixed(1)}℃`;
             document.getElementById('groundTempRange').innerHTML = `<span>${groundHtml}</span>`;
-            
             const materials = [
                 { name:'🌱 草地', offsetAvg:0 },
                 { name:'🟫 土地', offsetAvg:2 },
@@ -1094,27 +1213,24 @@ riskConfirmBtn.addEventListener('click', function() {
             }, 10);
         }
         
-        // 新增：根据当前指针日期的年份、月份、日期，同步到 datetime-local 输入框（保留原时间部分）
         function syncDateTimePickerFromDayIndex() {
             const dateObj = getDateFromIndex(currentDayIndex);
             const year = dateObj.year;
             const month = String(dateObj.month).padStart(2, '0');
             const day = String(dateObj.day).padStart(2, '0');
-            
-            // 获取原输入框中的时间部分（小时:分钟）
-            let timePart = "12:00"; // 默认中午12点
+            let timePart = "12:00";
             const currentPickerValue = document.getElementById('datetimePicker').value;
             if (currentPickerValue && currentPickerValue.includes('T')) {
                 const parts = currentPickerValue.split('T');
                 if (parts[1]) {
-                    timePart = parts[1].substring(0, 5); // 只取 HH:MM
+                    timePart = parts[1].substring(0, 5);
                 }
             }
             const newDateTime = `${year}-${month}-${day}T${timePart}`;
             document.getElementById('datetimePicker').value = newDateTime;
         }
         
-        // ---------- 圆盘绘制（保留原始逻辑） ----------
+        // 圆盘绘制 (原有逻辑不变)
         function hexToRgb(hex) { let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16); return [r,g,b]; }
         function interpolateColor(c1,c2,t){ let rgb1=hexToRgb(c1),rgb2=hexToRgb(c2); return `rgb(${Math.round(rgb1[0]+(rgb2[0]-rgb1[0])*t)},${Math.round(rgb1[1]+(rgb2[1]-rgb1[1])*t)},${Math.round(rgb1[2]+(rgb2[2]-rgb1[2])*t)})`; }
         function getAngleGradientColor(deg) {
@@ -1205,7 +1321,6 @@ riskConfirmBtn.addEventListener('click', function() {
             };
         }
         
-        // ---------- 日期时间联动 ----------
         function syncFromDateTimePicker() {
             let dtValue = document.getElementById('datetimePicker').value;
             if(!dtValue) return;
@@ -1239,10 +1354,8 @@ riskConfirmBtn.addEventListener('click', function() {
             updateCurrentCardByDateTime(iso);
         }
         
-        // ---------- 城市相关 ----------
         async function setCity(city) {
             currentLocation = { name: city.name, lat: city.lat, lng: city.lng };
-            // 先更新标题（临时不带标注，之后refresh时会重新标注）
             document.getElementById('cityTitle').innerHTML = `📍 ${city.name} · 自然足感`;
             updateCalendar();
             for(let idx=0; idx<totalDays; idx++){ let est=estimateDailyTemp(idx); dailyTempCache[idx]={ min:est.min, max:est.max, real:false }; }
@@ -1273,71 +1386,11 @@ riskConfirmBtn.addEventListener('click', function() {
             });
         }
         
-        // ---------- 定位核心：优先IP，失败后浏览器，再失败则浮动提示重试/选城市 ----------
-        async function performLocation() {
-            locateToast.classList.add('show');
-            locateButtons.innerHTML = '';
-            locateMessage.innerHTML = '<span>📍 正在获取位置信息...</span>';
-            
-            let location = null;
-            try {
-                const res = await fetch('https://ip-api.com/json/?fields=status,lat,lon,city&lang=zh-CN');
-                const data = await res.json();
-                if(data.status === 'success' && data.lat && data.lon) {
-                    let city = data.city || '未知城市';
-                    if(city.endsWith('市')) city = city.slice(0,-1);
-                    location = { name: city, lat: data.lat, lng: data.lon };
-                }
-            } catch(e) { console.warn('IP定位失败', e); }
-            
-            if (!location && navigator.geolocation) {
-                locateMessage.innerHTML = '<span>📍 尝试浏览器定位...</span>';
-                try {
-                    const pos = await new Promise((resolve, reject) => {
-                        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
-                    });
-                    const lat = pos.coords.latitude;
-                    const lng = pos.coords.longitude;
-                    const revRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`);
-                    const revData = await revRes.json();
-                    let city = revData.city || revData.locality || revData.principalSubdivision || '当前位置';
-                    if(city.endsWith('市')) city = city.slice(0,-1);
-                    location = { name: city, lat, lng };
-                } catch(e) { console.warn('浏览器定位失败', e); }
-            }
-            
-            if (location && location.lat && location.lng) {
-                locateToast.classList.remove('show');
-                await setCity(location);
-            } else {
-                locateMessage.innerHTML = '<span>⚠️ 定位失败，请重试或手动选择城市</span>';
-                locateButtons.innerHTML = `
-                    <button class="locate-btn" id="locateRetryBtn">🔄 重试</button>
-                    <button class="locate-btn primary" id="locateSelectCityBtn">📌 选择城市</button>
-                `;
-                const retryBtn = document.getElementById('locateRetryBtn');
-                const selectBtn = document.getElementById('locateSelectCityBtn');
-                const closeLocate = () => locateToast.classList.remove('show');
-                retryBtn.addEventListener('click', () => {
-                    closeLocate();
-                    performLocation();
-                });
-                selectBtn.addEventListener('click', () => {
-                    closeLocate();
-                    document.getElementById('openCityPickerBtn').click();
-                });
-            }
-        }
-        
-        function autoLocate() {
-            performLocation();
-        }
-        
         // 事件绑定
         document.getElementById('datetimePicker').addEventListener('change', syncFromDateTimePicker);
         document.getElementById('todayBtnMobile').addEventListener('click', setNowDateTime);
         document.getElementById('openCityPickerBtn').onclick = ()=>document.getElementById('citySelectorOverlay').classList.add('active');
-        document.getElementById('autoLocateBtn').onclick = ()=>autoLocate();
+        document.getElementById('autoLocateBtn').onclick = ()=>performLocation();
         document.getElementById('closeCityPicker').addEventListener('click',()=>{ document.getElementById('citySelectorOverlay').classList.remove('active'); });
         document.getElementById('citySearchInput').addEventListener('input',(e)=>{ if(searchDebounce)clearTimeout(searchDebounce); searchDebounce=setTimeout(()=>renderCitySelector(e.target.value),300); });
         document.querySelectorAll('.hot-city-btn').forEach(btn=>{
@@ -1350,7 +1403,6 @@ riskConfirmBtn.addEventListener('click', function() {
             });
         });
         
-        // 圆盘拖动交互（新增：每次拖动更新日期选择器）
         canvasWheel.addEventListener('mousedown',()=>{ drag=true; });
         function handleDragMove(e){
             if(!drag) return;
@@ -1368,7 +1420,6 @@ riskConfirmBtn.addEventListener('click', function() {
             currentDayIndex = dayIdx;
             pointerAngle = getAngleFromDayIndex(dayIdx);
             drawWheel();
-            // 同步日期选择器中的日期（保留时间）
             syncDateTimePickerFromDayIndex();
             if(pendingWeatherTimeout) clearTimeout(pendingWeatherTimeout);
             pendingWeatherTimeout=setTimeout(async()=>{
@@ -1403,6 +1454,14 @@ riskConfirmBtn.addEventListener('click', function() {
         window.addEventListener('resize', ()=>{
             if(dailyTempCache[currentDayIndex]) updateLeftPanelAndTimeline(currentDayIndex);
         });
+        
+        // 自动定位触发：如果风险已确认则立即执行，否则等待风险确认回调
+        if (localStorage.getItem('riskAcknowledged') === 'true') {
+            // 风险已确认，自动定位
+            setTimeout(() => { performLocation(); }, 100);
+        } else {
+            // 风险未确认，已在确认按钮回调中执行定位，无需额外操作
+        }
     })();
 </script>
 </body>
