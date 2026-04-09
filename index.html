@@ -14,91 +14,90 @@
     <meta property="og:type" content="website">
     
     <style>
-        
         /* 风险提示弹窗 */
-.risk-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s, opacity 0.3s;
-}
-.risk-modal.active {
-    visibility: visible;
-    opacity: 1;
-}
-.risk-content {
-    max-width: 480px;
-    width: 85%;
-    background: rgba(255, 255, 245, 0.98);
-    backdrop-filter: blur(20px);
-    border-radius: 2rem;
-    padding: 2rem 1.8rem;
-    box-shadow: 0 25px 40px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    border: 1px solid rgba(255, 240, 180, 0.8);
-    font-family: inherit;
-}
-.risk-content h3 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, #2c5a2e, #c7a252);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-}
-.risk-warning-icon {
-    background: none;                 /* 清除渐变背景 */
-    -webkit-background-clip: unset;  /* 重置剪裁 */
-    background-clip: unset;
-    color: #f4a261;                  /* 设置警告图标为橙色（或任何你喜欢的颜色） */
-    display: inline-block;
-    margin-right: 4px;               /* 可选，与文字拉开一点距离 */
-}
-.risk-content p {
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #3a2e22;
-    margin-bottom: 1rem;
-    text-align: left;
-}
-.risk-content .risk-list {
-    text-align: left;
-    margin: 1rem 0;
-    padding-left: 1.5rem;
-}
-.risk-content .risk-list li {
-    margin-bottom: 0.5rem;
-    color: #6b4c2c;
-}
-.risk-button {
-    background: #6b8c5c;
-    border: none;
-    color: white;
-    padding: 12px 28px;
-    border-radius: 40px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 1rem;
-    transition: transform 0.1s, background 0.2s;
-}
-.risk-button:hover {
-    background: #5a7a4a;
-    transform: scale(1.02);
-}
-.risk-button:active {
-    transform: scale(0.98);
-}
+        .risk-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s;
+        }
+        .risk-modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .risk-content {
+            max-width: 480px;
+            width: 85%;
+            background: rgba(255, 255, 245, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            border: 1px solid rgba(255, 240, 180, 0.8);
+            font-family: inherit;
+        }
+        .risk-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #2c5a2e, #c7a252);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .risk-warning-icon {
+            background: none;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+            color: #f4a261;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        .risk-content p {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #3a2e22;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        .risk-content .risk-list {
+            text-align: left;
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+        .risk-content .risk-list li {
+            margin-bottom: 0.5rem;
+            color: #6b4c2c;
+        }
+        .risk-button {
+            background: #6b8c5c;
+            border: none;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: transform 0.1s, background 0.2s;
+        }
+        .risk-button:hover {
+            background: #5a7a4a;
+            transform: scale(1.02);
+        }
+        .risk-button:active {
+            transform: scale(0.98);
+        }
 
         /* ========== 全屏“出血”背景 ========== */
         html {
@@ -143,7 +142,6 @@
         .main-title::after { content: '👣'; font-size: clamp(1.5rem, 6vw, 2.5rem); background-clip: text; color: transparent; display: inline-block; }
         .main-title::before { content: '🌿'; font-size: clamp(1.5rem, 6vw, 2.5rem); background-clip: text; color: transparent; display: inline-block; }
 
-        /* 横向竖向自适应布局 */
         .dashboard {
             display: flex;
             flex-wrap: wrap;
@@ -168,7 +166,6 @@
             position: relative;
         }
 
-        /* 卡片通用样式 */
         .info-card, .current-card, .date-card {
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(14px);
@@ -215,7 +212,6 @@
         }
         .date-card button:active { transform: scale(0.96); }
 
-        /* 当前卡片样式 */
         .current-card {
             padding: 1rem 1.5rem;
         }
@@ -330,7 +326,6 @@
             margin-right: 8px;
         }
 
-        /* 材质时间条样式 */
         .surface-list {
             margin-top: 0.5rem;
         }
@@ -401,7 +396,6 @@
             backdrop-filter: blur(4px);
         }
 
-        /* 城市选择器浮层 */
         .city-selector-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -484,7 +478,6 @@
             color: #6b5a3a;
         }
 
-        /* 定位浮动提示层（独立样式，区别于普通toast） */
         .locate-toast {
             position: fixed;
             top: 50%;
@@ -560,7 +553,6 @@
         }
         .loading-toast.show { display: flex; }
 
-        /* ========== 媒体查询：竖屏时调整卡片顺序 ========== */
         @media (max-width: 880px) {
             .dashboard {
                 flex-direction: column;
@@ -571,15 +563,12 @@
             .left-panel {
                 order: 2;
             }
-            /* 日期卡片始终在最前 */
             .date-card {
                 order: 1;
             }
-            /* 当前温度卡片排在第二 */
             .current-card {
                 order: 2;
             }
-            /* 自然足感卡片（info-card）排在当前温度卡片下方 */
             .info-card {
                 order: 3;
             }
@@ -588,7 +577,6 @@
             }
         }
 
-        /* 针对极小屏幕的微调，不干扰卡片顺序 */
         @media (max-width: 480px) {
             .nature-container { padding: 1rem; }
             .material-row { font-size: 0.75rem; }
@@ -603,7 +591,6 @@
     <h1 class="main-title">亲近自然指南</h1>
     <div class="dashboard">
         <div class="left-panel">
-            <!-- 日期时间选择卡片 -->
             <div class="date-card">
                 <div class="datetime-wrapper">
                     <input type="datetime-local" id="datetimePicker" step="60">
@@ -611,7 +598,6 @@
                 <button id="todayBtnMobile">📅 现在</button>
             </div>
 
-            <!-- 当前卡片 -->
             <div class="current-card" id="currentDetailCard">
                 <div class="current-temp-row">
                     <span>🌡️ 当前温度</span>
@@ -624,7 +610,6 @@
                 <div class="material-grid" id="currentMaterialGrid"></div>
             </div>
 
-            <!-- 自然足感卡片 -->
             <div class="info-card" id="mainInfoCard">
                 <div class="card-header">
                     <h3 id="cityTitle">📍 北京 · 自然足感</h3>
@@ -642,7 +627,6 @@
             </div>
         </div>
 
-        <!-- 圆盘区域 -->
         <div class="wheel-area">
             <div class="wheel-bg"></div>
             <canvas id="seasonWheelCanvas" width="600" height="600"></canvas>
@@ -660,6 +644,7 @@
         </div>
     </div>
 </div>
+
 <!-- 风险提示弹窗 -->
 <div id="riskModal" class="risk-modal">
     <div class="risk-content">
@@ -677,6 +662,7 @@
         <button id="riskConfirmBtn" class="risk-button">我已知晓，继续探索 🌿</button>
     </div>
 </div>
+
 <!-- 城市选择器浮层 -->
 <div id="citySelectorOverlay" class="city-selector-overlay">
     <div class="city-selector-panel">
@@ -697,53 +683,37 @@
     </div>
 </div>
 
-<!-- 通用天气加载提示 -->
 <div id="loadingToast" class="loading-toast"><div class="toast-message">获取天气中...</div></div>
-
-<!-- 定位专用浮动窗口 -->
 <div id="locateToast" class="locate-toast">
     <div class="locate-message" id="locateMessage">正在获取位置信息...</div>
     <div class="locate-buttons" id="locateButtons"></div>
 </div>
 
 <script>
-    // ----- 风险提示弹窗逻辑（首次加载显示，使用localStorage记录）-----
-const riskModal = document.getElementById('riskModal');
-const riskConfirmBtn = document.getElementById('riskConfirmBtn');
-
-// 检查是否已确认过
-if (!localStorage.getItem('riskAcknowledged')) {
-    // 未确认，显示弹窗
-    riskModal.classList.add('active');
-} else {
-    // 已确认，确保弹窗隐藏
-    riskModal.classList.remove('active');
-}
-
-// 确认按钮事件
-riskConfirmBtn.addEventListener('click', function() {
-    // 记录已确认状态
-    localStorage.setItem('riskAcknowledged', 'true');
-    // 隐藏弹窗
-    riskModal.classList.remove('active');
-    // 风险确认后，若尚未执行过自动定位，则触发一次自动定位
-    if (typeof window._autoLocated === 'undefined' || !window._autoLocated) {
-        if (typeof performLocation === 'function') {
-            performLocation();
-        }
-    }
-});
     (function(){
+        // ---------- 风险弹窗 ----------
+        const riskModal = document.getElementById('riskModal');
+        const riskConfirmBtn = document.getElementById('riskConfirmBtn');
+        if (!localStorage.getItem('riskAcknowledged')) {
+            riskModal.classList.add('active');
+        }
+        riskConfirmBtn.addEventListener('click', function() {
+            localStorage.setItem('riskAcknowledged', 'true');
+            riskModal.classList.remove('active');
+            if (typeof window._autoLocated === 'undefined' || !window._autoLocated) {
+                if (typeof performLocation === 'function') performLocation();
+            }
+        });
+
         // ---------- 全局变量 ----------
         let currentLocation = { name: "北京", lat: 39.9042, lng: 116.4074 };
         let currentYear = new Date().getFullYear();
         let monthDays = [];
         let totalDays = 365;
         let dailyTempCache = [];
-        let currentRealWeather = { isReal: false, dateStr: null, isHistory: false };
+        let currentRealWeather = { isReal: false, dateStr: null, isHistory: false, weatherCode: null };
         let currentDayIndex = 0;
         
-        // 圆盘canvas和绘制变量
         let canvasWheel = document.getElementById('seasonWheelCanvas');
         let ctx = canvasWheel.getContext('2d');
         let size = 600;
@@ -757,8 +727,28 @@ riskConfirmBtn.addEventListener('click', function() {
         let locateToast = document.getElementById('locateToast');
         let locateMessage = document.getElementById('locateMessage');
         let locateButtons = document.getElementById('locateButtons');
-        
-        // ---------- 反向地理编码 (中文城市名) ----------
+
+        // ---------- 天气偏移修正函数 (根据WMO天气代码) ----------
+        function getWeatherOffsetMultiplier(code) {
+            if (code === undefined || code === null) return 1.0;
+            // 晴天 / 晴间多云
+            if ([0, 1].includes(code)) return 1.20;
+            // 部分多云
+            if (code === 2) return 1.10;
+            // 多云
+            if (code === 3) return 1.0;
+            // 雾 / 霾
+            if (code === 45 || code === 48) return 0.90;
+            // 毛毛雨 / 雨
+            if (code >= 51 && code <= 67) return 0.70;
+            // 雪
+            if (code >= 71 && code <= 77) return 0.55;
+            // 雷暴 / 阵雨
+            if (code >= 80) return 0.80;
+            return 1.0;
+        }
+
+        // ---------- 反向地理编码 ----------
         async function reverseGeocode(lat, lng) {
             try {
                 const revRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`);
@@ -766,23 +756,17 @@ riskConfirmBtn.addEventListener('click', function() {
                 let city = revData.city || revData.locality || revData.principalSubdivision || '当前位置';
                 if(city.endsWith('市')) city = city.slice(0,-1);
                 return city;
-            } catch(e) {
-                console.warn('反向地理编码失败', e);
-                return null;
-            }
+            } catch(e) { return null; }
         }
         
-        // ---------- 多源IP定位 (并行，最快成功且返回中文) ----------
+        // ---------- IP定位 ----------
         async function tryMultiIpLocation() {
             const timeoutMs = 5000;
             const fetchWithTimeout = (url, options = {}) => {
                 const controller = new AbortController();
                 const id = setTimeout(() => controller.abort(), timeoutMs);
-                return fetch(url, { ...options, signal: controller.signal })
-                    .finally(() => clearTimeout(id));
+                return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
             };
-            
-            // IP定位服务列表，返回 {name, lat, lng} 或 null
             const ipServices = [
                 async () => {
                     try {
@@ -802,7 +786,6 @@ riskConfirmBtn.addEventListener('click', function() {
                         const data = await res.json();
                         if (data && data.latitude && data.longitude) {
                             let city = data.city || data.region || '';
-                            // ipapi.co 城市名可能为英文，尝试反向地理编码获取中文
                             if (city && data.latitude && data.longitude) {
                                 const cnName = await reverseGeocode(data.latitude, data.longitude);
                                 if (cnName) city = cnName;
@@ -814,7 +797,6 @@ riskConfirmBtn.addEventListener('click', function() {
                     } catch(e) { return null; }
                 }
             ];
-            
             const promises = ipServices.map(fn => fn());
             const results = await Promise.allSettled(promises);
             for (const res of results) {
@@ -825,7 +807,6 @@ riskConfirmBtn.addEventListener('click', function() {
             return null;
         }
         
-        // ---------- 浏览器定位 (优先高精度，返回中文城市) ----------
         async function tryBrowserLocation() {
             if (!navigator.geolocation) return null;
             return new Promise((resolve) => {
@@ -833,31 +814,21 @@ riskConfirmBtn.addEventListener('click', function() {
                     const lat = pos.coords.latitude;
                     const lng = pos.coords.longitude;
                     const cityName = await reverseGeocode(lat, lng);
-                    if (cityName) {
-                        resolve({ name: cityName, lat, lng });
-                    } else {
-                        resolve({ name: '当前位置', lat, lng });
-                    }
-                }, (err) => {
-                    console.warn('浏览器定位失败', err);
-                    resolve(null);
-                }, { timeout: 10000, enableHighAccuracy: false });
+                    if (cityName) resolve({ name: cityName, lat, lng });
+                    else resolve({ name: '当前位置', lat, lng });
+                }, (err) => { resolve(null); }, { timeout: 10000, enableHighAccuracy: false });
             });
         }
         
-        // ---------- 增强版自动定位：多IP并行 → 浏览器定位 → 失败引导 ----------
         async function performLocation() {
-            // 避免重复弹出
             if (locateToast.classList.contains('show')) return;
             locateToast.classList.add('show');
             locateButtons.innerHTML = '';
             locateMessage.innerHTML = '<span>📍 正在获取位置信息...</span>';
             
             let location = null;
-            // 1. 多源IP定位
             locateMessage.innerHTML = '<span>🌏 通过IP定位中...</span>';
             location = await tryMultiIpLocation();
-            // 2. IP失败则尝试浏览器定位
             if (!location || !location.lat) {
                 locateMessage.innerHTML = '<span>📡 尝试浏览器定位...</span>';
                 location = await tryBrowserLocation();
@@ -866,7 +837,6 @@ riskConfirmBtn.addEventListener('click', function() {
             if (location && location.lat && location.lng) {
                 locateToast.classList.remove('show');
                 await setCity(location);
-                // 标记自动定位已执行
                 window._autoLocated = true;
             } else {
                 locateMessage.innerHTML = '<span>⚠️ 定位失败，请重试或手动选择城市</span>';
@@ -874,21 +844,11 @@ riskConfirmBtn.addEventListener('click', function() {
                     <button class="locate-btn" id="locateRetryBtn">🔄 重试</button>
                     <button class="locate-btn primary" id="locateSelectCityBtn">📌 选择城市</button>
                 `;
-                const retryBtn = document.getElementById('locateRetryBtn');
-                const selectBtn = document.getElementById('locateSelectCityBtn');
-                const closeLocate = () => locateToast.classList.remove('show');
-                retryBtn.addEventListener('click', () => {
-                    closeLocate();
-                    performLocation();
-                });
-                selectBtn.addEventListener('click', () => {
-                    closeLocate();
-                    document.getElementById('openCityPickerBtn').click();
-                });
+                document.getElementById('locateRetryBtn').addEventListener('click', () => { locateToast.classList.remove('show'); performLocation(); });
+                document.getElementById('locateSelectCityBtn').addEventListener('click', () => { locateToast.classList.remove('show'); document.getElementById('openCityPickerBtn').click(); });
             }
         }
         
-        // 日历函数等原有内容保持不变...
         function updateCalendar() { 
             let isLeap = (currentYear%4===0&&currentYear%100!==0)||(currentYear%400===0); 
             monthDays=[31,isLeap?29:28,31,30,31,30,31,31,30,31,30,31]; 
@@ -989,16 +949,19 @@ riskConfirmBtn.addEventListener('click', function() {
             document.getElementById('currentAirTempVal').innerHTML = (airTemp !== null && !isEstimated) ? `${airTemp.toFixed(1)}°C` : '--';
             document.getElementById('currentWeatherIcon').innerHTML = emoji;
             document.getElementById('currentWeatherDesc').innerHTML = (isEstimated && !hourlyData) ? '估算数据' : desc;
+
+            const multiplier = getWeatherOffsetMultiplier(weatherCode);
             const materials = [
-                { name:'🌱 草地', offsetAvg:0 }, { name:'🟫 土地', offsetAvg:2 },
-                { name:'🏖️ 沙滩', offsetAvg:3.5 }, { name:'🧱 地砖', offsetAvg:4.5 },
-                { name:'🛣️ 马路', offsetAvg:7.5 }
+                { name:'🌱 草地', baseOffset:0 }, { name:'🟫 土地', baseOffset:2 },
+                { name:'🏖️ 沙滩', baseOffset:3.5 }, { name:'🧱 地砖', baseOffset:4.5 },
+                { name:'🛣️ 马路', baseOffset:7.5 }
             ];
             let gridHtml = '';
             for (let m of materials) {
+                let offset = m.baseOffset * multiplier;
                 let tempVal = null, statusText = '', statusClass = '';
                 if (airTemp !== null && !isEstimated) {
-                    tempVal = airTemp + m.offsetAvg;
+                    tempVal = airTemp + offset;
                     if (tempVal < 20) { statusText = '过冷'; statusClass = 'status-cold'; }
                     else if (tempVal >= 20 && tempVal <= 40) { statusText = '适宜'; statusClass = 'status-good'; }
                     else { statusText = '过热'; statusClass = 'status-hot'; }
@@ -1029,9 +992,9 @@ riskConfirmBtn.addEventListener('click', function() {
             try {
                 let url = '';
                 if (diffDays >= 0 && diffDays <= 7) {
-                    url = `https://api.open-meteo.com/v1/forecast?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm&timezone=auto&forecast_days=7`;
+                    url = `https://api.open-meteo.com/v1/forecast?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm,weathercode&timezone=auto&forecast_days=7`;
                 } else if (isHistory && Math.abs(diffDays) <= 90) {
-                    url = `https://archive-api.open-meteo.com/v1/archive?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&start_date=${targetDate}&end_date=${targetDate}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm&timezone=auto`;
+                    url = `https://archive-api.open-meteo.com/v1/archive?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&start_date=${targetDate}&end_date=${targetDate}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm,weathercode&timezone=auto`;
                 } else {
                     throw new Error('超出范围，使用估算');
                 }
@@ -1043,23 +1006,34 @@ riskConfirmBtn.addEventListener('click', function() {
                 const airs = data.hourly.temperature_2m;
                 const feels = data.hourly.apparent_temperature;
                 const grounds = data.hourly.soil_temperature_0cm;
+                const weatherCodes = data.hourly.weathercode;
                 let indices = [];
                 for(let i=0;i<times.length;i++) if(times[i].startsWith(targetDate)) indices.push(i);
                 if(indices.length){
-                    let airVals=[], feelsVals=[], groundVals=[];
-                    indices.forEach(idx=>{ airVals.push(airs[idx]); if(feels) feelsVals.push(feels[idx]); if(grounds) groundVals.push(grounds[idx]);});
+                    let airVals=[], feelsVals=[], groundVals=[], codeCount = {};
+                    indices.forEach(idx=>{ 
+                        airVals.push(airs[idx]); 
+                        if(feels) feelsVals.push(feels[idx]); 
+                        if(grounds) groundVals.push(grounds[idx]);
+                        if(weatherCodes) {
+                            let c = weatherCodes[idx];
+                            codeCount[c] = (codeCount[c]||0)+1;
+                        }
+                    });
+                    let dominantCode = weatherCodes ? parseInt(Object.keys(codeCount).reduce((a,b) => codeCount[a] > codeCount[b] ? a : b)) : 3;
                     currentRealWeather = { 
                         airMin:Math.min(...airVals), airMax:Math.max(...airVals), 
                         feelsMin:feelsVals.length?Math.min(...feelsVals):null, feelsMax:feelsVals.length?Math.max(...feelsVals):null,
                         groundMin:groundVals.length?Math.min(...groundVals):null, groundMax:groundVals.length?Math.max(...groundVals):null,
-                        isReal:true, dateStr:targetDate, isHistory:isHistory 
+                        isReal:true, dateStr:targetDate, isHistory:isHistory,
+                        weatherCode: dominantCode
                     };
-                    dailyTempCache[currentDayIndex] = { min:currentRealWeather.airMin, max:currentRealWeather.airMax, real:true, isHistory:isHistory };
+                    dailyTempCache[currentDayIndex] = { min:currentRealWeather.airMin, max:currentRealWeather.airMax, real:true, isHistory:isHistory, weatherCode: dominantCode };
                 } else throw new Error('no indices');
             } catch(e) {
                 let est = estimateDailyTemp(currentDayIndex);
-                dailyTempCache[currentDayIndex] = { min:est.min, max:est.max, real:false, isHistory:false };
-                currentRealWeather = { isReal:false, isHistory:false };
+                dailyTempCache[currentDayIndex] = { min:est.min, max:est.max, real:false, isHistory:false, weatherCode: null };
+                currentRealWeather = { isReal:false, isHistory:false, weatherCode: null };
             }
             updateLeftPanelAndTimeline(currentDayIndex);
             if(showToast) toast.classList.remove('show');
@@ -1160,10 +1134,11 @@ riskConfirmBtn.addEventListener('click', function() {
         
         function updateLeftPanelAndTimeline(dayIdx){
             let air = dailyTempCache[dayIdx] || {min:15,max:25,real:false,isHistory:false};
-            let airMin=air.min, airMax=air.max, airReal=air.real;
+            let airMin=air.min, airMax=air.max;
             let targetDate = getDateStrFromIdx(dayIdx);
             let useReal = (currentRealWeather.isReal && currentRealWeather.dateStr===targetDate);
             let dataType = "估算数据";
+            let weatherCodeForMultiplier = useReal ? currentRealWeather.weatherCode : null;
             if (useReal) {
                 const todayStr = new Date().toISOString().slice(0,10);
                 const targetDateObj = new Date(targetDate);
@@ -1180,17 +1155,20 @@ riskConfirmBtn.addEventListener('click', function() {
             document.getElementById('feelsLikeTemp').innerHTML = `<span>${feelsHtml}</span>`;
             let groundHtml = (useReal && currentRealWeather.groundMin) ? `${currentRealWeather.groundMin.toFixed(1)}~${currentRealWeather.groundMax.toFixed(1)}℃` : `${(airMin+1).toFixed(1)}~${(airMax+3).toFixed(1)}℃`;
             document.getElementById('groundTempRange').innerHTML = `<span>${groundHtml}</span>`;
+            
+            const multiplier = getWeatherOffsetMultiplier(weatherCodeForMultiplier);
             const materials = [
-                { name:'🌱 草地', offsetAvg:0 },
-                { name:'🟫 土地', offsetAvg:2 },
-                { name:'🏖️ 沙滩', offsetAvg:3.5 },
-                { name:'🧱 地砖', offsetAvg:4.5 },
-                { name:'🛣️ 马路', offsetAvg:7.5 }
+                { name:'🌱 草地', baseOffset:0 },
+                { name:'🟫 土地', baseOffset:2 },
+                { name:'🏖️ 沙滩', baseOffset:3.5 },
+                { name:'🧱 地砖', baseOffset:4.5 },
+                { name:'🛣️ 马路', baseOffset:7.5 }
             ];
             let surfaceHtml = '';
             materials.forEach((m, idx) => {
-                let tempRangeLow = airMin + m.offsetAvg - 1;
-                let tempRangeHigh = airMax + m.offsetAvg + 1;
+                let offset = m.baseOffset * multiplier;
+                let tempRangeLow = airMin + offset - 1;
+                let tempRangeHigh = airMax + offset + 1;
                 let canvasId = `timelineCanvas_${idx}`;
                 surfaceHtml += `
                     <div class="surface-row">
@@ -1207,8 +1185,8 @@ riskConfirmBtn.addEventListener('click', function() {
             document.getElementById('surfaceList').innerHTML = surfaceHtml;
             setTimeout(() => {
                 materials.forEach((m, idx) => {
-                    let canvasId = `timelineCanvas_${idx}`;
-                    drawMaterialTimeline(canvasId, airMin, airMax, m.offsetAvg);
+                    let offset = m.baseOffset * multiplier;
+                    drawMaterialTimeline(`timelineCanvas_${idx}`, airMin, airMax, offset);
                 });
             }, 10);
         }
@@ -1222,15 +1200,12 @@ riskConfirmBtn.addEventListener('click', function() {
             const currentPickerValue = document.getElementById('datetimePicker').value;
             if (currentPickerValue && currentPickerValue.includes('T')) {
                 const parts = currentPickerValue.split('T');
-                if (parts[1]) {
-                    timePart = parts[1].substring(0, 5);
-                }
+                if (parts[1]) timePart = parts[1].substring(0, 5);
             }
-            const newDateTime = `${year}-${month}-${day}T${timePart}`;
-            document.getElementById('datetimePicker').value = newDateTime;
+            document.getElementById('datetimePicker').value = `${year}-${month}-${day}T${timePart}`;
         }
         
-        // 圆盘绘制 (原有逻辑不变)
+        // 圆盘绘制 (保持原有逻辑)
         function hexToRgb(hex) { let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16); return [r,g,b]; }
         function interpolateColor(c1,c2,t){ let rgb1=hexToRgb(c1),rgb2=hexToRgb(c2); return `rgb(${Math.round(rgb1[0]+(rgb2[0]-rgb1[0])*t)},${Math.round(rgb1[1]+(rgb2[1]-rgb1[1])*t)},${Math.round(rgb1[2]+(rgb2[2]-rgb1[2])*t)})`; }
         function getAngleGradientColor(deg) {
@@ -1455,12 +1430,8 @@ riskConfirmBtn.addEventListener('click', function() {
             if(dailyTempCache[currentDayIndex]) updateLeftPanelAndTimeline(currentDayIndex);
         });
         
-        // 自动定位触发：如果风险已确认则立即执行，否则等待风险确认回调
         if (localStorage.getItem('riskAcknowledged') === 'true') {
-            // 风险已确认，自动定位
             setTimeout(() => { performLocation(); }, 100);
-        } else {
-            // 风险未确认，已在确认按钮回调中执行定位，无需额外操作
         }
     })();
 </script>
