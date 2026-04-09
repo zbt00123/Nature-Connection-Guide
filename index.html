@@ -273,9 +273,14 @@
             color: white;
             background: #aaa;
         }
-        .status-cold { background: #3b82f6; }
-        .status-good { background: #22c55e; }
-        .status-hot { background: #f97316; }
+        /* 新温度区间样式 */
+        .status-danger { background: #1e3a8a; }      /* <15℃ 危险深蓝 */
+        .status-too-cold { background: #3b82f6; }    /* 15~20℃ 过冷蓝 */
+        .status-cool { background: #60a5fa; }        /* 20~28℃ 较冷浅蓝 */
+        .status-good { background: #22c55e; }        /* 28~35℃ 适宜绿 */
+        .status-warm { background: #f97316; }        /* 35~40℃ 较热橙 */
+        .status-hot { background: #ea580c; }         /* 40~45℃ 过热深橙 */
+        .status-danger-hot { background: #dc2626; }  /* ≥45℃ 危险红 */
         .status-na { background: #9ca3af; }
 
         .card-header {
@@ -608,6 +613,8 @@
                     </div>
                 </div>
                 <div class="material-grid" id="currentMaterialGrid"></div>
+                <!-- 新增提示行 -->
+                <div style="text-align:center; font-size:0.8rem; margin-top:12px; color:#6b5a3a;">⚠️地面温度为综合估算，请以实际为准。</div>
             </div>
 
             <div class="info-card" id="mainInfoCard">
@@ -635,10 +642,12 @@
     <div class="footer-info">
         <p>🌱 数据来源：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> 全球气象服务（空气温度、体感温度、地表温度）</p>
         <p>🌏 地理编码：Open-Meteo Geocoding API & BigDataCloud 反向地理编码</p>
-        <p>🧘 安全提示:户外赤足请在确认地面安全、无尖锐物且温度适宜（20~40℃）时尝试，初次赤足请循序渐进。如感疼痛或异常，请立即停止并就医。</p>
-        <p>⚠️ 免责声明:本指南提供的所有信息仅供参考，不构成任何专业建议。实际体验请结合自身状况与场地环境，使用者需自行承担风险。</p>
-        <p>👮 版权&用途:本网页仅供技术学习与个人使用，禁止用于商业目的或任何非法活动。</p>
-        <p>🤖 核心交互与算法：DeepSeek | 天气数据集成：通义千问 | 网页图标:豆包AI</p>
+        <p>🧘 安全提示：户外赤足请在确认地面安全、无尖锐物且温度适宜（28~35℃）时尝试，初次赤足请循序渐进。</p>
+        <p>🧑‍🦰 特殊人群提示：儿童、老人、糖尿病患者、足部感觉减退人群，风险更高，需格外谨慎。</p>
+        <p>⚠️ 环境风险提示：警惕尖锐异物、污染物等，优先选择干净平整场地。</p>
+        <p>⚠️ 免责声明:本指南仅供参考，使用者需自行承担风险。</p>
+        <p>👮 版权&用途:仅供技术学习与个人使用，禁止商用。</p>
+        <p>🤖 核心交互与算法：DeepSeek | 天气集成：通义千问 | 图标：豆包AI</p>
         <div style="text-align: center; margin-top: 12px;">
         <img src="https://visitor-badge.laobi.icu/badge?page_id=zbt00123.Nature-Connection-Guide&left_color=red&right_color=green&left_text=Welcome" alt="访问量">
         </div>
@@ -650,15 +659,15 @@
     <div class="risk-content">
         <h3><span class="risk-warning-icon">⚠️</span> 赤足安全须知</h3>
         <p>亲爱的自然爱好者：</p>
-        <p>户外赤足存在潜在风险，在使用本工具前，请务必了解并遵守以下安全提示：</p>
+        <p>户外赤足存在潜在风险，在使用本工具前，请务必了解：</p>
         <ul class="risk-list">
-            <li>🌡️ <strong>温度适宜区间</strong>：建议地面温度在 <strong>20℃ ~ 40℃</strong> 之间尝试，避免过冷或过热损伤足部。</li>
-            <li>🧱 <strong>地面检查</strong>：务必确认地面无尖锐物（玻璃、钉子）、无化学污染、无虫蚁巢穴。</li>
-            <li>🚶 <strong>循序渐进</strong>：初次赤足请从短时间、柔软地面开始，让足部逐渐适应。</li>
-            <li>🩺 <strong>特殊人群</strong>：糖尿病、末梢神经病变、足部有伤口者请勿赤足，必要时咨询医生。</li>
-            <li>⚠️ <strong>遇痛即停</strong>：如感到刺痛、灼热或不适，请立即停止并检查足部。</li>
+            <li>🌡️ <strong>温度适宜区间</strong>：建议地面温度在 <strong>28℃ ~ 35℃</strong> 之间。</li>
+            <li>🧱 <strong>地面检查</strong>：确认无尖锐物、无化学污染。</li>
+            <li>🚶 <strong>循序渐进</strong>：初次从短时间、柔软地面开始。</li>
+            <li>🩺 <strong>特殊人群</strong>：糖尿病、神经病变者请勿赤足。</li>
+            <li>⚠️ <strong>遇痛即停</strong>：不适立即停止。</li>
         </ul>
-        <p>本工具提供的数据仅供参考，实际环境差异需由使用者自行判断。继续使用即表示您已知晓并同意承担相应风险。</p>
+        <p>继续使用即表示您已知晓并同意承担相应风险。</p>
         <button id="riskConfirmBtn" class="risk-button">我已知晓，继续探索 🌿</button>
     </div>
 </div>
@@ -728,24 +737,120 @@
         let locateMessage = document.getElementById('locateMessage');
         let locateButtons = document.getElementById('locateButtons');
 
-        // ---------- 天气偏移修正函数 (根据WMO天气代码) ----------
-        function getWeatherOffsetMultiplier(code) {
-            if (code === undefined || code === null) return 1.0;
-            // 晴天 / 晴间多云
-            if ([0, 1].includes(code)) return 1.20;
-            // 部分多云
-            if (code === 2) return 1.10;
-            // 多云
-            if (code === 3) return 1.0;
-            // 雾 / 霾
-            if (code === 45 || code === 48) return 0.90;
-            // 毛毛雨 / 雨
-            if (code >= 51 && code <= 67) return 0.70;
-            // 雪
-            if (code >= 71 && code <= 77) return 0.55;
-            // 雷暴 / 阵雨
-            if (code >= 80) return 0.80;
-            return 1.0;
+        // ---------- 材质热物理参数 (用于精准估算) ----------
+        const MATERIALS = [
+            { name: '🌱 草地', baseOffset: 0,   absorptivity: 0.65, thermalInertia: 0.7, nightCooling: 0.5 },  // 草地升温慢，夜间降温也慢
+            { name: '🟫 土地', baseOffset: 2,   absorptivity: 0.75, thermalInertia: 0.6, nightCooling: 0.6 },
+            { name: '🏖️ 沙滩', baseOffset: 3.5, absorptivity: 0.80, thermalInertia: 0.4, nightCooling: 0.8 },  // 沙子升温快，降温也快
+            { name: '🧱 地砖', baseOffset: 4.5, absorptivity: 0.85, thermalInertia: 0.55, nightCooling: 0.5 },
+            { name: '🛣️ 马路', baseOffset: 7.5, absorptivity: 0.90, thermalInertia: 0.45, nightCooling: 0.4 }  // 沥青吸热强，夜间释放慢
+        ];
+
+        // 根据WMO天气代码获取云量衰减因子 (0~1, 1为完全晴天)
+        function getCloudAttenuation(code) {
+            if (code === undefined || code === null) return 0.7; // 默认多云
+            if ([0, 1].includes(code)) return 1.0;      // 晴
+            if (code === 2) return 0.85;                // 部分多云
+            if (code === 3) return 0.65;                // 多云
+            if (code === 45 || code === 48) return 0.55; // 雾/霾
+            if (code >= 51 && code <= 67) return 0.3;    // 雨
+            if (code >= 71 && code <= 77) return 0.2;    // 雪
+            if (code >= 80) return 0.4;                  // 雷暴/阵雨
+            return 0.65;
+        }
+
+        // 计算太阳辐射引起的额外温升潜力 (基于纬度、日角、时角、云量)
+        function calcSolarGain(lat, dayOfYear, hour, weatherCode) {
+            // 太阳赤纬 (近似)
+            const declination = 23.45 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
+            const latRad = lat * Math.PI / 180;
+            const declRad = declination * Math.PI / 180;
+            
+            // 时角 (正午为0，每小时15度)
+            const hourAngle = (hour - 12) * 15 * Math.PI / 180;
+            
+            // 太阳高度角正弦
+            const sinElevation = Math.sin(latRad) * Math.sin(declRad) + Math.cos(latRad) * Math.cos(declRad) * Math.cos(hourAngle);
+            const solarElevation = Math.asin(Math.max(-0.2, Math.min(0.99, sinElevation))); // 限制范围
+            
+            if (solarElevation <= 0) return 0; // 夜间无直接辐射
+            
+            // 大气质量修正 (简化)
+            const airMass = 1 / (Math.sin(solarElevation) + 0.15 * Math.pow(solarElevation * 180/Math.PI + 3.885, -1.253));
+            const clearSkyTrans = 0.75; // 晴天透过率
+            
+            const cloudFactor = getCloudAttenuation(weatherCode);
+            
+            // 最大潜在辐射 (W/m²) 简化: 太阳常数1367 * 透过率
+            const maxRadiation = 1367 * clearSkyTrans * cloudFactor * Math.pow(0.9, airMass);
+            
+            // 转换为温升潜力: 经验值 ~ 晴天正午可使深色路面比气温高15-20°C
+            // 我们返回一个温升基准值 (单位: °C)
+            const baseGain = 18.0; // 晴天正午最大温升
+            const radiationRatio = maxRadiation / (1367 * 0.75); 
+            return baseGain * radiationRatio * Math.sin(solarElevation);
+        }
+
+        // 计算指定小时某材质的精准地面温度 (考虑热惯性)
+        function computeMaterialTempForHour(materialIdx, airTemp, hour, dayOfYear, lat, weatherCode, prevTemp = null) {
+            const mat = MATERIALS[materialIdx];
+            const solarGain = calcSolarGain(lat, dayOfYear, hour, weatherCode);
+            
+            // 辐射引起的瞬时温升 (材质吸收率调整)
+            let radHeating = solarGain * mat.absorptivity;
+            
+            // 夜间辐射冷却 (晴朗夜晚地面可低于气温)
+            let nightCool = 0;
+            if (solarGain === 0) {
+                const cloudFactor = getCloudAttenuation(weatherCode);
+                nightCool = - (1.5 + 2.0 * (1 - cloudFactor)) * mat.nightCooling; // 晴朗夜晚降温更明显
+            }
+            
+            // 稳态温度 (无热惯性)
+            const steadyTemp = airTemp + radHeating + nightCool;
+            
+            // 引入一阶热惯性 (前一时刻温度影响)
+            if (prevTemp !== null) {
+                const alpha = 0.3 + 0.5 * (1 - mat.thermalInertia); // 热惯性小则alpha大，响应快
+                return alpha * steadyTemp + (1 - alpha) * prevTemp;
+            } else {
+                return steadyTemp;
+            }
+        }
+
+        // 生成24小时材质温度曲线 (考虑热惯性)
+        function generateMaterialTempProfile(materialIdx, airMin, airMax, dayOfYear, lat, weatherCode) {
+            const hours = 24;
+            const profile = new Array(hours + 1).fill(0);
+            
+            // 先计算每小时空气温度 (正弦曲线，峰值在14点)
+            const airTemps = [];
+            const airMid = (airMin + airMax) / 2;
+            const airAmp = (airMax - airMin) / 2;
+            for (let h = 0; h <= hours; h++) {
+                const hourAngle = (h - 14) * Math.PI / 12;
+                airTemps.push(airMid + airAmp * Math.cos(hourAngle));
+            }
+            
+            // 初始温度设为气温 (或基于前一晚)
+            let prev = airTemps[0];
+            for (let h = 0; h <= hours; h++) {
+                const temp = computeMaterialTempForHour(materialIdx, airTemps[h], h, dayOfYear, lat, weatherCode, prev);
+                profile[h] = temp;
+                prev = temp;
+            }
+            return profile;
+        }
+
+        // 根据温度获取状态
+        function getTempStatus(temp) {
+            if (temp < 15) return { text: '危险', class: 'status-danger' };
+            if (temp < 20) return { text: '过冷', class: 'status-too-cold' };
+            if (temp < 28) return { text: '较冷', class: 'status-cool' };
+            if (temp <= 35) return { text: '适宜', class: 'status-good' };
+            if (temp <= 40) return { text: '较热', class: 'status-warm' };
+            if (temp <= 45) return { text: '过热', class: 'status-hot' };
+            return { text: '危险', class: 'status-danger-hot' };
         }
 
         // ---------- 反向地理编码 ----------
@@ -926,6 +1031,7 @@
             const day = dt.getDate();
             const hour = dt.getHours();
             const targetDateStr = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+            
             let airTemp = null, weatherCode = null, isEstimated = false;
             const hourlyData = await fetchHourlyWeather(currentLocation.lat, currentLocation.lng, targetDateStr, hour);
             if (hourlyData) {
@@ -950,32 +1056,25 @@
             document.getElementById('currentWeatherIcon').innerHTML = emoji;
             document.getElementById('currentWeatherDesc').innerHTML = (isEstimated && !hourlyData) ? '估算数据' : desc;
 
-            const multiplier = getWeatherOffsetMultiplier(weatherCode);
-            const materials = [
-                { name:'🌱 草地', baseOffset:0 }, { name:'🟫 土地', baseOffset:2 },
-                { name:'🏖️ 沙滩', baseOffset:3.5 }, { name:'🧱 地砖', baseOffset:4.5 },
-                { name:'🛣️ 马路', baseOffset:7.5 }
-            ];
+            // 使用新模型计算各材质当前温度
+            const dayOfYear = Math.floor((dt - new Date(dt.getFullYear(), 0, 0)) / 86400000);
             let gridHtml = '';
-            for (let m of materials) {
-                let offset = m.baseOffset * multiplier;
-                let tempVal = null, statusText = '', statusClass = '';
+            // 需要前一小时温度来模拟热惯性，简单起见用前一小时气温近似
+            let prevTemp = airTemp;
+            for (let idx=0; idx<MATERIALS.length; idx++) {
+                const mat = MATERIALS[idx];
+                let tempVal = null;
                 if (airTemp !== null && !isEstimated) {
-                    tempVal = airTemp + offset;
-                    if (tempVal < 20) { statusText = '过冷'; statusClass = 'status-cold'; }
-                    else if (tempVal >= 20 && tempVal <= 40) { statusText = '适宜'; statusClass = 'status-good'; }
-                    else { statusText = '过热'; statusClass = 'status-hot'; }
-                } else {
-                    tempVal = null;
-                    statusText = '--';
-                    statusClass = 'status-na';
+                    tempVal = computeMaterialTempForHour(idx, airTemp, hour, dayOfYear, currentLocation.lat, weatherCode, prevTemp);
                 }
+                const status = (tempVal !== null) ? getTempStatus(tempVal) : { text: '--', class: 'status-na' };
                 gridHtml += `
                     <div class="material-row">
-                        <span class="material-name">${m.name}</span>
+                        <span class="material-name">${mat.name}</span>
                         <span class="material-temp">${tempVal !== null ? tempVal.toFixed(1)+'℃' : '--'}</span>
-                        <span class="material-status"><span class="status-badge ${statusClass}">${statusText}</span></span>
+                        <span class="material-status"><span class="status-badge ${status.class}">${status.text}</span></span>
                     </div>`;
+                prevTemp = tempVal;
             }
             document.getElementById('currentMaterialGrid').innerHTML = gridHtml;
         }
@@ -1032,22 +1131,14 @@
                 } else throw new Error('no indices');
             } catch(e) {
                 let est = estimateDailyTemp(currentDayIndex);
-                dailyTempCache[currentDayIndex] = { min:est.min, max:est.max, real:false, isHistory:false, weatherCode: null };
-                currentRealWeather = { isReal:false, isHistory:false, weatherCode: null };
+                dailyTempCache[currentDayIndex] = { min:est.min, max:est.max, real:false, isHistory:false, weatherCode: 3 };
+                currentRealWeather = { isReal:false, isHistory:false, weatherCode: 3 };
             }
             updateLeftPanelAndTimeline(currentDayIndex);
             if(showToast) toast.classList.remove('show');
         }
         
-        function hourlyMaterialTemp(airMin, airMax, offsetAvg, hour) {
-            let mid = (airMin+airMax)/2;
-            let amp = (airMax-airMin)/2;
-            let hourAngle = (hour-14)*Math.PI/12;
-            let airTemp = mid + amp*Math.cos(hourAngle);
-            return airTemp + offsetAvg;
-        }
-        
-        function drawMaterialTimeline(canvasId, airMin, airMax, offsetAvg) {
+        function drawMaterialTimelineWithProfile(canvasId, tempProfile) {
             const canvas = document.getElementById(canvasId);
             if(!canvas) return;
             const container = canvas.parentElement;
@@ -1055,11 +1146,10 @@
             canvas.width = width;
             canvas.height = 18;
             const ctxCanvas = canvas.getContext('2d');
-            let hourTemps = [];
-            for(let h=0; h<=24; h++) hourTemps.push(hourlyMaterialTemp(airMin, airMax, offsetAvg, h));
-            const minTemp = Math.min(...hourTemps);
-            const maxTemp = Math.max(...hourTemps);
-            if(maxTemp < 20) {
+            const minTemp = Math.min(...tempProfile);
+            const maxTemp = Math.max(...tempProfile);
+            
+            if(maxTemp < 28) {
                 ctxCanvas.fillStyle = "#3b82f6";
                 ctxCanvas.beginPath();
                 ctxCanvas.roundRect(0, 0, width, 18, 9);
@@ -1071,26 +1161,29 @@
                 ctxCanvas.fillText("❄️ 不适宜", width/2, 9);
                 return;
             }
-            if(minTemp > 40) {
-                ctxCanvas.fillStyle = "#f97316";
+            if(minTemp > 35) {
+                ctxCanvas.fillStyle = "#dc2626";
                 ctxCanvas.beginPath();
                 ctxCanvas.roundRect(0, 0, width, 18, 9);
                 ctxCanvas.fill();
                 ctxCanvas.fillStyle = "white";
                 ctxCanvas.font = "bold 10px 'Segoe UI'";
                 ctxCanvas.textAlign = "center";
+                ctxCanvas.textBaseline = "middle";
                 ctxCanvas.fillText("🔥 不适宜", width/2, 9);
                 return;
             }
+            
             ctxCanvas.fillStyle = "#f2eddd";
             ctxCanvas.beginPath();
             ctxCanvas.roundRect(0, 0, width, 18, 9);
             ctxCanvas.fill();
+            
             let periods = [];
             let inPeriod = false, startHour = 0;
             for(let h=0; h<=24; h++) {
-                let temp = hourTemps[h];
-                let suitable = (temp>=20 && temp<=40);
+                let temp = tempProfile[h];
+                let suitable = (temp>=28 && temp<=35);
                 if(suitable && !inPeriod) {
                     inPeriod = true;
                     startHour = h;
@@ -1101,6 +1194,7 @@
                 }
             }
             if(inPeriod) periods.push({start:startHour, end:24});
+            
             for(let p of periods) {
                 let startX = (p.start/24)*width;
                 let endX = (p.end/24)*width;
@@ -1133,48 +1227,37 @@
         }
         
         function updateLeftPanelAndTimeline(dayIdx){
-            let air = dailyTempCache[dayIdx] || {min:15,max:25,real:false,isHistory:false};
+            let air = dailyTempCache[dayIdx] || {min:15,max:25,real:false,isHistory:false, weatherCode:3};
             let airMin=air.min, airMax=air.max;
             let targetDate = getDateStrFromIdx(dayIdx);
             let useReal = (currentRealWeather.isReal && currentRealWeather.dateStr===targetDate);
             let dataType = "估算数据";
-            let weatherCodeForMultiplier = useReal ? currentRealWeather.weatherCode : null;
+            let weatherCode = useReal ? currentRealWeather.weatherCode : 3;
             if (useReal) {
-                const todayStr = new Date().toISOString().slice(0,10);
-                const targetDateObj = new Date(targetDate);
-                const todayObj = new Date(todayStr);
-                const diffDays = Math.floor((targetDateObj - todayObj) / (86400000));
-                if (diffDays < 0) dataType = "历史数据";
-                else dataType = "预报数据";
+                const diffDays = Math.floor((new Date(targetDate) - new Date(new Date().toISOString().slice(0,10))) / 86400000);
+                dataType = diffDays < 0 ? "历史数据" : "预报数据";
             }
             const cityName = currentLocation.name;
-            const titleElem = document.getElementById('cityTitle');
-            titleElem.innerHTML = `📍 ${cityName} · 自然足感 <span class="data-tag" style="font-size:0.7rem; background:#e67e22; margin-left:6px; vertical-align:middle;">${dataType}</span>`;
-            document.getElementById('airTempRange').innerHTML = `<span>${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃</span>`;
-            let feelsHtml = (useReal && currentRealWeather.feelsMin) ? `${currentRealWeather.feelsMin.toFixed(1)}~${currentRealWeather.feelsMax.toFixed(1)}℃` : `${(airMin+0.5).toFixed(1)}~${(airMax+2).toFixed(1)}℃`;
-            document.getElementById('feelsLikeTemp').innerHTML = `<span>${feelsHtml}</span>`;
-            let groundHtml = (useReal && currentRealWeather.groundMin) ? `${currentRealWeather.groundMin.toFixed(1)}~${currentRealWeather.groundMax.toFixed(1)}℃` : `${(airMin+1).toFixed(1)}~${(airMax+3).toFixed(1)}℃`;
-            document.getElementById('groundTempRange').innerHTML = `<span>${groundHtml}</span>`;
+            document.getElementById('cityTitle').innerHTML = `📍 ${cityName} · 自然足感 <span class="data-tag">${dataType}</span>`;
+            document.getElementById('airTempRange').innerHTML = `${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃`;
             
-            const multiplier = getWeatherOffsetMultiplier(weatherCodeForMultiplier);
-            const materials = [
-                { name:'🌱 草地', baseOffset:0 },
-                { name:'🟫 土地', baseOffset:2 },
-                { name:'🏖️ 沙滩', baseOffset:3.5 },
-                { name:'🧱 地砖', baseOffset:4.5 },
-                { name:'🛣️ 马路', baseOffset:7.5 }
-            ];
+            let feelsHtml = (useReal && currentRealWeather.feelsMin) ? `${currentRealWeather.feelsMin.toFixed(1)}~${currentRealWeather.feelsMax.toFixed(1)}℃` : `${(airMin+0.5).toFixed(1)}~${(airMax+2).toFixed(1)}℃`;
+            document.getElementById('feelsLikeTemp').innerHTML = feelsHtml;
+            let groundHtml = (useReal && currentRealWeather.groundMin) ? `${currentRealWeather.groundMin.toFixed(1)}~${currentRealWeather.groundMax.toFixed(1)}℃` : `${(airMin+1).toFixed(1)}~${(airMax+3).toFixed(1)}℃`;
+            document.getElementById('groundTempRange').innerHTML = groundHtml;
+            
+            const dayOfYear = getDayOfYearFromIndex(dayIdx);
             let surfaceHtml = '';
-            materials.forEach((m, idx) => {
-                let offset = m.baseOffset * multiplier;
-                let tempRangeLow = airMin + offset - 1;
-                let tempRangeHigh = airMax + offset + 1;
-                let canvasId = `timelineCanvas_${idx}`;
+            MATERIALS.forEach((mat, idx) => {
+                const profile = generateMaterialTempProfile(idx, airMin, airMax, dayOfYear, currentLocation.lat, weatherCode);
+                const minT = Math.min(...profile);
+                const maxT = Math.max(...profile);
+                const canvasId = `timelineCanvas_${idx}`;
                 surfaceHtml += `
                     <div class="surface-row">
                         <div class="surface-header">
-                            <span class="surface-name">${m.name}</span>
-                            <span class="surface-temp-range">${tempRangeLow.toFixed(1)}~${tempRangeHigh.toFixed(1)}℃</span>
+                            <span class="surface-name">${mat.name}</span>
+                            <span class="surface-temp-range">${minT.toFixed(1)}~${maxT.toFixed(1)}℃</span>
                         </div>
                         <div class="timeline-canvas-wrapper">
                             <canvas id="${canvasId}" class="timeline-canvas" width="600" height="18"></canvas>
@@ -1184,11 +1267,16 @@
             });
             document.getElementById('surfaceList').innerHTML = surfaceHtml;
             setTimeout(() => {
-                materials.forEach((m, idx) => {
-                    let offset = m.baseOffset * multiplier;
-                    drawMaterialTimeline(`timelineCanvas_${idx}`, airMin, airMax, offset);
+                MATERIALS.forEach((mat, idx) => {
+                    const profile = generateMaterialTempProfile(idx, airMin, airMax, dayOfYear, currentLocation.lat, weatherCode);
+                    drawMaterialTimelineWithProfile(`timelineCanvas_${idx}`, profile);
                 });
             }, 10);
+        }
+        
+        function getDayOfYearFromIndex(dayIdx) {
+            const d = getDateFromIndex(dayIdx);
+            return Math.floor((new Date(d.year, d.month-1, d.day) - new Date(d.year, 0, 0)) / 86400000);
         }
         
         function syncDateTimePickerFromDayIndex() {
@@ -1205,7 +1293,7 @@
             document.getElementById('datetimePicker').value = `${year}-${month}-${day}T${timePart}`;
         }
         
-        // 圆盘绘制 (保持原有逻辑)
+        // 圆盘绘制 (保持不变)
         function hexToRgb(hex) { let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16); return [r,g,b]; }
         function interpolateColor(c1,c2,t){ let rgb1=hexToRgb(c1),rgb2=hexToRgb(c2); return `rgb(${Math.round(rgb1[0]+(rgb2[0]-rgb1[0])*t)},${Math.round(rgb1[1]+(rgb2[1]-rgb1[1])*t)},${Math.round(rgb1[2]+(rgb2[2]-rgb1[2])*t)})`; }
         function getAngleGradientColor(deg) {
@@ -1333,7 +1421,7 @@
             currentLocation = { name: city.name, lat: city.lat, lng: city.lng };
             document.getElementById('cityTitle').innerHTML = `📍 ${city.name} · 自然足感`;
             updateCalendar();
-            for(let idx=0; idx<totalDays; idx++){ let est=estimateDailyTemp(idx); dailyTempCache[idx]={ min:est.min, max:est.max, real:false }; }
+            for(let idx=0; idx<totalDays; idx++){ let est=estimateDailyTemp(idx); dailyTempCache[idx]={ min:est.min, max:est.max, real:false, weatherCode:3 }; }
             await refreshWeatherForCurrentDate(true);
             let nowVal = document.getElementById('datetimePicker').value;
             if(nowVal) updateCurrentCardByDateTime(nowVal);
@@ -1420,7 +1508,7 @@
         
         // 初始化
         updateCalendar();
-        for(let i=0;i<totalDays;i++){ let e=estimateDailyTemp(i); dailyTempCache[i]={ min:e.min, max:e.max, real:false }; }
+        for(let i=0;i<totalDays;i++){ let e=estimateDailyTemp(i); dailyTempCache[i]={ min:e.min, max:e.max, real:false, weatherCode:3 }; }
         let nowDate = new Date();
         currentDayIndex = getDayIndex(nowDate.getMonth()+1, nowDate.getDate());
         pointerAngle = getAngleFromDayIndex(currentDayIndex);
