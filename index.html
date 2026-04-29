@@ -932,11 +932,13 @@
             locateMessage.innerHTML = '<span>📍 正在获取位置信息...</span>';
             
             let location = null;
-            locateMessage.innerHTML = '<span>🌏 通过IP定位中...</span>';
-            location = await tryMultiIpLocation();
+            // 优先使用浏览器精确定位
+            locateMessage.innerHTML = '<span>📡 尝试浏览器定位...</span>';
+            location = await tryBrowserLocation();
             if (!location || !location.lat) {
-                locateMessage.innerHTML = '<span>📡 尝试浏览器定位...</span>';
-                location = await tryBrowserLocation();
+                // 浏览器定位失败，回退到IP定位
+                locateMessage.innerHTML = '<span>🌏 通过IP定位中...</span>';
+                location = await tryMultiIpLocation();
             }
             
             if (location && location.lat && location.lng) {
