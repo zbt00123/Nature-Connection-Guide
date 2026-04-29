@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>亲近自然指南 · 净足时光</title>
     
-    <!-- 固定分享图标（完整绝对路径） -->
     <link rel="icon" type="image/png" href="https://zbt00123.github.io/Nature-Connection-Guide/icon.png">
     <link rel="apple-touch-icon" href="https://zbt00123.github.io/Nature-Connection-Guide/icon.png">
     <meta property="og:title" content="亲近自然指南 · 净足时光">
@@ -14,7 +13,6 @@
     <meta property="og:type" content="website">
     
     <style>
-        /* 风险提示弹窗 */
         .risk-modal {
             position: fixed;
             top: 0;
@@ -99,7 +97,6 @@
             transform: scale(0.98);
         }
 
-        /* ========== 全屏“出血”背景 ========== */
         html {
             height: 100%;
             background: linear-gradient(135deg, #fce5c4 0%, #c8e0f0 50%, #e8d4f0 100%);
@@ -273,14 +270,13 @@
             color: white;
             background: #aaa;
         }
-        /* 新温度区间样式 */
-        .status-danger { background: #1e3a8a; }      /* <15℃ 危险深蓝 */
-        .status-too-cold { background: #3b82f6; }    /* 15~20℃ 过冷蓝 */
-        .status-cool { background: #60a5fa; }        /* 20~28℃ 较冷浅蓝 */
-        .status-good { background: #22c55e; }        /* 28~35℃ 适宜绿 */
-        .status-warm { background: #f97316; }        /* 35~40℃ 较热橙 */
-        .status-hot { background: #ea580c; }         /* 40~45℃ 过热深橙 */
-        .status-danger-hot { background: #dc2626; }  /* ≥45℃ 危险红 */
+        .status-danger { background: #1e3a8a; }
+        .status-too-cold { background: #3b82f6; }
+        .status-cool { background: #60a5fa; }
+        .status-good { background: #22c55e; }
+        .status-warm { background: #f97316; }
+        .status-hot { background: #ea580c; }
+        .status-danger-hot { background: #dc2626; }
         .status-na { background: #9ca3af; }
 
         .card-header {
@@ -613,7 +609,6 @@
                     </div>
                 </div>
                 <div class="material-grid" id="currentMaterialGrid"></div>
-                <!-- 新增提示行 -->
                 <div style="text-align:center; font-size:0.8rem; margin-top:12px; color:#6b5a3a;">⚠️地面温度为综合估算，请以实际为准。</div>
             </div>
 
@@ -654,7 +649,6 @@
     </div>
 </div>
 
-<!-- 风险提示弹窗 -->
 <div id="riskModal" class="risk-modal">
     <div class="risk-content">
         <h3><span class="risk-warning-icon">⚠️</span> 赤足安全须知</h3>
@@ -672,7 +666,6 @@
     </div>
 </div>
 
-<!-- 城市选择器浮层 -->
 <div id="citySelectorOverlay" class="city-selector-overlay">
     <div class="city-selector-panel">
         <h4>🌆 搜索城市 (中文 / 拼音)</h4>
@@ -700,7 +693,6 @@
 
 <script>
     (function(){
-        // ---------- 风险弹窗 ----------
         const riskModal = document.getElementById('riskModal');
         const riskConfirmBtn = document.getElementById('riskConfirmBtn');
         if (!localStorage.getItem('riskAcknowledged')) {
@@ -714,7 +706,6 @@
             }
         });
 
-        // ---------- 全局变量 ----------
         let currentLocation = { name: "北京", lat: 39.9042, lng: 116.4074 };
         let currentYear = new Date().getFullYear();
         let monthDays = [];
@@ -737,93 +728,64 @@
         let locateMessage = document.getElementById('locateMessage');
         let locateButtons = document.getElementById('locateButtons');
 
-        // ---------- 材质热物理参数 (用于精准估算) ----------
         const MATERIALS = [
-            { name: '🌱 草地', baseOffset: 0,   absorptivity: 0.65, thermalInertia: 0.7, nightCooling: 0.5 },  // 草地升温慢，夜间降温也慢
+            { name: '🌱 草地', baseOffset: 0,   absorptivity: 0.65, thermalInertia: 0.7, nightCooling: 0.5 },
             { name: '🟫 土地', baseOffset: 2,   absorptivity: 0.75, thermalInertia: 0.6, nightCooling: 0.6 },
-            { name: '🏖️ 沙滩', baseOffset: 3.5, absorptivity: 0.80, thermalInertia: 0.4, nightCooling: 0.8 },  // 沙子升温快，降温也快
+            { name: '🏖️ 沙滩', baseOffset: 3.5, absorptivity: 0.80, thermalInertia: 0.4, nightCooling: 0.8 },
             { name: '🧱 地砖', baseOffset: 4.5, absorptivity: 0.85, thermalInertia: 0.55, nightCooling: 0.5 },
-            { name: '🛣️ 马路', baseOffset: 7.5, absorptivity: 0.90, thermalInertia: 0.45, nightCooling: 0.4 }  // 沥青吸热强，夜间释放慢
+            { name: '🛣️ 马路', baseOffset: 7.5, absorptivity: 0.90, thermalInertia: 0.45, nightCooling: 0.4 }
         ];
 
-        // 根据WMO天气代码获取云量衰减因子 (0~1, 1为完全晴天)
         function getCloudAttenuation(code) {
-            if (code === undefined || code === null) return 0.7; // 默认多云
-            if ([0, 1].includes(code)) return 1.0;      // 晴
-            if (code === 2) return 0.85;                // 部分多云
-            if (code === 3) return 0.65;                // 多云
-            if (code === 45 || code === 48) return 0.55; // 雾/霾
-            if (code >= 51 && code <= 67) return 0.3;    // 雨
-            if (code >= 71 && code <= 77) return 0.2;    // 雪
-            if (code >= 80) return 0.4;                  // 雷暴/阵雨
+            if (code === undefined || code === null) return 0.7;
+            if ([0, 1].includes(code)) return 1.0;
+            if (code === 2) return 0.85;
+            if (code === 3) return 0.65;
+            if (code === 45 || code === 48) return 0.55;
+            if (code >= 51 && code <= 67) return 0.3;
+            if (code >= 71 && code <= 77) return 0.2;
+            if (code >= 80) return 0.4;
             return 0.65;
         }
 
-        // 计算太阳辐射引起的额外温升潜力 (基于纬度、日角、时角、云量)
         function calcSolarGain(lat, dayOfYear, hour, weatherCode) {
-            // 太阳赤纬 (近似)
             const declination = 23.45 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
             const latRad = lat * Math.PI / 180;
             const declRad = declination * Math.PI / 180;
-            
-            // 时角 (正午为0，每小时15度)
             const hourAngle = (hour - 12) * 15 * Math.PI / 180;
-            
-            // 太阳高度角正弦
             const sinElevation = Math.sin(latRad) * Math.sin(declRad) + Math.cos(latRad) * Math.cos(declRad) * Math.cos(hourAngle);
-            const solarElevation = Math.asin(Math.max(-0.2, Math.min(0.99, sinElevation))); // 限制范围
-            
-            if (solarElevation <= 0) return 0; // 夜间无直接辐射
-            
-            // 大气质量修正 (简化)
+            const solarElevation = Math.asin(Math.max(-0.2, Math.min(0.99, sinElevation)));
+            if (solarElevation <= 0) return 0;
             const airMass = 1 / (Math.sin(solarElevation) + 0.15 * Math.pow(solarElevation * 180/Math.PI + 3.885, -1.253));
-            const clearSkyTrans = 0.75; // 晴天透过率
-            
+            const clearSkyTrans = 0.75;
             const cloudFactor = getCloudAttenuation(weatherCode);
-            
-            // 最大潜在辐射 (W/m²) 简化: 太阳常数1367 * 透过率
             const maxRadiation = 1367 * clearSkyTrans * cloudFactor * Math.pow(0.9, airMass);
-            
-            // 转换为温升潜力: 经验值 ~ 晴天正午可使深色路面比气温高15-20°C
-            // 我们返回一个温升基准值 (单位: °C)
-            const baseGain = 18.0; // 晴天正午最大温升
+            const baseGain = 18.0;
             const radiationRatio = maxRadiation / (1367 * 0.75); 
             return baseGain * radiationRatio * Math.sin(solarElevation);
         }
 
-        // 计算指定小时某材质的精准地面温度 (考虑热惯性)
         function computeMaterialTempForHour(materialIdx, airTemp, hour, dayOfYear, lat, weatherCode, prevTemp = null) {
             const mat = MATERIALS[materialIdx];
             const solarGain = calcSolarGain(lat, dayOfYear, hour, weatherCode);
-            
-            // 辐射引起的瞬时温升 (材质吸收率调整)
             let radHeating = solarGain * mat.absorptivity;
-            
-            // 夜间辐射冷却 (晴朗夜晚地面可低于气温)
             let nightCool = 0;
             if (solarGain === 0) {
                 const cloudFactor = getCloudAttenuation(weatherCode);
-                nightCool = - (1.5 + 2.0 * (1 - cloudFactor)) * mat.nightCooling; // 晴朗夜晚降温更明显
+                nightCool = - (1.5 + 2.0 * (1 - cloudFactor)) * mat.nightCooling;
             }
-            
-            // 稳态温度 (无热惯性)
             const steadyTemp = airTemp + radHeating + nightCool;
-            
-            // 引入一阶热惯性 (前一时刻温度影响)
             if (prevTemp !== null) {
-                const alpha = 0.3 + 0.5 * (1 - mat.thermalInertia); // 热惯性小则alpha大，响应快
+                const alpha = 0.3 + 0.5 * (1 - mat.thermalInertia);
                 return alpha * steadyTemp + (1 - alpha) * prevTemp;
             } else {
                 return steadyTemp;
             }
         }
 
-        // 生成24小时材质温度曲线 (考虑热惯性)
         function generateMaterialTempProfile(materialIdx, airMin, airMax, dayOfYear, lat, weatherCode) {
             const hours = 24;
             const profile = new Array(hours + 1).fill(0);
-            
-            // 先计算每小时空气温度 (正弦曲线，峰值在14点)
             const airTemps = [];
             const airMid = (airMin + airMax) / 2;
             const airAmp = (airMax - airMin) / 2;
@@ -831,8 +793,6 @@
                 const hourAngle = (h - 14) * Math.PI / 12;
                 airTemps.push(airMid + airAmp * Math.cos(hourAngle));
             }
-            
-            // 初始温度设为气温 (或基于前一晚)
             let prev = airTemps[0];
             for (let h = 0; h <= hours; h++) {
                 const temp = computeMaterialTempForHour(materialIdx, airTemps[h], h, dayOfYear, lat, weatherCode, prev);
@@ -842,7 +802,6 @@
             return profile;
         }
 
-        // 根据温度获取状态
         function getTempStatus(temp) {
             if (temp < 15) return { text: '危险', class: 'status-danger' };
             if (temp < 20) return { text: '过冷', class: 'status-too-cold' };
@@ -853,7 +812,6 @@
             return { text: '危险', class: 'status-danger-hot' };
         }
 
-        // ---------- 反向地理编码 ----------
         async function reverseGeocode(lat, lng) {
             try {
                 const revRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`);
@@ -864,7 +822,6 @@
             } catch(e) { return null; }
         }
         
-        // ---------- IP定位 ----------
         async function tryMultiIpLocation() {
             const timeoutMs = 5000;
             const fetchWithTimeout = (url, options = {}) => {
@@ -925,18 +882,33 @@
             });
         }
         
-        async function performLocation() {
+        async function performLocation(fromUserGesture = false) {
             if (locateToast.classList.contains('show')) return;
             locateToast.classList.add('show');
             locateButtons.innerHTML = '';
             locateMessage.innerHTML = '<span>📍 正在获取位置信息...</span>';
             
             let location = null;
-            // 优先使用浏览器精确定位
-            locateMessage.innerHTML = '<span>📡 尝试浏览器定位...</span>';
-            location = await tryBrowserLocation();
+            let tryBrowser = false;
+            if (navigator.geolocation) {
+                if (!fromUserGesture && navigator.permissions) {
+                    try {
+                        const permStatus = await navigator.permissions.query({ name: 'geolocation' });
+                        tryBrowser = (permStatus.state === 'granted');
+                    } catch (e) {
+                        tryBrowser = true;
+                    }
+                } else {
+                    tryBrowser = true;
+                }
+            }
+
+            if (tryBrowser) {
+                locateMessage.innerHTML = '<span>📡 尝试浏览器定位...</span>';
+                location = await tryBrowserLocation();
+            }
+            
             if (!location || !location.lat) {
-                // 浏览器定位失败，回退到IP定位
                 locateMessage.innerHTML = '<span>🌏 通过IP定位中...</span>';
                 location = await tryMultiIpLocation();
             }
@@ -951,7 +923,7 @@
                     <button class="locate-btn" id="locateRetryBtn">🔄 重试</button>
                     <button class="locate-btn primary" id="locateSelectCityBtn">📌 选择城市</button>
                 `;
-                document.getElementById('locateRetryBtn').addEventListener('click', () => { locateToast.classList.remove('show'); performLocation(); });
+                document.getElementById('locateRetryBtn').addEventListener('click', () => { locateToast.classList.remove('show'); performLocation(true); });
                 document.getElementById('locateSelectCityBtn').addEventListener('click', () => { locateToast.classList.remove('show'); document.getElementById('openCityPickerBtn').click(); });
             }
         }
@@ -1058,10 +1030,8 @@
             document.getElementById('currentWeatherIcon').innerHTML = emoji;
             document.getElementById('currentWeatherDesc').innerHTML = (isEstimated && !hourlyData) ? '估算数据' : desc;
 
-            // 使用新模型计算各材质当前温度
             const dayOfYear = Math.floor((dt - new Date(dt.getFullYear(), 0, 0)) / 86400000);
             let gridHtml = '';
-            // 需要前一小时温度来模拟热惯性，简单起见用前一小时气温近似
             let prevTemp = airTemp;
             for (let idx=0; idx<MATERIALS.length; idx++) {
                 const mat = MATERIALS[idx];
@@ -1295,7 +1265,6 @@
             document.getElementById('datetimePicker').value = `${year}-${month}-${day}T${timePart}`;
         }
         
-        // 圆盘绘制 (保持不变)
         function hexToRgb(hex) { let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16); return [r,g,b]; }
         function interpolateColor(c1,c2,t){ let rgb1=hexToRgb(c1),rgb2=hexToRgb(c2); return `rgb(${Math.round(rgb1[0]+(rgb2[0]-rgb1[0])*t)},${Math.round(rgb1[1]+(rgb2[1]-rgb1[1])*t)},${Math.round(rgb1[2]+(rgb2[2]-rgb1[2])*t)})`; }
         function getAngleGradientColor(deg) {
@@ -1451,11 +1420,10 @@
             });
         }
         
-        // 事件绑定
         document.getElementById('datetimePicker').addEventListener('change', syncFromDateTimePicker);
         document.getElementById('todayBtnMobile').addEventListener('click', setNowDateTime);
         document.getElementById('openCityPickerBtn').onclick = ()=>document.getElementById('citySelectorOverlay').classList.add('active');
-        document.getElementById('autoLocateBtn').onclick = ()=>performLocation();
+        document.getElementById('autoLocateBtn').onclick = ()=>performLocation(true);
         document.getElementById('closeCityPicker').addEventListener('click',()=>{ document.getElementById('citySelectorOverlay').classList.remove('active'); });
         document.getElementById('citySearchInput').addEventListener('input',(e)=>{ if(searchDebounce)clearTimeout(searchDebounce); searchDebounce=setTimeout(()=>renderCitySelector(e.target.value),300); });
         document.querySelectorAll('.hot-city-btn').forEach(btn=>{
@@ -1508,7 +1476,6 @@
             }
         });
         
-        // 初始化
         updateCalendar();
         for(let i=0;i<totalDays;i++){ let e=estimateDailyTemp(i); dailyTempCache[i]={ min:e.min, max:e.max, real:false, weatherCode:3 }; }
         let nowDate = new Date();
