@@ -36,6 +36,7 @@
 - **反向地理编码**：[BigDataCloud](https://www.bigdatacloud.com/)（经纬度转城市名称）
 - **辅助图标**：豆包AI 生成
 - **交互算法**：DeepSeek / 通义千问
+- **🌓 深色模式适配**：[Dark Reader](https://github.com/darkreader/darkreader)（开源项目鸣谢）
 
 ## 🖱️ 使用指南
 
