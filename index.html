@@ -10,8 +10,7 @@
     <meta property="og:description" content="查看不同地面材质在全年中的赤足适宜时段，实时天气数据辅助决策。">
     <meta property="og:image" content="https://zbt00123.github.io/Nature-Connection-Guide/icon.png">
     <meta property="og:type" content="website">
-    <script src="https://cdn.jsdelivr.net/npm/darkreader@4.9.89/darkreader.min.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/darkreader@4.9.89/darkreader.min.js"></script>
     <style>
         .color-scheme-toggle {
             position: fixed;
@@ -398,6 +397,13 @@
             background: rgba(250, 245, 235, 0.75);
             backdrop-filter: blur(4px);
         }
+        .footer-info a {
+            color: #5a7a4a;
+            text-decoration: none;
+        }
+        .footer-info a:hover {
+            text-decoration: underline;
+        }
         .city-selector-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -554,6 +560,7 @@
             <p>⚠️ 免责声明:本指南仅供参考，使用者需自行承担风险。</p>
             <p>👮 版权&用途:仅供技术学习与个人使用，禁止商用。</p>
             <p>🤖 核心交互与算法：DeepSeek | 天气集成：通义千问 | 图标：豆包AI</p>
+            <p>🌓 深色模式适配：<a href="https://github.com/darkreader/darkreader" target="_blank" rel="noopener noreferrer">Dark Reader</a> (开源项目鸣谢)</p>
             <div style="text-align: center; margin-top: 12px;">
                 <img src="https://visitor-badge.laobi.icu/badge?page_id=zbt00123.Nature-Connection-Guide&left_color=red&right_color=green&left_text=Welcome" alt="访问量">
             </div>
@@ -680,6 +687,45 @@
                 { name: '🧱 地砖', baseOffset: 4.5, absorptivity: 0.85, thermalInertia: 0.55, nightCooling: 0.5 },
                 { name: '🛣️ 马路', baseOffset: 7.5, absorptivity: 0.90, thermalInertia: 0.45, nightCooling: 0.4 }
             ];
+
+            // 辅助函数: 将十六进制颜色亮度提高 (保留色相)
+            function lightenColor(hex, amount = 0.35) {
+                let r = parseInt(hex.slice(1,3), 16) / 255;
+                let g = parseInt(hex.slice(3,5), 16) / 255;
+                let b = parseInt(hex.slice(5,7), 16) / 255;
+                let max = Math.max(r,g,b), min = Math.min(r,g,b);
+                let h, s, l = (max + min) / 2;
+                if (max === min) { h = s = 0; }
+                else {
+                    let d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+                    else if (max === g) h = (b - r) / d + 2;
+                    else h = (r - g) / d + 4;
+                    h /= 6;
+                }
+                let newL = Math.min(0.92, l + amount);
+                function hue2rgb(p, q, t) {
+                    if(t < 0) t += 1;
+                    if(t > 1) t -= 1;
+                    if(t < 1/6) return p + (q - p) * 6 * t;
+                    if(t < 1/2) return q;
+                    if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                }
+                let q, p;
+                if (newL < 0.5) q = newL * (1 + s);
+                else q = newL + s - newL * s;
+                p = 2 * newL - q;
+                let newR = hue2rgb(p, q, h + 1/3);
+                let newG = hue2rgb(p, q, h);
+                let newB = hue2rgb(p, q, h - 1/3);
+                let toHex = (x) => {
+                    let hex = Math.round(x * 255).toString(16);
+                    return hex.length === 1 ? '0' + hex : hex;
+                };
+                return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
+            }
 
             function getCloudAttenuation(code) {
                 if (code == null) return 0.7;
@@ -1116,7 +1162,6 @@
             function interpolateColor(c1,c2,t){ let rgb1=hexToRgb(c1),rgb2=hexToRgb(c2); return `rgb(${Math.round(rgb1[0]+(rgb2[0]-rgb1[0])*t)},${Math.round(rgb1[1]+(rgb2[1]-rgb1[1])*t)},${Math.round(rgb1[2]+(rgb2[2]-rgb1[2])*t)})`; }
 
             function getSeasonColors() {
-                // 浅色与深色模式均使用相同的纯净色值 (深色模式额外透明度在drawWheel中通过globalAlpha控制)
                 return [
                     { deg:45, color:'#b0e1fa' },
                     { deg:135, color:'#bcda8b' },
@@ -1159,7 +1204,8 @@
                     let ang = adjAngle(idx);
                     let x = centerX + radiusText * Math.cos(ang);
                     let y = centerY + radiusText * Math.sin(ang);
-                    ctx.fillStyle = dark ? '#e0e0e0' : s.color;
+                    let textColor = dark ? lightenColor(s.color, 0.35) : s.color;
+                    ctx.fillStyle = textColor;
                     ctx.shadowColor = dark ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.25)";
                     ctx.shadowBlur = 3;
                     ctx.fillText(s.name, x, y);
@@ -1172,7 +1218,6 @@
                 if(!ctx) return;
                 ctx.clearRect(0,0,size,size);
                 const dark = isDarkMode();
-                // 深色模式圆环使用40%透明度，浅色模式完全不透明
                 if(dark) {
                     ctx.globalAlpha = 0.4;
                 } else {
@@ -1193,7 +1238,6 @@
                     ctx.fillStyle=color;
                     ctx.fill();
                 }
-                // 恢复透明度，后续绘制指针/文字等不透明
                 ctx.globalAlpha = 1.0;
                 ctx.save();
                 ctx.lineWidth=3;
