@@ -601,7 +601,7 @@
     </div>
     <div id="loadingToast" class="loading-toast"><div class="toast-message">获取天气中...</div></div>
     <div id="locateToast" class="locate-toast">
-        <div class="locate-message" id="locateMessage">正在获取位置信息...</div>
+        <div class="locate-message" id="locateMessage">正在定位...</div>
         <div class="locate-buttons" id="locateButtons"></div>
     </div>
     <script>
@@ -688,7 +688,6 @@
                 { name: '🛣️ 马路', baseOffset: 7.5, absorptivity: 0.90, thermalInertia: 0.45, nightCooling: 0.4 }
             ];
 
-            // 辅助函数: 将十六进制颜色亮度提高 (保留色相)
             function lightenColor(hex, amount = 0.35) {
                 let r = parseInt(hex.slice(1,3), 16) / 255;
                 let g = parseInt(hex.slice(3,5), 16) / 255;
@@ -853,12 +852,6 @@
                 return null;
             }
 
-            /**
-             * 尝试通过浏览器定位获取位置。
-             * 如果成功，返回带有 city、lat、lng 的对象；
-             * 如果用户拒绝了定位权限，返回 { permissionDenied: true }；
-             * 其他失败情况返回 null。
-             */
             async function tryBrowserLocation() {
                 if (!navigator.geolocation) return null;
                 return new Promise((resolve) => {
@@ -869,61 +862,37 @@
                         if (cityName) resolve({ name: cityName, lat, lng });
                         else resolve({ name: '当前位置', lat, lng });
                     }, (error) => {
-                        // 定位失败：如果是权限拒绝则返回特殊标记，否则返回null
-                        if (error.code === error.PERMISSION_DENIED) {
-                            resolve({ permissionDenied: true });
-                        } else {
-                            resolve(null);
-                        }
+                        // 定位失败统一返回 null
+                        resolve(null);
                     }, { timeout: 10000, enableHighAccuracy: false });
                 });
             }
 
-            /**
-             * 完整的定位流程：
-             * 1. 优先使用浏览器定位（精确）
-             * 2. 若权限被拒，根据协议给出明确提示，并自动使用IP定位（可能偏差）
-             * 3. 若浏览器定位因其他原因失败，尝试IP定位
-             * 4. 全部失败则提示手动选择城市
-             */
             async function performLocation() {
                 if (locateToast.classList.contains('show')) return;
                 locateToast.classList.add('show');
                 locateButtons.innerHTML = '';
-                // 步骤1：请求浏览器定位权限
-                locateMessage.innerHTML = '<span>📍 正在获取位置权限...</span>';
+                locateMessage.innerHTML = '<span>📍 正在获取位置...</span>';
 
                 let location = null;
                 const browserResult = await tryBrowserLocation();
 
-                if (browserResult && browserResult.permissionDenied) {
-                    // 权限被拒绝：区分是用户主动拒绝还是非HTTPS环境限制
-                    const isSecure = window.location.protocol === 'https:';
-                    if (!isSecure) {
-                        // Safari 等浏览器在非 HTTPS 下会直接返回 PERMISSION_DENIED，而非真正的用户拒绝
-                        locateMessage.innerHTML = '<span>🔒 非 HTTPS 连接，无法请求精确定位。<br>正在使用 IP 定位（可能略有偏差）。<br>建议通过 HTTPS 打开网站以获得更准确位置。</span>';
-                    } else {
-                        // HTTPS 下仍被拒绝，多为用户主动拒绝
-                        locateMessage.innerHTML = '<span>🔒 定位权限被拒绝，请开启系统定位权限以获取更精确位置。<br>正在使用 IP 定位（可能略有偏差）...</span>';
-                    }
-                    location = await tryMultiIpLocation();
-                } else if (browserResult && browserResult.lat) {
-                    // 浏览器定位成功
+                if (browserResult && browserResult.lat) {
+                    // 浏览器精确定位成功
                     location = browserResult;
                 } else {
-                    // 浏览器定位因其他原因失败（超时/位置不可用等）
-                    locateMessage.innerHTML = '<span>⚠️ 浏览器定位失败，尝试 IP 定位...</span>';
+                    // 浏览器定位失败（包括隐私设置拒绝等），尝试IP定位
+                    locateMessage.innerHTML = '<span>🌏 正在 IP 定位（可能有偏差）...</span>';
                     location = await tryMultiIpLocation();
                 }
 
                 if (location && location.lat && location.lng) {
-                    // 定位成功，根据来源给出不同提示
-                    if (browserResult && !browserResult.permissionDenied && browserResult.lat) {
-                        // 来自浏览器精确定位，直接应用并隐藏提示
+                    if (browserResult && browserResult.lat) {
+                        // 来自浏览器精确定位
                         locateToast.classList.remove('show');
                     } else {
-                        // 来自 IP 定位（或权限拒绝/环境限制后的 IP），提示可能偏差，延迟后自动关闭
-                        locateMessage.innerHTML = '<span>✅ 已定位到 ' + location.name + '（IP 定位可能存在偏差）</span>';
+                        // 来自 IP 定位
+                        locateMessage.innerHTML = '<span>✅ 已定位到 ' + location.name + '（IP 定位）</span>';
                         locateButtons.innerHTML = '';
                         setTimeout(() => { locateToast.classList.remove('show'); }, 2000);
                     }
@@ -931,7 +900,7 @@
                     window._autoLocated = true;
                 } else {
                     // 所有定位方式均失败
-                    locateMessage.innerHTML = '<span>⚠️ 定位失败，请重试或手动选择城市</span>';
+                    locateMessage.innerHTML = '<span>⚠️ 定位失败，请手动选择城市</span>';
                     locateButtons.innerHTML = `
                         <button class="locate-btn" id="locateRetryBtn">🔄 重试</button>
                         <button class="locate-btn primary" id="locateSelectCityBtn">📌 选择城市</button>
@@ -1392,7 +1361,7 @@
             document.getElementById('datetimePicker').addEventListener('change', syncFromDateTimePicker);
             document.getElementById('todayBtnMobile').addEventListener('click', setNowDateTime);
             document.getElementById('openCityPickerBtn').onclick = ()=>document.getElementById('citySelectorOverlay').classList.add('active');
-            document.getElementById('autoLocateBtn').onclick = performLocation;  // 手动定位按钮遵循相同逻辑
+            document.getElementById('autoLocateBtn').onclick = performLocation;
             document.getElementById('closeCityPicker').addEventListener('click',()=>{ document.getElementById('citySelectorOverlay').classList.remove('active'); });
             document.getElementById('citySearchInput').addEventListener('input',(e)=>{ if(searchDebounce)clearTimeout(searchDebounce); searchDebounce=setTimeout(()=>renderCitySelector(e.target.value),300); });
             document.querySelectorAll('.hot-city-btn').forEach(btn=>{
@@ -1456,7 +1425,6 @@
                 if(dailyTempCache[currentDayIndex]) updateLeftPanelAndTimeline(currentDayIndex);
             });
 
-            // 启动自动定位：仅在用户已同意风险提示且尚未自动定位过时触发
             if (localStorage.getItem('riskAcknowledged') === 'true') {
                 setTimeout(() => { performLocation(); }, 100);
             }
