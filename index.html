@@ -863,7 +863,6 @@
                 if (!navigator.geolocation) return null;
                 return new Promise((resolve) => {
                     navigator.geolocation.getCurrentPosition(async (pos) => {
-                        // 成功获取坐标，进行反向地理编码
                         const lat = pos.coords.latitude;
                         const lng = pos.coords.longitude;
                         const cityName = await reverseGeocode(lat, lng);
@@ -883,7 +882,7 @@
             /**
              * 完整的定位流程：
              * 1. 优先使用浏览器定位（精确）
-             * 2. 若权限被拒，提示用户并自动使用IP定位（可能偏差）
+             * 2. 若权限被拒，根据协议给出明确提示，并自动使用IP定位（可能偏差）
              * 3. 若浏览器定位因其他原因失败，尝试IP定位
              * 4. 全部失败则提示手动选择城市
              */
@@ -898,15 +897,22 @@
                 const browserResult = await tryBrowserLocation();
 
                 if (browserResult && browserResult.permissionDenied) {
-                    // 权限被拒绝：提示开启权限，同时自动使用IP定位（说明可能存在偏差）
-                    locateMessage.innerHTML = '<span>🔒 定位权限被拒绝，请开启系统定位权限以获取更精确位置。<br>正在使用IP定位（可能略有偏差）...</span>';
+                    // 权限被拒绝：区分是用户主动拒绝还是非HTTPS环境限制
+                    const isSecure = window.location.protocol === 'https:';
+                    if (!isSecure) {
+                        // Safari 等浏览器在非 HTTPS 下会直接返回 PERMISSION_DENIED，而非真正的用户拒绝
+                        locateMessage.innerHTML = '<span>🔒 非 HTTPS 连接，无法请求精确定位。<br>正在使用 IP 定位（可能略有偏差）。<br>建议通过 HTTPS 打开网站以获得更准确位置。</span>';
+                    } else {
+                        // HTTPS 下仍被拒绝，多为用户主动拒绝
+                        locateMessage.innerHTML = '<span>🔒 定位权限被拒绝，请开启系统定位权限以获取更精确位置。<br>正在使用 IP 定位（可能略有偏差）...</span>';
+                    }
                     location = await tryMultiIpLocation();
                 } else if (browserResult && browserResult.lat) {
                     // 浏览器定位成功
                     location = browserResult;
                 } else {
                     // 浏览器定位因其他原因失败（超时/位置不可用等）
-                    locateMessage.innerHTML = '<span>⚠️ 浏览器定位失败，尝试IP定位...</span>';
+                    locateMessage.innerHTML = '<span>⚠️ 浏览器定位失败，尝试 IP 定位...</span>';
                     location = await tryMultiIpLocation();
                 }
 
@@ -916,8 +922,8 @@
                         // 来自浏览器精确定位，直接应用并隐藏提示
                         locateToast.classList.remove('show');
                     } else {
-                        // 来自IP定位（或权限拒绝后的IP），提示可能偏差，延迟后自动关闭
-                        locateMessage.innerHTML = '<span>✅ 已定位到 ' + location.name + '（IP定位，可能略有偏差）</span>';
+                        // 来自 IP 定位（或权限拒绝/环境限制后的 IP），提示可能偏差，延迟后自动关闭
+                        locateMessage.innerHTML = '<span>✅ 已定位到 ' + location.name + '（IP 定位可能存在偏差）</span>';
                         locateButtons.innerHTML = '';
                         setTimeout(() => { locateToast.classList.remove('show'); }, 2000);
                     }
