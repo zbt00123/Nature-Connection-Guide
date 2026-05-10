@@ -542,7 +542,6 @@
                     <div class="temp-block">
                         <div class="temp-item"><span>🌡️ 空气温度</span><span id="airTempRange"></span></div>
                         <div class="temp-item"><span>🏃‍♂️ 体感温度</span><span id="feelsLikeTemp"></span></div>
-                        <div class="temp-item"><span>🔥 地面温度</span><span id="groundTempRange"></span></div>
                     </div>
                     <div class="surface-list" id="surfaceList"></div>
                 </div>
@@ -601,7 +600,7 @@
     </div>
     <div id="loadingToast" class="loading-toast"><div class="toast-message">获取天气中...</div></div>
     <div id="locateToast" class="locate-toast">
-        <div class="locate-message" id="locateMessage">正在定位...</div>
+        <div class="locate-message" id="locateMessage">正在获取位置信息...</div>
         <div class="locate-buttons" id="locateButtons"></div>
     </div>
     <script>
@@ -688,6 +687,17 @@
                 { name: '🛣️ 马路', baseOffset: 7.5, absorptivity: 0.90, thermalInertia: 0.45, nightCooling: 0.4 }
             ];
 
+            // 根据温度获取对应的状态颜色 (用于渐变)
+            function getColorForTemp(temp) {
+                if (temp < 15) return '#1e3a8a';
+                if (temp < 20) return '#3b82f6';
+                if (temp < 28) return '#60a5fa';
+                if (temp <= 35) return '#22c55e';
+                if (temp <= 40) return '#f97316';
+                if (temp <= 45) return '#ea580c';
+                return '#dc2626';
+            }
+
             function lightenColor(hex, amount = 0.35) {
                 let r = parseInt(hex.slice(1,3), 16) / 255;
                 let g = parseInt(hex.slice(3,5), 16) / 255;
@@ -771,14 +781,21 @@
                 return steadyTemp;
             }
 
-            function generateMaterialTempProfile(materialIdx, airMin, airMax, dayOfYear, lat, weatherCode) {
+            function generateMaterialTempProfile(materialIdx, airMin, airMax, dayOfYear, lat, weatherCode, hourlyAirTemps = null) {
                 const hours = 24;
                 const profile = new Array(hours + 1).fill(0);
-                const airTemps = [];
-                const airMid = (airMin + airMax) / 2;
-                const airAmp = (airMax - airMin) / 2;
-                for (let h = 0; h <= hours; h++) {
-                    airTemps.push(airMid + airAmp * Math.cos((h - 14) * Math.PI / 12));
+                let airTemps = new Array(hours + 1);
+                if (hourlyAirTemps && hourlyAirTemps.length === 24) {
+                    for (let h = 0; h <= hours; h++) {
+                        if (h < 24) airTemps[h] = hourlyAirTemps[h];
+                        else airTemps[24] = hourlyAirTemps[0];
+                    }
+                } else {
+                    const airMid = (airMin + airMax) / 2;
+                    const airAmp = (airMax - airMin) / 2;
+                    for (let h = 0; h <= hours; h++) {
+                        airTemps[h] = airMid + airAmp * Math.cos((h - 14) * Math.PI / 12);
+                    }
                 }
                 let prev = airTemps[0];
                 for (let h = 0; h <= hours; h++) {
@@ -861,10 +878,7 @@
                         const cityName = await reverseGeocode(lat, lng);
                         if (cityName) resolve({ name: cityName, lat, lng });
                         else resolve({ name: '当前位置', lat, lng });
-                    }, (error) => {
-                        // 定位失败统一返回 null
-                        resolve(null);
-                    }, { timeout: 10000, enableHighAccuracy: false });
+                    }, () => { resolve(null); }, { timeout: 10000, enableHighAccuracy: false });
                 });
             }
 
@@ -872,35 +886,20 @@
                 if (locateToast.classList.contains('show')) return;
                 locateToast.classList.add('show');
                 locateButtons.innerHTML = '';
-                locateMessage.innerHTML = '<span>📍 正在获取位置...</span>';
-
+                locateMessage.innerHTML = '<span>📍 正在获取位置信息...</span>';
                 let location = null;
-                const browserResult = await tryBrowserLocation();
-
-                if (browserResult && browserResult.lat) {
-                    // 浏览器精确定位成功
-                    location = browserResult;
-                } else {
-                    // 浏览器定位失败（包括隐私设置拒绝等），尝试IP定位
-                    locateMessage.innerHTML = '<span>🌏 正在 IP 定位（可能有偏差）...</span>';
+                locateMessage.innerHTML = '<span>📡 尝试浏览器定位...</span>';
+                location = await tryBrowserLocation();
+                if (!location || !location.lat) {
+                    locateMessage.innerHTML = '<span>🌏 通过IP定位中...</span>';
                     location = await tryMultiIpLocation();
                 }
-
                 if (location && location.lat && location.lng) {
-                    if (browserResult && browserResult.lat) {
-                        // 来自浏览器精确定位
-                        locateToast.classList.remove('show');
-                    } else {
-                        // 来自 IP 定位
-                        locateMessage.innerHTML = '<span>✅ 已定位到 ' + location.name + '（IP 定位）</span>';
-                        locateButtons.innerHTML = '';
-                        setTimeout(() => { locateToast.classList.remove('show'); }, 2000);
-                    }
+                    locateToast.classList.remove('show');
                     await setCity(location);
                     window._autoLocated = true;
                 } else {
-                    // 所有定位方式均失败
-                    locateMessage.innerHTML = '<span>⚠️ 定位失败，请手动选择城市</span>';
+                    locateMessage.innerHTML = '<span>⚠️ 定位失败，请重试或手动选择城市</span>';
                     locateButtons.innerHTML = `
                         <button class="locate-btn" id="locateRetryBtn">🔄 重试</button>
                         <button class="locate-btn primary" id="locateSelectCityBtn">📌 选择城市</button>
@@ -1032,30 +1031,51 @@
                     for(let i=0;i<times.length;i++) if(times[i].startsWith(targetDate)) indices.push(i);
                     if(indices.length){
                         let airVals=[], feelsVals=[], groundVals=[], codeCount = {};
+                        let hourlyAirTemps = new Array(24).fill(null);
                         indices.forEach(idx=>{ 
+                            let hour = new Date(times[idx]).getHours();
+                            if (hour >=0 && hour < 24) hourlyAirTemps[hour] = airs[idx];
                             airVals.push(airs[idx]); 
                             if(feels) feelsVals.push(feels[idx]); 
                             if(grounds) groundVals.push(grounds[idx]);
                             if(weatherCodes) { let c = weatherCodes[idx]; codeCount[c] = (codeCount[c]||0)+1; }
                         });
+                        for (let h=0; h<24; h++) {
+                            if (hourlyAirTemps[h] === null) {
+                                let left = h-1; while(left>=0 && hourlyAirTemps[left]===null) left--;
+                                let right = h+1; while(right<24 && hourlyAirTemps[right]===null) right++;
+                                if (left>=0 && right<24) hourlyAirTemps[h] = (hourlyAirTemps[left] + hourlyAirTemps[right])/2;
+                                else if (left>=0) hourlyAirTemps[h] = hourlyAirTemps[left];
+                                else if (right<24) hourlyAirTemps[h] = hourlyAirTemps[right];
+                                else hourlyAirTemps[h] = (airVals.length? airVals[0] : 15);
+                            }
+                        }
                         let dominantCode = weatherCodes ? parseInt(Object.keys(codeCount).reduce((a,b) => codeCount[a] > codeCount[b] ? a : b)) : 3;
                         currentRealWeather = { 
                             airMin:Math.min(...airVals), airMax:Math.max(...airVals), 
                             feelsMin:feelsVals.length?Math.min(...feelsVals):null, feelsMax:feelsVals.length?Math.max(...feelsVals):null,
-                            groundMin:groundsVals.length?Math.min(...groundVals):null, groundMax:groundsVals.length?Math.max(...groundVals):null,
+                            groundMin:groundVals.length?Math.min(...groundVals):null, groundMax:groundVals.length?Math.max(...groundVals):null,
                             isReal:true, dateStr:targetDate, isHistory, weatherCode: dominantCode
                         };
-                        dailyTempCache[currentDayIndex] = { min:currentRealWeather.airMin, max:currentRealWeather.airMax, real:true, isHistory, weatherCode: dominantCode };
+                        dailyTempCache[currentDayIndex] = { 
+                            min:currentRealWeather.airMin, 
+                            max:currentRealWeather.airMax, 
+                            real:true, 
+                            isHistory, 
+                            weatherCode: dominantCode,
+                            hourlyTemps: hourlyAirTemps
+                        };
                     } else throw new Error('no indices');
                 } catch(e) {
                     let est = estimateDailyTemp(currentDayIndex);
-                    dailyTempCache[currentDayIndex] = { min:est.min, max:est.max, real:false, isHistory:false, weatherCode: 3 };
+                    dailyTempCache[currentDayIndex] = { min:est.min, max:est.max, real:false, isHistory:false, weatherCode: 3, hourlyTemps: null };
                     currentRealWeather = { isReal:false, isHistory:false, weatherCode: 3 };
                 }
                 updateLeftPanelAndTimeline(currentDayIndex);
                 if(showToast) toast.classList.remove('show');
             }
 
+            // 新版的温度条绘制：渐变背景 + 适宜区间高亮
             function drawMaterialTimelineWithProfile(canvasId, tempProfile) {
                 const canvas = document.getElementById(canvasId);
                 if(!canvas) return;
@@ -1065,64 +1085,81 @@
                 canvas.height = 18;
                 const ctxCanvas = canvas.getContext('2d');
                 const dark = isDarkMode();
+                
+                // 1. 绘制基于温度渐变的背景 (透明度40%)
+                ctxCanvas.save();
+                ctxCanvas.globalAlpha = 0.4;
+                for (let i = 0; i < 24; i++) {
+                    const x1 = (i / 24) * width;
+                    const x2 = ((i+1) / 24) * width;
+                    const t1 = tempProfile[i];
+                    const t2 = tempProfile[i+1];
+                    const color1 = getColorForTemp(t1);
+                    const color2 = getColorForTemp(t2);
+                    const gradient = ctxCanvas.createLinearGradient(x1, 0, x2, 0);
+                    gradient.addColorStop(0, color1);
+                    gradient.addColorStop(1, color2);
+                    ctxCanvas.fillStyle = gradient;
+                    ctxCanvas.fillRect(x1, 0, x2 - x1, 18);
+                }
+                ctxCanvas.restore();
+                
+                // 2. 绘制适宜区间高亮胶囊 (28-35度)
                 const minTemp = Math.min(...tempProfile);
                 const maxTemp = Math.max(...tempProfile);
-                if(maxTemp < 28) {
-                    ctxCanvas.fillStyle = dark ? "#1e3a5f" : "#3b82f6";
-                    ctxCanvas.beginPath(); ctxCanvas.roundRect(0, 0, width, 18, 9); ctxCanvas.fill();
-                    ctxCanvas.fillStyle = dark ? "#e0e0e0" : "white";
+                if(maxTemp >= 28 && minTemp <= 35) {
+                    let periods = [];
+                    let inPeriod = false, startHour = 0;
+                    for(let h=0; h<=24; h++) {
+                        let temp = tempProfile[h];
+                        let suitable = (temp>=28 && temp<=35);
+                        if(suitable && !inPeriod) { inPeriod = true; startHour = h; }
+                        if(!suitable && inPeriod) { periods.push({start:startHour, end:h}); inPeriod = false; }
+                    }
+                    if(inPeriod) periods.push({start:startHour, end:24});
+                    const highLightColor = dark ? "#15803d" : "#22c55e";
+                    for(let p of periods) {
+                        let startX = (p.start/24)*width;
+                        let endX = (p.end/24)*width;
+                        let blockWidth = endX - startX;
+                        if(blockWidth <= 0) continue;
+                        ctxCanvas.fillStyle = highLightColor;
+                        ctxCanvas.beginPath();
+                        ctxCanvas.roundRect(startX, 0, blockWidth, 18, 9);
+                        ctxCanvas.fill();
+                        const minLabelWidth = 38;
+                        let showInside = (blockWidth > minLabelWidth*1.5);
+                        let startLabel = `${Math.floor(p.start)}:${p.start%1===0?'00':'30'}`;
+                        let endLabel = `${Math.floor(p.end)}:00`;
+                        ctxCanvas.font = "bold 9px 'Segoe UI'";
+                        ctxCanvas.textBaseline = "middle";
+                        ctxCanvas.fillStyle = dark ? "#e0e0e0" : "white";
+                        if(showInside) {
+                            ctxCanvas.textAlign = "left"; ctxCanvas.fillText(startLabel, startX+3, 9);
+                            ctxCanvas.textAlign = "right"; ctxCanvas.fillText(endLabel, endX-3, 9);
+                        } else {
+                            ctxCanvas.fillStyle = dark ? "#d1d5db" : "#2c5a2e";
+                            ctxCanvas.textAlign = "right"; ctxCanvas.fillText(startLabel, startX-3, 9);
+                            ctxCanvas.textAlign = "left"; ctxCanvas.fillText(endLabel, endX+3, 9);
+                        }
+                    }
+                } else {
+                    // 无适宜区间，显示提示文字
                     ctxCanvas.font = "bold 10px 'Segoe UI'";
-                    ctxCanvas.textAlign = "center"; ctxCanvas.textBaseline = "middle";
-                    ctxCanvas.fillText("❄️ 不适宜", width/2, 9);
-                    return;
-                }
-                if(minTemp > 35) {
-                    ctxCanvas.fillStyle = dark ? "#7f1d1d" : "#dc2626";
-                    ctxCanvas.beginPath(); ctxCanvas.roundRect(0, 0, width, 18, 9); ctxCanvas.fill();
-                    ctxCanvas.fillStyle = dark ? "#e0e0e0" : "white";
-                    ctxCanvas.font = "bold 10px 'Segoe UI'";
-                    ctxCanvas.textAlign = "center"; ctxCanvas.textBaseline = "middle";
-                    ctxCanvas.fillText("🔥 不适宜", width/2, 9);
-                    return;
-                }
-                ctxCanvas.fillStyle = dark ? "#3a3a3a" : "#f2eddd";
-                ctxCanvas.beginPath(); ctxCanvas.roundRect(0, 0, width, 18, 9); ctxCanvas.fill();
-                let periods = [];
-                let inPeriod = false, startHour = 0;
-                for(let h=0; h<=24; h++) {
-                    let temp = tempProfile[h];
-                    let suitable = (temp>=28 && temp<=35);
-                    if(suitable && !inPeriod) { inPeriod = true; startHour = h; }
-                    if(!suitable && inPeriod) { periods.push({start:startHour, end:h}); inPeriod = false; }
-                }
-                if(inPeriod) periods.push({start:startHour, end:24});
-                for(let p of periods) {
-                    let startX = (p.start/24)*width;
-                    let endX = (p.end/24)*width;
-                    let blockWidth = endX - startX;
-                    if(blockWidth <= 0) continue;
-                    ctxCanvas.fillStyle = dark ? "#15803d" : "#22c55e";
-                    ctxCanvas.beginPath(); ctxCanvas.roundRect(startX, 0, blockWidth, 18, 9); ctxCanvas.fill();
-                    const minLabelWidth = 38;
-                    let showInside = (blockWidth > minLabelWidth*1.5);
-                    let startLabel = `${Math.floor(p.start)}:${p.start%1===0?'00':'30'}`;
-                    let endLabel = `${Math.floor(p.end)}:00`;
-                    ctxCanvas.font = "bold 9px 'Segoe UI'";
+                    ctxCanvas.textAlign = "center";
                     ctxCanvas.textBaseline = "middle";
-                    if(showInside) {
-                        ctxCanvas.fillStyle = "white";
-                        ctxCanvas.textAlign = "left"; ctxCanvas.fillText(startLabel, startX+3, 9);
-                        ctxCanvas.textAlign = "right"; ctxCanvas.fillText(endLabel, endX-3, 9);
-                    } else {
-                        ctxCanvas.fillStyle = dark ? "#d1d5db" : "#2c5a2e";
-                        ctxCanvas.textAlign = "right"; ctxCanvas.fillText(startLabel, startX-3, 9);
-                        ctxCanvas.textAlign = "left"; ctxCanvas.fillText(endLabel, endX+3, 9);
+                    if(maxTemp < 28) {
+                        ctxCanvas.fillStyle = dark ? "#e0e0e0" : "#4a5b44";
+                        ctxCanvas.fillText("❄️ 全天偏冷", width/2, 9);
+                    } else if(minTemp > 35) {
+                        ctxCanvas.fillStyle = dark ? "#e0e0e0" : "#4a5b44";
+                        ctxCanvas.fillText("🔥 全天过热", width/2, 9);
                     }
                 }
             }
 
             function updateLeftPanelAndTimeline(dayIdx){
-                let air = dailyTempCache[dayIdx] || {min:15,max:25,real:false,isHistory:false, weatherCode:3};
+                let air = dailyTempCache[dayIdx] || {min:15,max:25,real:false,isHistory:false, weatherCode:3, hourlyTemps: null};
                 let airMin=air.min, airMax=air.max;
                 let targetDate = getDateStrFromIdx(dayIdx);
                 let useReal = (currentRealWeather.isReal && currentRealWeather.dateStr===targetDate);
@@ -1136,12 +1173,11 @@
                 document.getElementById('airTempRange').innerHTML = `${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃`;
                 let feelsHtml = (useReal && currentRealWeather.feelsMin) ? `${currentRealWeather.feelsMin.toFixed(1)}~${currentRealWeather.feelsMax.toFixed(1)}℃` : `${(airMin+0.5).toFixed(1)}~${(airMax+2).toFixed(1)}℃`;
                 document.getElementById('feelsLikeTemp').innerHTML = feelsHtml;
-                let groundHtml = (useReal && currentRealWeather.groundMin) ? `${currentRealWeather.groundMin.toFixed(1)}~${currentRealWeather.groundMax.toFixed(1)}℃` : `${(airMin+1).toFixed(1)}~${(airMax+3).toFixed(1)}℃`;
-                document.getElementById('groundTempRange').innerHTML = groundHtml;
                 const dayOfYear = getDayOfYearFromIndex(dayIdx);
                 let surfaceHtml = '';
                 MATERIALS.forEach((mat, idx) => {
-                    const profile = generateMaterialTempProfile(idx, airMin, airMax, dayOfYear, currentLocation.lat, weatherCode);
+                    let hourlyTemps = (air.hourlyTemps && air.hourlyTemps.length === 24) ? air.hourlyTemps : null;
+                    const profile = generateMaterialTempProfile(idx, airMin, airMax, dayOfYear, currentLocation.lat, weatherCode, hourlyTemps);
                     const minT = Math.min(...profile);
                     const maxT = Math.max(...profile);
                     const canvasId = `timelineCanvas_${idx}`;
@@ -1150,7 +1186,8 @@
                 document.getElementById('surfaceList').innerHTML = surfaceHtml;
                 setTimeout(() => {
                     MATERIALS.forEach((mat, idx) => {
-                        const profile = generateMaterialTempProfile(idx, airMin, airMax, dayOfYear, currentLocation.lat, weatherCode);
+                        let hourlyTemps = (air.hourlyTemps && air.hourlyTemps.length === 24) ? air.hourlyTemps : null;
+                        const profile = generateMaterialTempProfile(idx, airMin, airMax, dayOfYear, currentLocation.lat, weatherCode, hourlyTemps);
                         drawMaterialTimelineWithProfile(`timelineCanvas_${idx}`, profile);
                     });
                 }, 10);
@@ -1236,7 +1273,7 @@
                 ctx.clearRect(0,0,size,size);
                 const dark = isDarkMode();
                 if(dark) {
-                    ctx.globalAlpha = 0.4;
+                    ctx.globalAlpha = 0.3;
                 } else {
                     ctx.globalAlpha = 1.0;
                 }
@@ -1330,7 +1367,7 @@
                 currentLocation = { name: city.name, lat: city.lat, lng: city.lng };
                 document.getElementById('cityTitle').innerHTML = `📍 ${city.name} · 自然足感`;
                 updateCalendar();
-                for(let idx=0; idx<totalDays; idx++){ let est=estimateDailyTemp(idx); dailyTempCache[idx]={ min:est.min, max:est.max, real:false, weatherCode:3 }; }
+                for(let idx=0; idx<totalDays; idx++){ let est=estimateDailyTemp(idx); dailyTempCache[idx]={ min:est.min, max:est.max, real:false, weatherCode:3, hourlyTemps: null }; }
                 await refreshWeatherForCurrentDate(true);
                 let nowVal = document.getElementById('datetimePicker').value;
                 if(nowVal) updateCurrentCardByDateTime(nowVal);
@@ -1415,7 +1452,7 @@
             });
 
             updateCalendar();
-            for(let i=0;i<totalDays;i++){ let e=estimateDailyTemp(i); dailyTempCache[i]={ min:e.min, max:e.max, real:false, weatherCode:3 }; }
+            for(let i=0;i<totalDays;i++){ let e=estimateDailyTemp(i); dailyTempCache[i]={ min:e.min, max:e.max, real:false, weatherCode:3, hourlyTemps: null }; }
             let nowDate = new Date();
             currentDayIndex = getDayIndex(nowDate.getMonth()+1, nowDate.getDate());
             pointerAngle = getAngleFromDayIndex(currentDayIndex);
