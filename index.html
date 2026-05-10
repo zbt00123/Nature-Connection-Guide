@@ -10,8 +10,17 @@
     <meta property="og:description" content="查看不同地面材质在全年中的赤足适宜时段，实时天气数据辅助决策。">
     <meta property="og:image" content="https://zbt00123.github.io/Nature-Connection-Guide/icon.png">
     <meta property="og:type" content="website">
-    <script src="https://cdn.jsdelivr.net/npm/darkreader@4.9.89/darkreader.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/darkreader@4.9.89/darkreader.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.13/lunar.min.js">
+    </script>
     <style>
+        :root {
+            --footer-link: #5a7a4a;
+            --footer-text: #4a3b28;
+            --overlay-blur: 4px;
+        }
+
         .color-scheme-toggle {
             position: fixed;
             top: 16px;
@@ -48,15 +57,43 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             transition: transform 0.08s ease, box-shadow 0.08s ease;
         }
-        @media (max-width: 480px) {
-            .color-scheme-toggle {
-                width: 38px;
-                height: 38px;
-                top: 10px;
-                right: 10px;
-                font-size: 1.2rem;
-            }
+
+        .quick-nav-buttons {
+            position: fixed;
+            top: 70px;
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 599;
         }
+        .quick-nav-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(180, 150, 100, 0.5);
+            background: rgba(255, 255, 245, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background 0.2s;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .quick-nav-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 250, 0.92);
+        }
+        .quick-nav-btn:active {
+            transform: scale(0.92);
+        }
+
         .risk-modal {
             position: fixed;
             top: 0;
@@ -64,7 +101,8 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(var(--overlay-blur));
+            -webkit-backdrop-filter: blur(var(--overlay-blur));
             display: flex;
             justify-content: center;
             align-items: center;
@@ -85,7 +123,7 @@
             border-radius: 2rem;
             padding: 2rem 1.8rem;
             box-shadow: 0 25px 40px rgba(0, 0, 0, 0.2);
-            text-align: center;
+            text-align: left;
             border: 1px solid rgba(255, 240, 180, 0.8);
             font-family: inherit;
         }
@@ -96,6 +134,7 @@
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
+            text-align: center;
         }
         .risk-warning-icon {
             background: none;
@@ -132,6 +171,9 @@
             cursor: pointer;
             margin-top: 1rem;
             transition: transform 0.1s, background 0.2s;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         .risk-button:hover {
             background: #5a7a4a;
@@ -140,6 +182,298 @@
         .risk-button:active {
             transform: scale(0.98);
         }
+
+        .loading-toast {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(var(--overlay-blur));
+            -webkit-backdrop-filter: blur(var(--overlay-blur));
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1100;
+        }
+        .loading-toast.show {
+            display: flex;
+        }
+        .toast-content {
+            background: rgba(30, 40, 30, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #f9f2e0;
+            padding: 24px 32px;
+            border-radius: 40px;
+            font-size: 1rem;
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .locate-toast {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(var(--overlay-blur));
+            -webkit-backdrop-filter: blur(var(--overlay-blur));
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1200;
+        }
+        .locate-toast.show {
+            display: flex;
+        }
+        .locate-card {
+            background: rgba(30, 40, 30, 0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #f9f2e0;
+            padding: 24px 32px;
+            border-radius: 40px;
+            text-align: center;
+            min-width: 280px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 220, 150, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .locate-message {
+            font-size: 1rem;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .locate-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .locate-btn {
+            background: rgba(255, 255, 220, 0.2);
+            border: 1px solid rgba(255, 255, 200, 0.6);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.1s;
+            font-weight: 500;
+        }
+        .locate-btn:hover {
+            background: rgba(255, 255, 220, 0.4);
+            transform: scale(1.02);
+        }
+        .locate-btn.primary {
+            background: #e67e22;
+            border-color: #ffb347;
+        }
+
+        .city-selector-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(var(--overlay-blur));
+            -webkit-backdrop-filter: blur(var(--overlay-blur));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .city-selector-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .city-selector-panel {
+            background: rgba(255, 255, 245, 0.97);
+            backdrop-filter: blur(20px);
+            width: auto;
+            min-width: 360px;
+            max-width: 90vw;
+            border-radius: 1.8rem;
+            padding: 1.2rem;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 240, 180, 0.8);
+        }
+        .city-search input {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 40px;
+            border: 1px solid #ddcca8;
+            background: #fffef7;
+            font-size: 1rem;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .city-results {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        .city-result-item {
+            background: #f5efdf;
+            padding: 8px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.1s;
+            font-size: 0.9rem;
+        }
+        .city-result-item:hover {
+            background: #e2d2af;
+        }
+        .hot-cities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+            justify-content: center;
+        }
+        .hot-city-btn {
+            background: #e8e0c8;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.1s;
+            color: #3a5a2a;
+        }
+        .hot-city-btn:hover {
+            background: #cfc49e;
+            transform: scale(1.02);
+        }
+        .loading-tip {
+            text-align: center;
+            padding: 20px;
+            color: #6b5a3a;
+        }
+
+        .year-month-picker-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .year-month-display {
+            cursor: pointer;
+            font-weight: 600;
+            font-size: clamp(0.8rem, 3.5cqw, 1.1rem);
+            color: #2c5a2e;
+            white-space: nowrap;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: rgba(255, 255, 250, 0.5);
+            border: 1px solid rgba(180, 150, 100, 0.35);
+            transition: background 0.2s, transform 0.1s;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .year-month-display:hover {
+            background: rgba(255, 255, 250, 0.85);
+            transform: scale(1.03);
+        }
+        .year-month-display:active {
+            transform: scale(0.96);
+        }
+        .year-month-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: #fffef9;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(180, 150, 100, 0.5);
+            display: none;
+            min-width: 220px;
+            text-align: center;
+        }
+        .year-month-dropdown.open {
+            display: block;
+        }
+        .ym-year-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #2c5a2e;
+        }
+        .ym-year-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #6b8c5c;
+            padding: 4px 8px;
+            border-radius: 50%;
+            transition: background 0.15s, transform 0.1s;
+            line-height: 1;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .ym-year-btn:hover {
+            background: rgba(107, 140, 92, 0.15);
+        }
+        .ym-year-btn:active {
+            transform: scale(0.9);
+        }
+        .ym-month-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+        .ym-month-cell {
+            padding: 6px 4px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.8rem;
+            transition: background 0.15s, transform 0.1s, color 0.15s;
+            color: #3a5a2a;
+            background: #f5efdf;
+            border: 1px solid transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .ym-month-cell:hover {
+            background: #e2d2af;
+            transform: scale(1.04);
+        }
+        .ym-month-cell:active {
+            transform: scale(0.94);
+        }
+        .ym-month-cell.active-month {
+            background: #6b8c5c;
+            color: white;
+            border-color: #4a6b3e;
+            font-weight: 700;
+        }
+
         html {
             height: 100%;
             background: linear-gradient(135deg, #fce5c4 0%, #c8e0f0 50%, #e8d4f0 100%);
@@ -179,32 +513,62 @@
             gap: 8px;
             flex-wrap: wrap;
         }
-        .main-title::after { content: '👣'; font-size: clamp(1.5rem, 6vw, 2.5rem); background-clip: text; color: transparent; display: inline-block; }
-        .main-title::before { content: '🌿'; font-size: clamp(1.5rem, 6vw, 2.5rem); background-clip: text; color: transparent; display: inline-block; }
+        .main-title::after {
+            content: '👣';
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+        .main-title::before {
+            content: '🌿';
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
         .dashboard {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            grid-template-areas:
+                "calendar info"
+                "current  info";
             gap: 1.5rem;
-            justify-content: center;
-            align-items: stretch;
+            align-items: start;
         }
-        .left-panel {
-            flex: 1.45;
-            min-width: 320px;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+        @media (max-width: 880px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+                grid-template-areas:
+                    "calendar"
+                    "current"
+                    "info";
+            }
         }
-        .wheel-area {
-            flex: 2;
-            min-width: 320px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .date-card {
+            grid-area: calendar;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(14px);
+            border-radius: 1.8rem;
+            padding: 1rem 1.2rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 240, 0.7);
             position: relative;
+            container-type: inline-size;
         }
-        .info-card, .current-card, .date-card {
+        .current-card {
+            grid-area: current;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(14px);
+            border-radius: 1.8rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 240, 0.7);
+        }
+        .info-card {
+            grid-area: info;
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(14px);
             border-radius: 1.8rem;
@@ -212,44 +576,181 @@
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 240, 0.7);
         }
-        .date-card {
+        .calendar-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+            gap: 4px;
             flex-wrap: nowrap;
-            gap: 12px;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
         }
-        .datetime-wrapper {
+        .calendar-nav {
             display: flex;
             align-items: center;
-            gap: 12px;
-            flex: 2;
+            gap: 4px;
+            font-weight: 600;
+            font-size: clamp(0.7rem, 3cqw, 1rem);
+            color: #2c5a2e;
+            white-space: nowrap;
+            position: relative;
+            z-index: 2;
+            flex-shrink: 1;
             min-width: 0;
         }
-        .datetime-wrapper input {
-            padding: 8px 14px;
-            border-radius: 40px;
+        .calendar-nav button {
+            background: none;
+            border: none;
+            font-size: clamp(0.9rem, 3.5cqw, 1.2rem);
+            cursor: pointer;
+            color: #6b8c5c;
+            line-height: 1;
+            padding: 0 2px;
+            transition: transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+            flex-shrink: 0;
+        }
+        .calendar-nav button:active {
+            transform: scale(0.9);
+        }
+        .calendar-time-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            position: relative;
+            z-index: 2;
+            flex-shrink: 1;
+            min-width: 0;
+        }
+        .calendar-time-actions input[type="time"] {
+            padding: 2px 4px;
+            border-radius: 16px;
             border: 1px solid #c7b280;
             background: rgba(255, 255, 250, 0.95);
             font-family: inherit;
-            font-size: 0.9rem;
-            width: 180px;
+            font-size: clamp(0.6rem, 2.5cqw, 0.8rem);
+            width: auto;
+            min-width: 65px;
+            max-width: 85px;
             flex-shrink: 1;
         }
-        .date-card button {
+        .calendar-today-btn {
             background: #6b8c5c;
             border: none;
             color: white;
-            padding: 8px 18px;
-            border-radius: 40px;
+            padding: 2px 8px;
+            border-radius: 16px;
             cursor: pointer;
             font-weight: 500;
-            white-space: nowrap;
+            font-size: clamp(0.6rem, 2.5cqw, 0.8rem);
             transition: 0.1s;
-            flex-shrink: 0;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            flex-shrink: 1;
         }
-        .date-card button:active { transform: scale(0.96); }
-        .current-card { padding: 1rem 1.5rem; }
+        .calendar-today-btn:active {
+            transform: scale(0.96);
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+            position: relative;
+            z-index: 0;
+        }
+        .calendar-day-name {
+            font-weight: 600;
+            font-size: clamp(0.6rem, 2.2cqw, 0.8rem);
+            color: #7c6b4a;
+            padding: 4px 0;
+        }
+        .calendar-day {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            font-size: clamp(0.7rem, 4.2cqw, 1.1rem);
+            position: relative;
+            color: #3a2e22;
+            background: rgba(255, 255, 250, 0.7);
+            line-height: 1.15;
+            padding: 2px;
+            box-sizing: border-box;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .calendar-day:hover {
+            background: rgba(200, 180, 120, 0.25);
+            transform: scale(1.02);
+            z-index: 3;
+        }
+        .calendar-day.today:not(.selected) {
+            border: 2px solid #e67e22;
+        }
+        .calendar-day .lunar {
+            font-size: 0.68em;
+            opacity: 0.85;
+            line-height: 1;
+            margin-top: 1px;
+            position: relative;
+            z-index: 0;
+            pointer-events: none;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .holiday-badge {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            font-size: 0.65em;
+            font-weight: 800;
+            line-height: 1;
+            padding: 1px 2px;
+            border-radius: 0;
+            color: inherit;
+            background: none !important;
+            pointer-events: none;
+            z-index: 15;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        }
+        .holiday-rest {
+            color: #16a34a;
+        }
+        .holiday-work {
+            color: #dc2626;
+        }
+        .calendar-day.weekend {
+            background-color: rgba(255, 165, 0, 0.1);
+        }
+        .calendar-day.other-month {
+            opacity: 0.5;
+        }
+        .calendar-day.selected {
+            background: #6b8c5c;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+        .calendar-day.selected.weekend {
+            background: #6b8c5c;
+        }
+        .calendar-day.selected .lunar {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .calendar-day.selected .holiday-badge {
+            z-index: 20;
+        }
         .current-temp-row {
             display: flex;
             justify-content: space-between;
@@ -284,9 +785,21 @@
             gap: 8px;
             font-size: 0.9rem;
         }
-        .material-name { width: 70px; font-weight: 600; color: #4a5b44; }
-        .material-temp { width: 70px; text-align: right; font-weight: 700; color: #2f5e3a; }
-        .material-status { width: 70px; text-align: center; }
+        .material-name {
+            width: 70px;
+            font-weight: 600;
+            color: #4a5b44;
+        }
+        .material-temp {
+            width: 70px;
+            text-align: right;
+            font-weight: 700;
+            color: #2f5e3a;
+        }
+        .material-status {
+            width: 70px;
+            text-align: center;
+        }
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -296,21 +809,37 @@
             color: white;
             background: #aaa;
         }
-        .status-danger { background: #1e3a8a; }
-        .status-too-cold { background: #3b82f6; }
-        .status-cool { background: #60a5fa; }
-        .status-good { background: #22c55e; }
-        .status-warm { background: #f97316; }
-        .status-hot { background: #ea580c; }
-        .status-danger-hot { background: #dc2626; }
-        .status-na { background: #9ca3af; }
+        .status-danger {
+            background: #1e3a8a;
+        }
+        .status-too-cold {
+            background: #3b82f6;
+        }
+        .status-cool {
+            background: #60a5fa;
+        }
+        .status-good {
+            background: #22c55e;
+        }
+        .status-warm {
+            background: #f97316;
+        }
+        .status-hot {
+            background: #ea580c;
+        }
+        .status-danger-hot {
+            background: #dc2626;
+        }
+        .status-na {
+            background: #9ca3af;
+        }
+
         .card-header {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
             flex-wrap: wrap;
             gap: 12px;
             margin-bottom: 1rem;
+            align-items: flex-start;
         }
         .card-header h3 {
             font-size: clamp(1.3rem, 5vw, 1.7rem);
@@ -324,8 +853,26 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .city-picker-btn, .auto-locate-btn { background: #6b8c5c; border: none; color: white; padding: 5px 12px; border-radius: 30px; cursor: pointer; font-weight: 500; }
-        .auto-locate-btn { background: #b48c48; }
+        .location-actions {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            margin-top: 4px;
+        }
+        .city-picker-btn,
+        .auto-locate-btn {
+            background: #6b8c5c;
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .auto-locate-btn {
+            background: #b48c48;
+        }
         .temp-block {
             background: rgba(245, 245, 235, 0.5);
             border-radius: 1.2rem;
@@ -350,8 +897,13 @@
             display: inline-block;
             margin-right: 8px;
         }
-        .surface-list { margin-top: 0.5rem; }
-        .surface-row { margin-bottom: 1rem; padding-bottom: 0.2rem; }
+        .surface-list {
+            margin-top: 0.5rem;
+        }
+        .surface-row {
+            margin-bottom: 1rem;
+            padding-bottom: 0.2rem;
+        }
         .surface-header {
             display: flex;
             justify-content: space-between;
@@ -359,219 +911,239 @@
             margin-bottom: 4px;
             font-size: 0.85rem;
         }
-        .surface-name { font-weight: 700; color: #4a5b44; }
-        .surface-temp-range { font-size: 0.75rem; color: #7c6b4a; }
-        .timeline-canvas-wrapper { width: 100%; height: 18px; margin: 2px 0; }
-        .timeline-canvas { width: 100%; height: 18px; display: block; border-radius: 12px; }
-        .wheel-bg {
-            position: absolute;
-            width: 100%;
-            max-width: 550px;
-            aspect-ratio: 1;
-            background: rgba(255, 255, 245, 0.5);
-            border-radius: 50%;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            z-index: 0;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .surface-name {
+            font-weight: 700;
+            color: #4a5b44;
         }
-        canvas#seasonWheelCanvas {
+        .surface-temp-range {
+            font-size: 0.75rem;
+            color: #7c6b4a;
+        }
+        .timeline-canvas-wrapper {
             width: 100%;
-            max-width: 550px;
-            height: auto;
-            border-radius: 50%;
-            cursor: grab;
-            position: relative;
-            z-index: 1;
-            background: transparent;
+            height: 18px;
+            margin: 2px 0;
+        }
+        .timeline-canvas {
+            width: 100%;
+            height: 18px;
+            display: block;
+            border-radius: 12px;
         }
         .footer-info {
             margin-top: 2rem;
-            padding: 1rem;
-            text-align: center;
-            font-size: 0.7rem;
+            padding: 1.5rem;
+            background: rgba(250, 245, 235, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(180, 150, 100, 0.3);
             color: #4a3b28;
-            border-top: 1px solid rgba(150, 120, 80, 0.4);
-            border-radius: 1rem;
-            background: rgba(250, 245, 235, 0.75);
-            backdrop-filter: blur(4px);
+            font-size: 0.8rem;
+            line-height: 1.6;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .footer-info-inner {
+            max-width: 750px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .footer-info h4 {
+            font-size: 0.95rem;
+            margin: 1rem 0 0.3rem;
+            color: #2c5a2e;
+            font-weight: 600;
+        }
+        .footer-info ul,
+        .footer-info p {
+            margin: 0.4rem 0;
+            padding-left: 1.2rem;
+            text-align: left;
+            word-break: break-word;
+            max-width: 100%;
+        }
+        .footer-info li {
+            margin-bottom: 0.25rem;
         }
         .footer-info a {
             color: #5a7a4a;
-            text-decoration: none;
+            text-decoration: underline;
+            font-weight: 500;
         }
         .footer-info a:hover {
-            text-decoration: underline;
+            color: #2c5a2e;
         }
-        .city-selector-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(4px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            visibility: hidden;
-            opacity: 0;
-            transition: 0.2s;
-        }
-        .city-selector-overlay.active { visibility: visible; opacity: 1; }
-        .city-selector-panel {
-            background: rgba(255, 255, 245, 0.97);
-            backdrop-filter: blur(20px);
-            width: auto;
-            min-width: 360px;
-            max-width: 90vw;
-            border-radius: 1.8rem;
-            padding: 1.2rem;
-            overflow-y: auto;
-            border: 1px solid rgba(255,240,180,0.8);
-        }
-        .city-search input {
-            width: 100%;
-            padding: 10px 15px;
-            border-radius: 40px;
-            border: 1px solid #ddcca8;
-            background: #fffef7;
-            font-size: 1rem;
-            outline: none;
-            box-sizing: border-box;
-        }
-        .city-results { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; }
-        .city-result-item { background: #f5efdf; padding: 8px 12px; border-radius: 40px; cursor: pointer; transition: 0.1s; font-size: 0.9rem; }
-        .city-result-item:hover { background: #e2d2af; }
-        .hot-cities { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; justify-content: center; }
-        .hot-city-btn { background: #e8e0c8; border: none; padding: 5px 12px; border-radius: 30px; font-size: 0.8rem; cursor: pointer; transition: 0.1s; color: #3a5a2a; }
-        .hot-city-btn:hover { background: #cfc49e; transform: scale(1.02); }
-        .loading-tip { text-align: center; padding: 20px; color: #6b5a3a; }
-        .locate-toast {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(30, 40, 30, 0.96);
-            backdrop-filter: blur(20px);
-            color: #f9f2e0;
-            padding: 24px 32px;
-            border-radius: 40px;
-            z-index: 1200;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            text-align: center;
-            min-width: 280px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,220,150,0.3);
-        }
-        .locate-toast.show { display: flex; }
-        .locate-message { font-size: 1rem; line-height: 1.4; display: flex; align-items: center; gap: 12px; }
-        .locate-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
-        .locate-btn { background: rgba(255,255,220,0.2); border: 1px solid rgba(255,255,200,0.6); color: white; padding: 8px 20px; border-radius: 40px; font-size: 0.9rem; cursor: pointer; transition: 0.1s; font-weight: 500; }
-        .locate-btn:hover { background: rgba(255,255,220,0.4); transform: scale(1.02); }
-        .locate-btn.primary { background: #e67e22; border-color: #ffb347; }
-        .loading-toast {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(30,40,30,0.95);
-            backdrop-filter: blur(20px);
-            color: #f9f2e0;
-            padding: 24px 32px;
-            border-radius: 40px;
-            z-index: 1100;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            text-align: center;
-        }
-        .loading-toast.show { display: flex; }
-        @media (max-width: 880px) {
-            .dashboard { flex-direction: column; }
-            .wheel-area { order: 4; }
-            .left-panel { order: 2; }
-            .date-card { order: 1; }
-            .current-card { order: 2; }
-            .info-card { order: 3; }
-            .footer-info { order: 5; }
-        }
+
         @media (max-width: 480px) {
-            .nature-container { padding: 1rem; }
-            .material-row { font-size: 0.75rem; }
-            .datetime-wrapper input { width: 140px; }
-            .city-selector-panel { min-width: 280px; }
-            .locate-toast { padding: 20px 24px; min-width: 240px; }
+            .color-scheme-toggle {
+                width: 38px;
+                height: 38px;
+                top: 10px;
+                right: 10px;
+                font-size: 1.2rem;
+            }
+            .quick-nav-buttons {
+                top: 56px;
+                right: 10px;
+                gap: 6px;
+            }
+            .quick-nav-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 1rem;
+            }
+            .nature-container {
+                padding: 1rem;
+            }
+            .material-row {
+                font-size: 0.75rem;
+            }
+            .calendar-day {
+                font-size: clamp(0.6rem, 5.5cqw, 0.85rem);
+            }
+            .calendar-day .lunar {
+                font-size: 0.7em;
+            }
+            .city-selector-panel {
+                min-width: 280px;
+            }
+            .toast-content {
+                padding: 20px 24px;
+            }
+            .locate-card {
+                padding: 20px 24px;
+                min-width: 240px;
+            }
+            .year-month-dropdown {
+                min-width: 180px;
+                padding: 0.8rem;
+            }
+            .ym-month-grid {
+                gap: 4px;
+            }
+            .ym-month-cell {
+                padding: 5px 3px;
+                font-size: 0.7rem;
+                border-radius: 16px;
+            }
         }
     </style>
 </head>
 <body>
     <button class="color-scheme-toggle" id="colorSchemeToggleBtn" aria-label="切换深色模式" title="切换深色/浅色模式">🌙</button>
+
+    <div class="quick-nav-buttons">
+        <button class="quick-nav-btn" id="scrollToCalendarBtn" aria-label="日历" title="跳转至日历">📅</button>
+        <button class="quick-nav-btn" id="scrollToCurrentBtn" aria-label="当前温度" title="跳转至当前温度">🌡️</button>
+        <button class="quick-nav-btn" id="scrollToInfoBtn" aria-label="自然足感" title="跳转至自然足感卡片">📍</button>
+    </div>
+
     <div class="nature-container">
         <h1 class="main-title">亲近自然指南</h1>
         <div class="dashboard">
-            <div class="left-panel">
-                <div class="date-card">
-                    <div class="datetime-wrapper">
-                        <input type="datetime-local" id="datetimePicker" step="60">
-                    </div>
-                    <button id="todayBtnMobile">📅 现在</button>
-                </div>
-                <div class="current-card" id="currentDetailCard">
-                    <div class="current-temp-row">
-                        <span>🌡️ 当前温度</span>
-                        <div class="current-weather-badge" id="currentTempWeather">
-                            <span id="currentAirTempVal">--</span>
-                            <span id="currentWeatherIcon">⏳</span>
-                            <span id="currentWeatherDesc">加载中</span>
+            <div class="date-card" id="dateCard">
+                <div class="calendar-header">
+                    <div class="calendar-nav">
+                        <button id="prevMonthBtn" aria-label="上一月">◀</button>
+                        <div class="year-month-picker-wrapper" id="yearMonthPickerWrapper">
+                            <span class="year-month-display" id="yearMonthDisplay">2026年5月</span>
+                            <div class="year-month-dropdown" id="yearMonthDropdown">
+                                <div class="ym-year-row">
+                                    <button class="ym-year-btn" id="ymYearPrev" aria-label="上一年">◀</button>
+                                    <span id="ymYearLabel">2026</span>
+                                    <button class="ym-year-btn" id="ymYearNext" aria-label="下一年">▶</button>
+                                </div>
+                                <div class="ym-month-grid" id="ymMonthGrid">
+                                    <div class="ym-month-cell" data-month="1">1月</div>
+                                    <div class="ym-month-cell" data-month="2">2月</div>
+                                    <div class="ym-month-cell" data-month="3">3月</div>
+                                    <div class="ym-month-cell" data-month="4">4月</div>
+                                    <div class="ym-month-cell" data-month="5">5月</div>
+                                    <div class="ym-month-cell" data-month="6">6月</div>
+                                    <div class="ym-month-cell" data-month="7">7月</div>
+                                    <div class="ym-month-cell" data-month="8">8月</div>
+                                    <div class="ym-month-cell" data-month="9">9月</div>
+                                    <div class="ym-month-cell" data-month="10">10月</div>
+                                    <div class="ym-month-cell" data-month="11">11月</div>
+                                    <div class="ym-month-cell" data-month="12">12月</div>
+                                </div>
+                            </div>
                         </div>
+                        <button id="nextMonthBtn" aria-label="下一月">▶</button>
                     </div>
-                    <div class="material-grid" id="currentMaterialGrid"></div>
-                    <div style="text-align:center; font-size:0.8rem; margin-top:12px; color:#6b5a3a;">⚠️地面温度为综合估算，请以实际为准。</div>
+                    <div class="calendar-time-actions">
+                        <input type="time" id="timePicker" value="12:00">
+                        <button class="calendar-today-btn" id="calendarTodayBtn">📍 现在</button>
+                    </div>
                 </div>
-                <div class="info-card" id="mainInfoCard">
-                    <div class="card-header">
-                        <h3 id="cityTitle">📍 北京 · 自然足感</h3>
-                        <div class="location-actions">
-                            <button class="city-picker-btn" id="openCityPickerBtn">📌 城市</button>
-                            <button class="city-picker-btn auto-locate-btn" id="autoLocateBtn">📍 定位</button>
-                        </div>
-                    </div>
-                    <div class="temp-block">
-                        <div class="temp-item"><span>🌡️ 空气温度</span><span id="airTempRange"></span></div>
-                        <div class="temp-item"><span>🏃‍♂️ 体感温度</span><span id="feelsLikeTemp"></span></div>
-                    </div>
-                    <div class="surface-list" id="surfaceList"></div>
-                </div>
+                <div class="calendar-grid" id="calendarDaysGrid"></div>
+                <input type="datetime-local" id="datetimePicker" step="60" style="display:none;">
             </div>
-            <div class="wheel-area">
-                <div class="wheel-bg"></div>
-                <canvas id="seasonWheelCanvas" width="600" height="600"></canvas>
+            <div class="current-card" id="currentDetailCard">
+                <div class="current-temp-row">
+                    <span>🌡️ 当前温度</span>
+                    <div class="current-weather-badge" id="currentTempWeather">
+                        <span id="currentAirTempVal">--</span>
+                        <span id="currentWeatherIcon">⏳</span>
+                        <span id="currentWeatherDesc">加载中</span>
+                    </div>
+                </div>
+                <div class="material-grid" id="currentMaterialGrid"></div>
+                <div style="text-align:center; font-size:0.8rem; margin-top:12px; color:#6b5a3a;">⚠️地面温度为综合估算，请以实际为准。</div>
+            </div>
+            <div class="info-card" id="mainInfoCard">
+                <div class="card-header">
+                    <h3 id="cityTitle">📍 北京 · 自然足感</h3>
+                    <div class="location-actions">
+                        <button class="city-picker-btn" id="openCityPickerBtn">📌 城市</button>
+                        <button class="city-picker-btn auto-locate-btn" id="autoLocateBtn">📍 定位</button>
+                    </div>
+                </div>
+                <div class="temp-block">
+                    <div class="temp-item"><span>🌡️ 空气温度</span><span id="airTempRange"></span></div>
+                    <div class="temp-item"><span>🏃‍♂️ 体感温度</span><span id="feelsLikeTemp"></span></div>
+                </div>
+                <div class="surface-list" id="surfaceList"></div>
             </div>
         </div>
         <div class="footer-info">
-            <p>🌱 数据来源：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> 全球气象服务</p>
-            <p>🌏 地理编码：Open-Meteo Geocoding API & BigDataCloud 反向地理编码</p>
-            <p>🧘 安全提示：户外赤足请在确认地面安全、无尖锐物且温度适宜时尝试。</p>
-            <p>🧑‍🦰 特殊人群提示：儿童、老人、糖尿病患者等需格外谨慎。</p>
-            <p>⚠️ 免责声明:本指南仅供参考，使用者需自行承担风险。</p>
-            <p>👮 版权&用途:仅供技术学习与个人使用，禁止商用。</p>
-            <p>🤖 核心交互与算法：<a href="https://chat.deepseek.com" target="_blank" rel="noopener noreferrer">DeepSeek</a> | 天气集成：<a href="https://www.qianwen.com" target="_blank" rel="noopener noreferrer">通义千问</a> | 图标：<a href="https://www.doubao.com/chat" target="_blank" rel="noopener noreferrer">豆包AI</a></p>
-            <p>🌓 深色模式适配：<a href="https://github.com/darkreader/darkreader" target="_blank" rel="noopener noreferrer">Dark Reader</a> (开源项目鸣谢)</p>
-            <div style="text-align: center; margin-top: 12px;">
-                <img src="https://visitor-badge.laobi.icu/badge?page_id=zbt00123.Nature-Connection-Guide&left_color=red&right_color=green&left_text=Welcome" alt="访问量">
+            <div class="footer-info-inner">
+                <h4>🔗 数据来源与技术服务</h4>
+                <ul>
+                    <li>🌍 气象数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>（全球免费气象API）</li>
+                    <li>🗺️ 地理编码：<a href="https://geocoding-api.open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo Geocoding</a>（城市搜索） · 反向定位：<a href="https://www.bigdatacloud.com/" target="_blank" rel="noopener noreferrer">BigDataCloud</a></li>
+                    <li>📅 农历与节气：<a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noopener noreferrer">lunar-javascript</a>（阳历/农历/节假日）</li>
+                    <li>🇨🇳 节假日数据：<a href="https://api.timor.tech" target="_blank" rel="noopener noreferrer">Timor.tech</a>（中国法定节假日）</li>
+                    <li>🎨 深色模式适配：<a href="https://github.com/darkreader/darkreader" target="_blank" rel="noopener noreferrer">Dark Reader</a>（开源项目）</li>
+                    <li>🤖 核心交互与算法：<a href="https://chat.deepseek.com" target="_blank" rel="noopener noreferrer">DeepSeek</a> · 辅助集成：<a href="https://www.qianwen.com" target="_blank" rel="noopener noreferrer">通义千问</a> · 图标设计：<a href="https://www.doubao.com/chat" target="_blank" rel="noopener noreferrer">豆包AI</a></li>
+                </ul>
+                <h4>⚠️ 安全须知与免责</h4>
+                <p>户外赤足存在割伤、烫伤、冻伤、过敏及感染等风险。使用前请确认：</p>
+                <ul>
+                    <li>🌡️ 地面温度宜在 <strong>28℃ ~ 35℃</strong>，避免极端温差；高温地面（＞45℃）可瞬间灼伤。</li>
+                    <li>🧱 检查地面无玻璃、金属、尖锐物及化学污染。</li>
+                    <li>☀️ 暴晒后地砖/沥青温度远超气温，注意防晒并缩短暴露时间。</li>
+                    <li>🩺 糖尿病、神经病变、末梢循环障碍者请勿赤足。</li>
+                    <li>🚸 儿童需在成人监护下进行，老人及孕妇谨慎尝试。</li>
+                    <li>🌧️ 雨后地面湿滑，风险增加，不建议赤足。</li>
+                    <li>⚠️ 遇疼痛或不适立即停止，本指南仅供参考，使用者自行承担全部风险。</li>
+                </ul>
+                <p style="margin-top:1rem;">👮 版权声明：仅供技术学习与个人使用，禁止商用。</p>
+                <div style="text-align: center; margin-top: 16px;">
+                    <img src="https://visitor-badge.laobi.icu/badge?page_id=zbt00123.Nature-Connection-Guide&left_color=red&right_color=green&left_text=Welcome" alt="访问量">
+                </div>
             </div>
         </div>
     </div>
+
     <div id="riskModal" class="risk-modal">
         <div class="risk-content">
             <h3><span class="risk-warning-icon">⚠️</span> 赤足安全须知</h3>
-            <p>户外赤足存在潜在风险，在使用本工具前，请务必了解：</p>
+            <p>户外赤足存在潜在风险，使用前请务必了解：</p>
             <ul class="risk-list">
                 <li>🌡️ <strong>温度适宜区间</strong>：建议地面温度在 <strong>28℃ ~ 35℃</strong> 之间。</li>
                 <li>🧱 <strong>地面检查</strong>：确认无尖锐物、无化学污染。</li>
+                <li>☀️ <strong>防晒与高温</strong>：高温地面可导致严重灼伤，避免暴晒时段赤足。</li>
                 <li>🚶 <strong>循序渐进</strong>：初次从短时间、柔软地面开始。</li>
                 <li>🩺 <strong>特殊人群</strong>：糖尿病、神经病变者请勿赤足。</li>
                 <li>⚠️ <strong>遇痛即停</strong>：不适立即停止。</li>
@@ -582,9 +1154,9 @@
     </div>
     <div id="citySelectorOverlay" class="city-selector-overlay">
         <div class="city-selector-panel">
-            <h4>🌆 搜索城市 (中文 / 拼音)</h4>
+            <h4>🌆 搜索城市</h4>
             <div class="city-search">
-                <input type="text" id="citySearchInput" placeholder="例如：北京市 / 上海 / Hangzhou">
+                <input type="text" id="citySearchInput" placeholder="例如：北京、beijing">
             </div>
             <div class="hot-cities">
                 <button class="hot-city-btn" data-city="北京" data-lat="39.9042" data-lng="116.4074">🏙️ 北京</button>
@@ -593,101 +1165,154 @@
                 <button class="hot-city-btn" data-city="深圳" data-lat="22.5431" data-lng="114.0579">🏙️ 深圳</button>
                 <button class="hot-city-btn" data-city="杭州" data-lat="30.2741" data-lng="120.1551">🌸 杭州</button>
                 <button class="hot-city-btn" data-city="成都" data-lat="30.5728" data-lng="104.0668">🐼 成都</button>
+                <button class="hot-city-btn" data-city="重庆" data-lat="29.4316" data-lng="106.9123">🏞️ 重庆</button>
+                <button class="hot-city-btn" data-city="南京" data-lat="32.0603" data-lng="118.7969">🏛️ 南京</button>
+                <button class="hot-city-btn" data-city="武汉" data-lat="30.5928" data-lng="114.3055">🌉 武汉</button>
+                <button class="hot-city-btn" data-city="西安" data-lat="34.3416" data-lng="108.9398">🏯 西安</button>
             </div>
             <div id="cityResultsList" class="city-results"></div>
             <div style="text-align:right; margin-top:1rem;"><button id="closeCityPicker" style="background:#bbaa7a; border:none; padding:5px 16px; border-radius:40px; cursor:pointer;">关闭</button></div>
         </div>
     </div>
-    <div id="loadingToast" class="loading-toast"><div class="toast-message">获取天气中...</div></div>
-    <div id="locateToast" class="locate-toast">
-        <div class="locate-message" id="locateMessage">正在获取位置信息...</div>
-        <div class="locate-buttons" id="locateButtons"></div>
+
+    <div id="loadingToast" class="loading-toast">
+        <div class="toast-content">获取天气中...</div>
     </div>
+    <div id="locateToast" class="locate-toast">
+        <div class="locate-card">
+            <div class="locate-message" id="locateMessage">正在获取位置信息...</div>
+            <div class="locate-buttons" id="locateButtons"></div>
+        </div>
+    </div>
+
     <script>
         (function() {
+            const $ = (id) => document.getElementById(id);
+            const datetimePickerEl = $('datetimePicker');
+            const timePickerEl = $('timePicker');
+            const cityTitleEl = $('cityTitle');
+            const airTempRangeEl = $('airTempRange');
+            const feelsLikeTempEl = $('feelsLikeTemp');
+            const surfaceListEl = $('surfaceList');
+            const currentAirTempEl = $('currentAirTempVal');
+            const currentWeatherIconEl = $('currentWeatherIcon');
+            const currentWeatherDescEl = $('currentWeatherDesc');
+            const currentMaterialGridEl = $('currentMaterialGrid');
+            const calendarGridEl = $('calendarDaysGrid');
+            const loadingToastEl = $('loadingToast');
+            const locateToastEl = $('locateToast');
+            const locateMessageEl = $('locateMessage');
+            const locateButtonsEl = $('locateButtons');
+            const citySelectorOverlay = $('citySelectorOverlay');
+            const citySearchInput = $('citySearchInput');
+            const cityResultsList = $('cityResultsList');
+            const colorSchemeToggleBtn = $('colorSchemeToggleBtn');
+            const yearMonthDisplay = $('yearMonthDisplay');
+            const yearMonthDropdown = $('yearMonthDropdown');
+            const ymYearLabel = $('ymYearLabel');
+            const ymMonthGrid = $('ymMonthGrid');
+            const ymYearPrev = $('ymYearPrev');
+            const ymYearNext = $('ymYearNext');
+            const yearMonthPickerWrapper = $('yearMonthPickerWrapper');
+
             const COLOR_SCHEME_KEY = 'colorSchemePreference';
             const darkReaderConfig = { brightness: 100, contrast: 90, sepia: 10 };
-
-            function getSystemColorScheme() {
-                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            }
-            function getStoredPreference() { return localStorage.getItem(COLOR_SCHEME_KEY); }
-            function setStoredPreference(scheme) { localStorage.setItem(COLOR_SCHEME_KEY, scheme); }
-            function getEffectiveColorScheme() {
-                const stored = getStoredPreference();
-                return (stored === 'dark' || stored === 'light') ? stored : getSystemColorScheme();
-            }
-            function isDarkMode() { return getEffectiveColorScheme() === 'dark'; }
-
-            function applyColorScheme(scheme) {
-                const toggleBtn = document.getElementById('colorSchemeToggleBtn');
-                if (scheme === 'dark') {
-                    if (typeof DarkReader !== 'undefined') DarkReader.enable(darkReaderConfig);
-                    if (toggleBtn) { toggleBtn.innerHTML = '☀️'; toggleBtn.setAttribute('aria-label', '切换浅色模式'); toggleBtn.setAttribute('title', '切换浅色模式'); }
-                } else {
-                    if (typeof DarkReader !== 'undefined') DarkReader.disable();
-                    if (toggleBtn) { toggleBtn.innerHTML = '🌙'; toggleBtn.setAttribute('aria-label', '切换深色模式'); toggleBtn.setAttribute('title', '切换深色模式'); }
-                }
-            }
-
-            function toggleColorScheme() {
-                const newScheme = getEffectiveColorScheme() === 'dark' ? 'light' : 'dark';
-                setStoredPreference(newScheme);
-                applyColorScheme(newScheme);
-                if (typeof drawWheel === 'function') drawWheel();
-                if (typeof updateLeftPanelAndTimeline === 'function' && typeof currentDayIndex !== 'undefined' && dailyTempCache[currentDayIndex]) {
-                    updateLeftPanelAndTimeline(currentDayIndex);
-                }
-            }
-
-            function initColorScheme() { applyColorScheme(getEffectiveColorScheme()); }
-            const systemColorSchemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
-            systemColorSchemeMedia.addEventListener('change', function(e) {
-                if (!getStoredPreference()) applyColorScheme(e.matches ? 'dark' : 'light');
-            });
-            document.getElementById('colorSchemeToggleBtn').addEventListener('click', toggleColorScheme);
-            initColorScheme();
-
-            const riskModal = document.getElementById('riskModal');
-            const riskConfirmBtn = document.getElementById('riskConfirmBtn');
-            if (!localStorage.getItem('riskAcknowledged')) riskModal.classList.add('active');
-            riskConfirmBtn.addEventListener('click', function() {
-                localStorage.setItem('riskAcknowledged', 'true');
-                riskModal.classList.remove('active');
-                if (typeof window._autoLocated === 'undefined' || !window._autoLocated) {
-                    if (typeof performLocation === 'function') performLocation();
-                }
-            });
-
-            let currentLocation = { name: "北京", lat: 39.9042, lng: 116.4074 };
-            let currentYear = new Date().getFullYear();
-            let monthDays = [];
-            let totalDays = 365;
-            let dailyTempCache = [];
-            let currentRealWeather = { isReal: false, dateStr: null, isHistory: false, weatherCode: null };
-            let currentDayIndex = 0;
-            let canvasWheel = document.getElementById('seasonWheelCanvas');
-            let ctx = canvasWheel.getContext('2d');
-            let size = 600;
-            canvasWheel.width = size; canvasWheel.height = size;
-            let centerX = size/2, centerY = size/2, radiusOuter = 243, radiusInner = 90, pointerLength = radiusOuter - 18;
-            let pointerAngle = Math.PI/2;
-            let drag = false;
-            let pendingWeatherTimeout = null, currentAbortController = null;
-            let toast = document.getElementById('loadingToast');
-            let locateToast = document.getElementById('locateToast');
-            let locateMessage = document.getElementById('locateMessage');
-            let locateButtons = document.getElementById('locateButtons');
-
             const MATERIALS = [
-                { name: '🌱 草地', baseOffset: 0,   absorptivity: 0.65, thermalInertia: 0.7, nightCooling: 0.5 },
-                { name: '🟫 土地', baseOffset: 2,   absorptivity: 0.75, thermalInertia: 0.6, nightCooling: 0.6 },
+                { name: '🌱 草地', baseOffset: 0, absorptivity: 0.65, thermalInertia: 0.7, nightCooling: 0.5 },
+                { name: '🟫 土地', baseOffset: 2, absorptivity: 0.75, thermalInertia: 0.6, nightCooling: 0.6 },
                 { name: '🏖️ 沙滩', baseOffset: 3.5, absorptivity: 0.80, thermalInertia: 0.4, nightCooling: 0.8 },
                 { name: '🧱 地砖', baseOffset: 4.5, absorptivity: 0.85, thermalInertia: 0.55, nightCooling: 0.5 },
                 { name: '🛣️ 马路', baseOffset: 7.5, absorptivity: 0.90, thermalInertia: 0.45, nightCooling: 0.4 }
             ];
+            const STATUS_CLASSES = {
+                danger: 'status-danger',
+                tooCold: 'status-too-cold',
+                cool: 'status-cool',
+                good: 'status-good',
+                warm: 'status-warm',
+                hot: 'status-hot',
+                dangerHot: 'status-danger-hot',
+                na: 'status-na'
+            };
+            const STATUS_TEXTS = { danger: '危险', tooCold: '过冷', cool: '较冷', good: '适宜', warm: '较热', hot: '过热',
+                dangerHot: '危险', na: '--' };
 
-            // 根据温度获取对应的状态颜色 (用于渐变)
+            const SOLAR_FESTIVALS = {
+                '01-01': '元旦',
+                '02-14': '情人节',
+                '03-08': '妇女节',
+                '03-12': '植树节',
+                '04-01': '愚人节',
+                '05-01': '劳动节',
+                '05-04': '青年节',
+                '06-01': '儿童节',
+                '07-01': '建党节',
+                '08-01': '建军节',
+                '09-10': '教师节',
+                '10-01': '国庆节',
+                '10-31': '万圣节',
+                '12-25': '圣诞节'
+            };
+
+            function getEasterDate(year) {
+                const a = year % 19;
+                const b = Math.floor(year / 100);
+                const c = year % 100;
+                const d = Math.floor(b / 4);
+                const e = b % 4;
+                const f = Math.floor((b + 8) / 25);
+                const g = Math.floor((b - f + 1) / 3);
+                const h = (19 * a + b - d - g + 15) % 30;
+                const i = Math.floor(c / 4);
+                const k = c % 4;
+                const l = (32 + 2 * e + 2 * i - h - k) % 7;
+                const m = Math.floor((a + 11 * h + 22 * l) / 451);
+                const month = Math.floor((h + l - 7 * m + 114) / 31);
+                const day = ((h + l - 7 * m + 114) % 31) + 1;
+                return { month, day };
+            }
+
+            function getMothersDay(year) {
+                const may1 = new Date(year, 4, 1).getDay();
+                const day = 8 + (may1 === 0 ? 0 : 7 - may1);
+                return { month: 5, day };
+            }
+
+            function getFathersDay(year) {
+                const jun1 = new Date(year, 5, 1).getDay();
+                const day = 15 + (jun1 === 0 ? 0 : 7 - jun1);
+                return { month: 6, day };
+            }
+
+            function getThanksgiving(year) {
+                const nov1 = new Date(year, 10, 1).getDay();
+                const day = 22 + ((4 - nov1 + 7) % 7);
+                return { month: 11, day };
+            }
+
+            function getDynamicSolarFestivals(year) {
+                const festivals = {};
+                const easter = getEasterDate(year);
+                festivals[`${String(easter.month).padStart(2,'0')}-${String(easter.day).padStart(2,'0')}`] = '复活节';
+                const mothers = getMothersDay(year);
+                festivals[`${String(mothers.month).padStart(2,'0')}-${String(mothers.day).padStart(2,'0')}`] = '母亲节';
+                const fathers = getFathersDay(year);
+                festivals[`${String(fathers.month).padStart(2,'0')}-${String(fathers.day).padStart(2,'0')}`] = '父亲节';
+                const thanks = getThanksgiving(year);
+                festivals[`${String(thanks.month).padStart(2,'0')}-${String(thanks.day).padStart(2,'0')}`] = '感恩节';
+                return festivals;
+            }
+
+            function getTempStatus(temp) {
+                if (temp < 15) return { text: STATUS_TEXTS.danger, class: STATUS_CLASSES.danger };
+                if (temp < 20) return { text: STATUS_TEXTS.tooCold, class: STATUS_CLASSES.tooCold };
+                if (temp < 28) return { text: STATUS_TEXTS.cool, class: STATUS_CLASSES.cool };
+                if (temp <= 35) return { text: STATUS_TEXTS.good, class: STATUS_CLASSES.good };
+                if (temp <= 40) return { text: STATUS_TEXTS.warm, class: STATUS_CLASSES.warm };
+                if (temp <= 45) return { text: STATUS_TEXTS.hot, class: STATUS_CLASSES.hot };
+                return { text: STATUS_TEXTS.dangerHot, class: STATUS_CLASSES.dangerHot };
+            }
+
             function getColorForTemp(temp) {
                 if (temp < 15) return '#1e3a8a';
                 if (temp < 20) return '#3b82f6';
@@ -698,47 +1323,9 @@
                 return '#dc2626';
             }
 
-            function lightenColor(hex, amount = 0.35) {
-                let r = parseInt(hex.slice(1,3), 16) / 255;
-                let g = parseInt(hex.slice(3,5), 16) / 255;
-                let b = parseInt(hex.slice(5,7), 16) / 255;
-                let max = Math.max(r,g,b), min = Math.min(r,g,b);
-                let h, s, l = (max + min) / 2;
-                if (max === min) { h = s = 0; }
-                else {
-                    let d = max - min;
-                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                    if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
-                    else if (max === g) h = (b - r) / d + 2;
-                    else h = (r - g) / d + 4;
-                    h /= 6;
-                }
-                let newL = Math.min(0.92, l + amount);
-                function hue2rgb(p, q, t) {
-                    if(t < 0) t += 1;
-                    if(t > 1) t -= 1;
-                    if(t < 1/6) return p + (q - p) * 6 * t;
-                    if(t < 1/2) return q;
-                    if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-                    return p;
-                }
-                let q, p;
-                if (newL < 0.5) q = newL * (1 + s);
-                else q = newL + s - newL * s;
-                p = 2 * newL - q;
-                let newR = hue2rgb(p, q, h + 1/3);
-                let newG = hue2rgb(p, q, h);
-                let newB = hue2rgb(p, q, h - 1/3);
-                let toHex = (x) => {
-                    let hex = Math.round(x * 255).toString(16);
-                    return hex.length === 1 ? '0' + hex : hex;
-                };
-                return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
-            }
-
             function getCloudAttenuation(code) {
                 if (code == null) return 0.7;
-                if ([0,1].includes(code)) return 1.0;
+                if ([0, 1].includes(code)) return 1.0;
                 if (code === 2) return 0.85;
                 if (code === 3) return 0.65;
                 if (code === 45 || code === 48) return 0.55;
@@ -748,31 +1335,167 @@
                 return 0.65;
             }
 
+            const WEATHER_MAP = {
+                0: ['☀️', '晴'],
+                1: ['🌤️', '晴间多云'],
+                2: ['⛅', '部分多云'],
+                3: ['☁️', '多云'],
+                45: ['🌫️', '雾'],
+                48: ['🌫️', '冻雾'],
+                51: ['🌦️', '小毛毛雨'],
+                53: ['🌦️', '毛毛雨'],
+                55: ['🌦️', '大毛毛雨'],
+                56: ['🌨️', '冻毛毛雨'],
+                57: ['🌨️', '冻毛毛雨'],
+                61: ['🌧️', '小雨'],
+                63: ['🌧️', '中雨'],
+                65: ['🌧️', '大雨'],
+                66: ['🌨️', '冻雨'],
+                67: ['🌨️', '冻雨'],
+                71: ['❄️', '小雪'],
+                73: ['❄️', '中雪'],
+                75: ['❄️', '大雪'],
+                77: ['❄️', '雪粒'],
+                80: ['🌦️', '小阵雨'],
+                81: ['🌦️', '阵雨'],
+                82: ['🌧️', '大阵雨'],
+                85: ['🌨️', '小阵雪'],
+                86: ['🌨️', '阵雪'],
+                95: ['⛈️', '雷暴'],
+                96: ['⛈️', '雷暴伴冰雹'],
+                99: ['⛈️', '雷暴伴大冰雹']
+            };
+
+            function getWeatherEmojiAndDesc(code) {
+                return WEATHER_MAP[code] || ['🌥️', '多云'];
+            }
+
+            let currentLocation = { name: "北京", lat: 39.9042, lng: 116.4074 };
+            let currentYear = new Date().getFullYear();
+            let monthDays = [];
+            let totalDays = 365;
+            let dailyTempCache = [];
+            let currentRealWeather = { isReal: false, dateStr: null, isHistory: false, weatherCode: null };
+            let currentDayIndex = 0;
+            let currentAbortController = null;
+            let currentCalendarMonth = new Date().getMonth() + 1;
+            let currentCalendarYear = new Date().getFullYear();
+            let selectedCalendarDay = new Date().getDate();
+            let holidayMap = {};
+            let ymPickerYear = currentCalendarYear;
+            let dynamicSolarFestivalsCache = {};
+
+            // 2026年完整法定节假日调休默认数据（权威预测，保障核心标注）
+            const DEFAULT_HOLIDAY_MAP = {
+                // 元旦
+                '01-01': { name: '元旦', isHoliday: true, isWorkday: false },
+                '01-02': { name: '元旦', isHoliday: true, isWorkday: false },
+                '01-03': { name: '元旦', isHoliday: true, isWorkday: false },
+                '01-04': { name: '', isHoliday: false, isWorkday: true },
+                // 春节 (2月15日除夕~2月21日)
+                '02-15': { name: '春节', isHoliday: true, isWorkday: false },
+                '02-16': { name: '春节', isHoliday: true, isWorkday: false },
+                '02-17': { name: '春节', isHoliday: true, isWorkday: false },
+                '02-18': { name: '春节', isHoliday: true, isWorkday: false },
+                '02-19': { name: '春节', isHoliday: true, isWorkday: false },
+                '02-20': { name: '春节', isHoliday: true, isWorkday: false },
+                '02-21': { name: '春节', isHoliday: true, isWorkday: false },
+                '02-14': { name: '', isHoliday: false, isWorkday: true },
+                '02-28': { name: '', isHoliday: false, isWorkday: true },
+                // 清明节 (4月4日~6日)
+                '04-04': { name: '清明节', isHoliday: true, isWorkday: false },
+                '04-05': { name: '清明节', isHoliday: true, isWorkday: false },
+                '04-06': { name: '清明节', isHoliday: true, isWorkday: false },
+                // 劳动节 (5月1日~5日，5月9日上班)
+                '05-01': { name: '劳动节', isHoliday: true, isWorkday: false },
+                '05-02': { name: '', isHoliday: true, isWorkday: false },
+                '05-03': { name: '', isHoliday: true, isWorkday: false },
+                '05-04': { name: '', isHoliday: true, isWorkday: false },
+                '05-05': { name: '', isHoliday: true, isWorkday: false },
+                '05-09': { name: '', isHoliday: false, isWorkday: true },
+                // 端午节 (6月19日~21日)
+                '06-19': { name: '端午节', isHoliday: true, isWorkday: false },
+                '06-20': { name: '', isHoliday: true, isWorkday: false },
+                '06-21': { name: '', isHoliday: true, isWorkday: false },
+                // 中秋节 (9月25日~27日，9月20日上班)
+                '09-25': { name: '中秋节', isHoliday: true, isWorkday: false },
+                '09-26': { name: '', isHoliday: true, isWorkday: false },
+                '09-27': { name: '', isHoliday: true, isWorkday: false },
+                '09-20': { name: '', isHoliday: false, isWorkday: true },
+                // 国庆节 (10月1日~7日，10月10日上班)
+                '10-01': { name: '国庆节', isHoliday: true, isWorkday: false },
+                '10-02': { name: '', isHoliday: true, isWorkday: false },
+                '10-03': { name: '', isHoliday: true, isWorkday: false },
+                '10-04': { name: '', isHoliday: true, isWorkday: false },
+                '10-05': { name: '', isHoliday: true, isWorkday: false },
+                '10-06': { name: '', isHoliday: true, isWorkday: false },
+                '10-07': { name: '', isHoliday: true, isWorkday: false },
+                '10-10': { name: '', isHoliday: false, isWorkday: true }
+            };
+
+            function getDynamicFestivalsForYear(year) {
+                if (!dynamicSolarFestivalsCache[year]) {
+                    dynamicSolarFestivalsCache[year] = getDynamicSolarFestivals(year);
+                }
+                return dynamicSolarFestivalsCache[year];
+            }
+
+            function updateCalendar() {
+                let isLeap = (currentYear % 4 === 0 && currentYear % 100 !== 0) || (currentYear % 400 === 0);
+                monthDays = [31, isLeap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                totalDays = monthDays.reduce((a, b) => a + b, 0);
+                dynamicSolarFestivalsCache = {};
+            }
+
+            function getDayIndex(month, day) { let idx = 0; for (let i = 1; i < month; i++) idx += monthDays[i -
+                    1]; return idx + day - 1; }
+
+            function getDateFromIndex(idx) { let r = idx; for (let m = 0; m < 12; m++) { if (r < monthDays[m])
+                        return { year: currentYear, month: m + 1, day: r + 1 };
+                r -= monthDays[m]; } return { year: currentYear, month: 12, day: 31 }; }
+
+            function getDateStrFromIdx(idx) { let d = getDateFromIndex(idx); return `${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`; }
+
+            function getDayOfYearFromIndex(dayIdx) { const d = getDateFromIndex(dayIdx); return Math.floor((new Date(d
+                    .year, d.month - 1, d.day) - new Date(d.year, 0, 0)) / 86400000); }
+
+            function estimateDailyTemp(idx) {
+                let rad = (idx / totalDays) * 2 * Math.PI;
+                let latFactor = Math.abs(currentLocation.lat);
+                let avg = 15,
+                    amp = 18;
+                if (latFactor > 35) { avg = 11;
+                    amp = 20; } else if (latFactor < 25) { avg = 22;
+                    amp = 12; }
+                let mean = avg + amp * Math.sin(rad - Math.PI / 2);
+                return { min: mean - 3.5, max: mean + 3.5 };
+            }
+
             function calcSolarGain(lat, dayOfYear, hour, weatherCode) {
                 const declination = 23.45 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
-                const latRad = lat * Math.PI / 180;
-                const declRad = declination * Math.PI / 180;
+                const latRad = lat * Math.PI / 180,
+                    declRad = declination * Math.PI / 180;
                 const hourAngle = (hour - 12) * 15 * Math.PI / 180;
-                const sinElevation = Math.sin(latRad) * Math.sin(declRad) + Math.cos(latRad) * Math.cos(declRad) * Math.cos(hourAngle);
+                const sinElevation = Math.sin(latRad) * Math.sin(declRad) + Math.cos(latRad) * Math.cos(declRad) * Math
+                    .cos(hourAngle);
                 const solarElevation = Math.asin(Math.max(-0.2, Math.min(0.99, sinElevation)));
                 if (solarElevation <= 0) return 0;
-                const airMass = 1 / (Math.sin(solarElevation) + 0.15 * Math.pow(solarElevation * 180/Math.PI + 3.885, -1.253));
+                const airMass = 1 / (Math.sin(solarElevation) + 0.15 * Math.pow(solarElevation * 180 / Math.PI + 3.885, -
+                    1.253));
                 const clearSkyTrans = 0.75;
                 const cloudFactor = getCloudAttenuation(weatherCode);
                 const maxRadiation = 1367 * clearSkyTrans * cloudFactor * Math.pow(0.9, airMass);
-                const baseGain = 18.0;
-                return baseGain * (maxRadiation / (1367 * 0.75)) * Math.sin(solarElevation);
+                return 18.0 * (maxRadiation / (1367 * 0.75)) * Math.sin(solarElevation);
             }
 
-            function computeMaterialTempForHour(materialIdx, airTemp, hour, dayOfYear, lat, weatherCode, prevTemp = null) {
+            function computeMaterialTempForHour(materialIdx, airTemp, hour, dayOfYear, lat, weatherCode, prevTemp =
+            null) {
                 const mat = MATERIALS[materialIdx];
                 const solarGain = calcSolarGain(lat, dayOfYear, hour, weatherCode);
                 let radHeating = solarGain * mat.absorptivity;
                 let nightCool = 0;
-                if (solarGain === 0) {
-                    const cloudFactor = getCloudAttenuation(weatherCode);
-                    nightCool = -(1.5 + 2.0 * (1 - cloudFactor)) * mat.nightCooling;
-                }
+                if (solarGain === 0) nightCool = -(1.5 + 2.0 * (1 - getCloudAttenuation(weatherCode))) * mat
+                .nightCooling;
                 const steadyTemp = airTemp + radHeating + nightCool;
                 if (prevTemp !== null) {
                     const alpha = 0.3 + 0.5 * (1 - mat.thermalInertia);
@@ -781,687 +1504,821 @@
                 return steadyTemp;
             }
 
-            function generateMaterialTempProfile(materialIdx, airMin, airMax, dayOfYear, lat, weatherCode, hourlyAirTemps = null) {
+            function generateMaterialTempProfile(materialIdx, airMin, airMax, dayOfYear, lat, weatherCode,
+            hourlyAirTemps = null) {
                 const hours = 24;
                 const profile = new Array(hours + 1).fill(0);
                 let airTemps = new Array(hours + 1);
                 if (hourlyAirTemps && hourlyAirTemps.length === 24) {
-                    for (let h = 0; h <= hours; h++) {
-                        if (h < 24) airTemps[h] = hourlyAirTemps[h];
-                        else airTemps[24] = hourlyAirTemps[0];
-                    }
+                    for (let h = 0; h <= hours; h++) airTemps[h] = (h < 24) ? hourlyAirTemps[h] : hourlyAirTemps[0];
                 } else {
-                    const airMid = (airMin + airMax) / 2;
-                    const airAmp = (airMax - airMin) / 2;
-                    for (let h = 0; h <= hours; h++) {
-                        airTemps[h] = airMid + airAmp * Math.cos((h - 14) * Math.PI / 12);
-                    }
+                    const airMid = (airMin + airMax) / 2,
+                        airAmp = (airMax - airMin) / 2;
+                    for (let h = 0; h <= hours; h++) airTemps[h] = airMid + airAmp * Math.cos((h - 14) * Math.PI / 12);
                 }
                 let prev = airTemps[0];
                 for (let h = 0; h <= hours; h++) {
-                    profile[h] = computeMaterialTempForHour(materialIdx, airTemps[h], h, dayOfYear, lat, weatherCode, prev);
+                    profile[h] = computeMaterialTempForHour(materialIdx, airTemps[h], h, dayOfYear, lat, weatherCode,
+                        prev);
                     prev = profile[h];
                 }
                 return profile;
             }
 
-            function getTempStatus(temp) {
-                if (temp < 15) return { text: '危险', class: 'status-danger' };
-                if (temp < 20) return { text: '过冷', class: 'status-too-cold' };
-                if (temp < 28) return { text: '较冷', class: 'status-cool' };
-                if (temp <= 35) return { text: '适宜', class: 'status-good' };
-                if (temp <= 40) return { text: '较热', class: 'status-warm' };
-                if (temp <= 45) return { text: '过热', class: 'status-hot' };
-                return { text: '危险', class: 'status-danger-hot' };
-            }
-
-            async function reverseGeocode(lat, lng) {
-                try {
-                    const revRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`);
-                    const revData = await revRes.json();
-                    let city = revData.city || revData.locality || revData.principalSubdivision || '当前位置';
-                    if(city.endsWith('市')) city = city.slice(0,-1);
-                    return city;
-                } catch(e) { return null; }
-            }
-
-            async function tryMultiIpLocation() {
-                const timeoutMs = 5000;
-                const fetchWithTimeout = (url, options = {}) => {
-                    const controller = new AbortController();
-                    const id = setTimeout(() => controller.abort(), timeoutMs);
-                    return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
-                };
-                const ipServices = [
-                    async () => {
-                        try {
-                            const res = await fetchWithTimeout('https://ip-api.com/json/?fields=status,lat,lon,city&lang=zh-CN');
-                            const data = await res.json();
-                            if (data.status === 'success' && data.lat && data.lon && data.city) {
-                                let city = data.city;
-                                if(city.endsWith('市')) city = city.slice(0,-1);
-                                return { name: city, lat: data.lat, lng: data.lon };
-                            }
-                            return null;
-                        } catch(e) { return null; }
-                    },
-                    async () => {
-                        try {
-                            const res = await fetchWithTimeout('https://ipapi.co/json/');
-                            const data = await res.json();
-                            if (data && data.latitude && data.longitude) {
-                                let city = data.city || data.region || '';
-                                if (city && data.latitude && data.longitude) {
-                                    const cnName = await reverseGeocode(data.latitude, data.longitude);
-                                    if (cnName) city = cnName;
-                                    else if (city.endsWith('市')) city = city.slice(0,-1);
-                                    return { name: city || '未知位置', lat: data.latitude, lng: data.longitude };
-                                }
-                            }
-                            return null;
-                        } catch(e) { return null; }
-                    }
-                ];
-                const results = await Promise.allSettled(ipServices.map(fn => fn()));
-                for (const res of results) {
-                    if (res.status === 'fulfilled' && res.value && res.value.lat && res.value.lng) return res.value;
-                }
-                return null;
-            }
-
-            async function tryBrowserLocation() {
-                if (!navigator.geolocation) return null;
-                return new Promise((resolve) => {
-                    navigator.geolocation.getCurrentPosition(async (pos) => {
-                        const lat = pos.coords.latitude;
-                        const lng = pos.coords.longitude;
-                        const cityName = await reverseGeocode(lat, lng);
-                        if (cityName) resolve({ name: cityName, lat, lng });
-                        else resolve({ name: '当前位置', lat, lng });
-                    }, () => { resolve(null); }, { timeout: 10000, enableHighAccuracy: false });
-                });
-            }
-
-            async function performLocation() {
-                if (locateToast.classList.contains('show')) return;
-                locateToast.classList.add('show');
-                locateButtons.innerHTML = '';
-                locateMessage.innerHTML = '<span>📍 正在获取位置信息...</span>';
-                let location = null;
-                locateMessage.innerHTML = '<span>📡 尝试浏览器定位...</span>';
-                location = await tryBrowserLocation();
-                if (!location || !location.lat) {
-                    locateMessage.innerHTML = '<span>🌏 通过IP定位中...</span>';
-                    location = await tryMultiIpLocation();
-                }
-                if (location && location.lat && location.lng) {
-                    locateToast.classList.remove('show');
-                    await setCity(location);
-                    window._autoLocated = true;
-                } else {
-                    locateMessage.innerHTML = '<span>⚠️ 定位失败，请重试或手动选择城市</span>';
-                    locateButtons.innerHTML = `
-                        <button class="locate-btn" id="locateRetryBtn">🔄 重试</button>
-                        <button class="locate-btn primary" id="locateSelectCityBtn">📌 选择城市</button>
-                    `;
-                    document.getElementById('locateRetryBtn').addEventListener('click', () => { locateToast.classList.remove('show'); performLocation(); });
-                    document.getElementById('locateSelectCityBtn').addEventListener('click', () => { locateToast.classList.remove('show'); document.getElementById('openCityPickerBtn').click(); });
-                }
-            }
-
-            function updateCalendar() { 
-                let isLeap = (currentYear%4===0&&currentYear%100!==0)||(currentYear%400===0); 
-                monthDays=[31,isLeap?29:28,31,30,31,30,31,31,30,31,30,31]; 
-                totalDays=monthDays.reduce((a,b)=>a+b,0); 
-            }
-            function getDayIndex(month,day){ let idx=0; for(let i=1;i<month;i++) idx+=monthDays[i-1]; return idx+day-1; }
-            function getDateFromIndex(idx){ let r=idx; for(let m=0;m<12;m++){ if(r<monthDays[m]) return {year:currentYear, month:m+1, day:r+1}; r-=monthDays[m];} return {year:currentYear, month:12, day:31}; }
-            function formatDate(idx){ let d=getDateFromIndex(idx); return `${d.month}月${d.day}日`; }
-            function getDateStrFromIdx(idx){ let d=getDateFromIndex(idx); return `${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`; }
-            function getAngleFromDayIndex(dayIdx){ return (dayIdx/totalDays)*2*Math.PI; }
-            function estimateDailyTemp(idx) { 
-                let rad=(idx/totalDays)*2*Math.PI; 
-                let latFactor=Math.abs(currentLocation.lat); 
-                let avg=15,amp=18; 
-                if(latFactor>35){ avg=11; amp=20;} else if(latFactor<25){ avg=22; amp=12;} 
-                let mean=avg+amp*Math.sin(rad-Math.PI/2); 
-                return { min:mean-3.5, max:mean+3.5 }; 
-            }
-
             async function fetchHourlyWeather(lat, lng, targetDate, hour) {
                 const targetDateObj = new Date(targetDate);
                 const nowObj = new Date();
-                const diffDays = Math.floor((targetDateObj - nowObj) / (1000*3600*24));
+                const diffDays = Math.floor((targetDateObj - nowObj) / (1000 * 3600 * 24));
                 const isHistory = diffDays < 0;
                 const isForecastFuture = diffDays >= 0 && diffDays <= 7;
                 const isWithin3MonthsHistory = isHistory && Math.abs(diffDays) <= 90;
                 let url = '';
-                if (isForecastFuture) {
-                    url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=temperature_2m,weathercode&timezone=auto&forecast_days=7`;
-                } else if (isWithin3MonthsHistory) {
-                    url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${targetDate}&end_date=${targetDate}&hourly=temperature_2m,weathercode&timezone=auto`;
-                } else return null;
+                if (isForecastFuture) url =
+                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=temperature_2m,weathercode&timezone=auto&forecast_days=7`;
+                else if (isWithin3MonthsHistory) url =
+                    `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${targetDate}&end_date=${targetDate}&hourly=temperature_2m,weathercode&timezone=auto`;
+                else return null;
                 try {
-                    const response = await fetch(url);
-                    if (!response.ok) return null;
-                    const data = await response.json();
-                    if (!data.hourly || !data.hourly.time) return null;
+                    const resp = await fetch(url);
+                    if (!resp.ok) return null;
+                    const data = await resp.json();
                     const times = data.hourly.time;
                     const temps = data.hourly.temperature_2m;
                     const codes = data.hourly.weathercode;
-                    for (let i=0; i<times.length; i++) {
+                    for (let i = 0; i < times.length; i++) {
                         if (times[i].startsWith(targetDate) && new Date(times[i]).getHours() === hour) {
                             return { temp: temps[i], weatherCode: codes?.[i] || 0, isHistory };
                         }
                     }
                     return null;
-                } catch(e) { return null; }
+                } catch (e) { return null; }
             }
 
-            function getWeatherEmojiAndDesc(code) {
-                if (code === undefined) return ['❓', '未知'];
-                const map = {0:'☀️ 晴',1:'🌤️ 晴间多云',2:'⛅ 部分多云',3:'☁️ 多云',45:'🌫️ 雾',51:'🌧️ 毛毛雨',61:'🌧️ 雨',71:'❄️ 雪'};
-                if (map[code]) return [map[code].split(' ')[0], map[code].split(' ')[1]];
-                return ['🌥️', '多云'];
+            async function refreshWeatherForCurrentDate(showToast = true) {
+                if (currentAbortController) currentAbortController.abort();
+                if (showToast) loadingToastEl.classList.add('show');
+                const targetDate = getDateStrFromIdx(currentDayIndex);
+                const todayStr = new Date().toISOString().slice(0, 10);
+                const diffDays = Math.floor((new Date(targetDate) - new Date(todayStr)) / 86400000);
+                let isHistory = diffDays < 0;
+                try {
+                    let url = '';
+                    if (diffDays >= 0 && diffDays <= 7) url =
+                        `https://api.open-meteo.com/v1/forecast?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm,weathercode&timezone=auto&forecast_days=7`;
+                    else if (isHistory && Math.abs(diffDays) <= 90) url =
+                        `https://archive-api.open-meteo.com/v1/archive?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&start_date=${targetDate}&end_date=${targetDate}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm,weathercode&timezone=auto`;
+                    else throw new Error('out of range');
+                    const resp = await fetch(url);
+                    if (!resp.ok) throw new Error('api fail');
+                    const data = await resp.json();
+                    const times = data.hourly.time;
+                    const airs = data.hourly.temperature_2m;
+                    const feels = data.hourly.apparent_temperature;
+                    const grounds = data.hourly.soil_temperature_0cm;
+                    const codes = data.hourly.weathercode;
+                    let indices = [];
+                    for (let i = 0; i < times.length; i++)
+                        if (times[i].startsWith(targetDate)) indices.push(i);
+                    if (indices.length) {
+                        let airVals = [],
+                            feelsVals = [],
+                            groundVals = [],
+                            codeCount = {};
+                        let hourlyAir = new Array(24).fill(null);
+                        indices.forEach(i => {
+                            let h = new Date(times[i]).getHours();
+                            if (h >= 0 && h < 24) hourlyAir[h] = airs[i];
+                            airVals.push(airs[i]);
+                            if (feels) feelsVals.push(feels[i]);
+                            if (grounds) groundVals.push(grounds[i]);
+                            if (codes) { let c = codes[i];
+                                codeCount[c] = (codeCount[c] || 0) + 1; }
+                        });
+                        for (let h = 0; h < 24; h++) {
+                            if (hourlyAir[h] === null) {
+                                let left = h - 1,
+                                    right = h + 1;
+                                while (left >= 0 && hourlyAir[left] === null) left--;
+                                while (right < 24 && hourlyAir[right] === null) right++;
+                                if (left >= 0 && right < 24) hourlyAir[h] = (hourlyAir[left] + hourlyAir[right]) /
+                                    2;
+                                else if (left >= 0) hourlyAir[h] = hourlyAir[left];
+                                else if (right < 24) hourlyAir[h] = hourlyAir[right];
+                                else hourlyAir[h] = airVals[0] || 15;
+                            }
+                        }
+                        let domCode = codes ? parseInt(Object.keys(codeCount).reduce((a, b) => codeCount[a] >
+                            codeCount[b] ? a : b)) : 3;
+                        currentRealWeather = {
+                            airMin: Math.min(...airVals),
+                            airMax: Math.max(...airVals),
+                            feelsMin: feelsVals.length ? Math.min(...feelsVals) : null,
+                            feelsMax: feelsVals.length ? Math.max(...feelsVals) : null,
+                            groundMin: groundVals.length ? Math.min(...groundVals) : null,
+                            groundMax: groundVals.length ? Math.max(...groundVals) : null,
+                            isReal: true,
+                            dateStr: targetDate,
+                            isHistory,
+                            weatherCode: domCode
+                        };
+                        dailyTempCache[currentDayIndex] = {
+                            min: currentRealWeather.airMin,
+                            max: currentRealWeather.airMax,
+                            real: true,
+                            isHistory,
+                            weatherCode: domCode,
+                            hourlyTemps: hourlyAir
+                        };
+                    } else throw new Error('no indices');
+                } catch (e) {
+                    let est = estimateDailyTemp(currentDayIndex);
+                    dailyTempCache[currentDayIndex] = { min: est.min, max: est.max, real: false, isHistory: false,
+                        weatherCode: 3, hourlyTemps: null };
+                    currentRealWeather = { isReal: false, isHistory: false, weatherCode: 3 };
+                }
+                updateLeftPanelAndTimeline(currentDayIndex);
+                if (showToast) loadingToastEl.classList.remove('show');
             }
 
             async function updateCurrentCardByDateTime(dateTimeStr) {
                 if (!dateTimeStr) return;
                 const dt = new Date(dateTimeStr);
                 if (isNaN(dt)) return;
-                const year = dt.getFullYear(), month = dt.getMonth()+1, day = dt.getDate(), hour = dt.getHours();
-                const targetDateStr = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-                let airTemp = null, weatherCode = null, isEstimated = false;
-                const hourlyData = await fetchHourlyWeather(currentLocation.lat, currentLocation.lng, targetDateStr, hour);
-                if (hourlyData) {
-                    airTemp = hourlyData.temp;
-                    weatherCode = hourlyData.weatherCode;
-                } else {
-                    const today = new Date(); today.setHours(0,0,0,0);
+                const year = dt.getFullYear(),
+                    month = dt.getMonth() + 1,
+                    day = dt.getDate(),
+                    hour = dt.getHours();
+                const targetDateStr =
+                    `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                let airTemp = null,
+                    weatherCode = null,
+                    isEstimated = false;
+                const hourlyData = await fetchHourlyWeather(currentLocation.lat, currentLocation.lng, targetDateStr,
+                    hour);
+                if (hourlyData) { airTemp = hourlyData.temp;
+                    weatherCode = hourlyData.weatherCode; } else {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
                     const diffDays = Math.floor((new Date(targetDateStr) - today) / 86400000);
                     if (diffDays > 7 || diffDays < -90) isEstimated = true;
                     else {
                         const dayIdx = getDayIndex(month, day);
                         const est = dailyTempCache[dayIdx] || estimateDailyTemp(dayIdx);
-                        airTemp = (est.min + est.max)/2;
+                        airTemp = (est.min + est.max) / 2;
                         weatherCode = 3;
                     }
                 }
                 const [emoji, desc] = getWeatherEmojiAndDesc(weatherCode);
-                document.getElementById('currentAirTempVal').innerHTML = (airTemp !== null && !isEstimated) ? `${airTemp.toFixed(1)}°C` : '--';
-                document.getElementById('currentWeatherIcon').innerHTML = emoji;
-                document.getElementById('currentWeatherDesc').innerHTML = (isEstimated && !hourlyData) ? '估算数据' : desc;
+                currentAirTempEl.innerHTML = (airTemp !== null && !isEstimated) ? `${airTemp.toFixed(1)}°C` : '--';
+                currentWeatherIconEl.innerHTML = emoji;
+                currentWeatherDescEl.innerHTML = (isEstimated && !hourlyData) ? '估算数据' : desc;
                 const dayOfYear = Math.floor((dt - new Date(dt.getFullYear(), 0, 0)) / 86400000);
-                let gridHtml = '', prevTemp = airTemp;
-                for (let idx=0; idx<MATERIALS.length; idx++) {
-                    const mat = MATERIALS[idx];
-                    let tempVal = null;
-                    if (airTemp !== null && !isEstimated) tempVal = computeMaterialTempForHour(idx, airTemp, hour, dayOfYear, currentLocation.lat, weatherCode, prevTemp);
-                    const status = (tempVal !== null) ? getTempStatus(tempVal) : { text: '--', class: 'status-na' };
-                    gridHtml += `<div class="material-row"><span class="material-name">${mat.name}</span><span class="material-temp">${tempVal !== null ? tempVal.toFixed(1)+'℃' : '--'}</span><span class="material-status"><span class="status-badge ${status.class}">${status.text}</span></span></div>`;
+                let gridHtml = '',
+                    prevTemp = airTemp;
+                for (let idx = 0; idx < MATERIALS.length; idx++) {
+                    let tempVal = (airTemp !== null && !isEstimated) ? computeMaterialTempForHour(idx, airTemp, hour,
+                        dayOfYear, currentLocation.lat, weatherCode, prevTemp) : null;
+                    const status = (tempVal !== null) ? getTempStatus(tempVal) : { text: STATUS_TEXTS.na,
+                        class: STATUS_CLASSES.na };
+                    gridHtml +=
+                        `<div class="material-row"><span class="material-name">${MATERIALS[idx].name}</span><span class="material-temp">${tempVal !== null ? tempVal.toFixed(1)+'℃' : '--'}</span><span class="material-status"><span class="status-badge ${status.class}">${status.text}</span></span></div>`;
                     prevTemp = tempVal;
                 }
-                document.getElementById('currentMaterialGrid').innerHTML = gridHtml;
+                currentMaterialGridEl.innerHTML = gridHtml;
             }
 
-            async function refreshWeatherForCurrentDate(showToast=true) {
-                if(currentAbortController) currentAbortController.abort();
-                if(showToast) toast.classList.add('show');
-                const targetDate = getDateStrFromIdx(currentDayIndex);
-                const todayStr = new Date().toISOString().slice(0,10);
-                const diffDays = Math.floor((new Date(targetDate) - new Date(todayStr)) / 86400000);
-                let isHistory = diffDays < 0;
-                try {
-                    let url = '';
-                    if (diffDays >= 0 && diffDays <= 7) {
-                        url = `https://api.open-meteo.com/v1/forecast?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm,weathercode&timezone=auto&forecast_days=7`;
-                    } else if (isHistory && Math.abs(diffDays) <= 90) {
-                        url = `https://archive-api.open-meteo.com/v1/archive?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&start_date=${targetDate}&end_date=${targetDate}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm,weathercode&timezone=auto`;
-                    } else throw new Error('超出范围');
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error('api fail');
-                    const data = await response.json();
-                    if (!data.hourly || !data.hourly.time) throw new Error('no data');
-                    const times = data.hourly.time;
-                    const airs = data.hourly.temperature_2m;
-                    const feels = data.hourly.apparent_temperature;
-                    const grounds = data.hourly.soil_temperature_0cm;
-                    const weatherCodes = data.hourly.weathercode;
-                    let indices = [];
-                    for(let i=0;i<times.length;i++) if(times[i].startsWith(targetDate)) indices.push(i);
-                    if(indices.length){
-                        let airVals=[], feelsVals=[], groundVals=[], codeCount = {};
-                        let hourlyAirTemps = new Array(24).fill(null);
-                        indices.forEach(idx=>{ 
-                            let hour = new Date(times[idx]).getHours();
-                            if (hour >=0 && hour < 24) hourlyAirTemps[hour] = airs[idx];
-                            airVals.push(airs[idx]); 
-                            if(feels) feelsVals.push(feels[idx]); 
-                            if(grounds) groundVals.push(grounds[idx]);
-                            if(weatherCodes) { let c = weatherCodes[idx]; codeCount[c] = (codeCount[c]||0)+1; }
-                        });
-                        for (let h=0; h<24; h++) {
-                            if (hourlyAirTemps[h] === null) {
-                                let left = h-1; while(left>=0 && hourlyAirTemps[left]===null) left--;
-                                let right = h+1; while(right<24 && hourlyAirTemps[right]===null) right++;
-                                if (left>=0 && right<24) hourlyAirTemps[h] = (hourlyAirTemps[left] + hourlyAirTemps[right])/2;
-                                else if (left>=0) hourlyAirTemps[h] = hourlyAirTemps[left];
-                                else if (right<24) hourlyAirTemps[h] = hourlyAirTemps[right];
-                                else hourlyAirTemps[h] = (airVals.length? airVals[0] : 15);
-                            }
-                        }
-                        let dominantCode = weatherCodes ? parseInt(Object.keys(codeCount).reduce((a,b) => codeCount[a] > codeCount[b] ? a : b)) : 3;
-                        currentRealWeather = { 
-                            airMin:Math.min(...airVals), airMax:Math.max(...airVals), 
-                            feelsMin:feelsVals.length?Math.min(...feelsVals):null, feelsMax:feelsVals.length?Math.max(...feelsVals):null,
-                            groundMin:groundVals.length?Math.min(...groundVals):null, groundMax:groundVals.length?Math.max(...groundVals):null,
-                            isReal:true, dateStr:targetDate, isHistory, weatherCode: dominantCode
-                        };
-                        dailyTempCache[currentDayIndex] = { 
-                            min:currentRealWeather.airMin, 
-                            max:currentRealWeather.airMax, 
-                            real:true, 
-                            isHistory, 
-                            weatherCode: dominantCode,
-                            hourlyTemps: hourlyAirTemps
-                        };
-                    } else throw new Error('no indices');
-                } catch(e) {
-                    let est = estimateDailyTemp(currentDayIndex);
-                    dailyTempCache[currentDayIndex] = { min:est.min, max:est.max, real:false, isHistory:false, weatherCode: 3, hourlyTemps: null };
-                    currentRealWeather = { isReal:false, isHistory:false, weatherCode: 3 };
-                }
-                updateLeftPanelAndTimeline(currentDayIndex);
-                if(showToast) toast.classList.remove('show');
-            }
-
-            // 新版的温度条绘制：渐变背景 + 适宜区间高亮
             function drawMaterialTimelineWithProfile(canvasId, tempProfile) {
                 const canvas = document.getElementById(canvasId);
-                if(!canvas) return;
+                if (!canvas) return;
                 const container = canvas.parentElement;
                 const width = container.clientWidth;
                 canvas.width = width;
                 canvas.height = 18;
                 const ctxCanvas = canvas.getContext('2d');
                 const dark = isDarkMode();
-                
-                // 1. 绘制基于温度渐变的背景
                 ctxCanvas.save();
                 ctxCanvas.globalAlpha = 0.2;
                 for (let i = 0; i < 24; i++) {
-                    const x1 = (i / 24) * width;
-                    const x2 = ((i+1) / 24) * width;
-                    const t1 = tempProfile[i];
-                    const t2 = tempProfile[i+1];
-                    const color1 = getColorForTemp(t1);
-                    const color2 = getColorForTemp(t2);
-                    const gradient = ctxCanvas.createLinearGradient(x1, 0, x2, 0);
-                    gradient.addColorStop(0, color1);
-                    gradient.addColorStop(1, color2);
-                    ctxCanvas.fillStyle = gradient;
+                    const x1 = (i / 24) * width,
+                        x2 = ((i + 1) / 24) * width;
+                    const grad = ctxCanvas.createLinearGradient(x1, 0, x2, 0);
+                    grad.addColorStop(0, getColorForTemp(tempProfile[i]));
+                    grad.addColorStop(1, getColorForTemp(tempProfile[i + 1]));
+                    ctxCanvas.fillStyle = grad;
                     ctxCanvas.fillRect(x1, 0, x2 - x1, 18);
                 }
                 ctxCanvas.restore();
-                
-                // 2. 绘制适宜区间高亮胶囊 (28-35度)
-                const minTemp = Math.min(...tempProfile);
-                const maxTemp = Math.max(...tempProfile);
-                if(maxTemp >= 28 && minTemp <= 35) {
-                    let periods = [];
-                    let inPeriod = false, startHour = 0;
-                    for(let h=0; h<=24; h++) {
-                        let temp = tempProfile[h];
-                        let suitable = (temp>=28 && temp<=35);
-                        if(suitable && !inPeriod) { inPeriod = true; startHour = h; }
-                        if(!suitable && inPeriod) { periods.push({start:startHour, end:h}); inPeriod = false; }
+                const minT = Math.min(...tempProfile),
+                    maxT = Math.max(...tempProfile);
+                if (maxT >= 28 && minT <= 35) {
+                    let periods = [],
+                        inPeriod = false,
+                        startH = 0;
+                    for (let h = 0; h <= 24; h++) {
+                        let suitable = (tempProfile[h] >= 28 && tempProfile[h] <= 35);
+                        if (suitable && !inPeriod) { inPeriod = true;
+                            startH = h; }
+                        if (!suitable && inPeriod) { periods.push({ start: startH, end: h });
+                            inPeriod = false; }
                     }
-                    if(inPeriod) periods.push({start:startHour, end:24});
-                    const highLightColor = dark ? "#15803d" : "#22c55e";
-                    for(let p of periods) {
-                        let startX = (p.start/24)*width;
-                        let endX = (p.end/24)*width;
-                        let blockWidth = endX - startX;
-                        if(blockWidth <= 0) continue;
-                        ctxCanvas.fillStyle = highLightColor;
+                    if (inPeriod) periods.push({ start: startH, end: 24 });
+                    const hlColor = dark ? "#15803d" : "#22c55e";
+                    for (let p of periods) {
+                        let sx = (p.start / 24) * width,
+                            ex = (p.end / 24) * width,
+                            bw = ex - sx;
+                        if (bw <= 0) continue;
+                        ctxCanvas.fillStyle = hlColor;
                         ctxCanvas.beginPath();
-                        ctxCanvas.roundRect(startX, 0, blockWidth, 18, 9);
+                        if (ctxCanvas.roundRect) ctxCanvas.roundRect(sx, 0, bw, 18, 9);
+                        else ctxCanvas.fillRect(sx, 0, bw, 18);
                         ctxCanvas.fill();
-                        const minLabelWidth = 38;
-                        let showInside = (blockWidth > minLabelWidth*1.5);
-                        let startLabel = `${Math.floor(p.start)}:${p.start%1===0?'00':'30'}`;
-                        let endLabel = `${Math.floor(p.end)}:00`;
                         ctxCanvas.font = "bold 9px 'Segoe UI'";
                         ctxCanvas.textBaseline = "middle";
+                        let inside = bw > 38 * 1.5;
                         ctxCanvas.fillStyle = dark ? "#e0e0e0" : "white";
-                        if(showInside) {
-                            ctxCanvas.textAlign = "left"; ctxCanvas.fillText(startLabel, startX+3, 9);
-                            ctxCanvas.textAlign = "right"; ctxCanvas.fillText(endLabel, endX-3, 9);
+                        if (inside) {
+                            ctxCanvas.textAlign = "left";
+                            ctxCanvas.fillText(
+                                `${Math.floor(p.start)}:${p.start%1===0?'00':'30'}`, sx + 3, 9);
+                            ctxCanvas.textAlign = "right";
+                            ctxCanvas.fillText(`${Math.floor(p.end)}:00`, ex - 3, 9);
                         } else {
                             ctxCanvas.fillStyle = dark ? "#d1d5db" : "#2c5a2e";
-                            ctxCanvas.textAlign = "right"; ctxCanvas.fillText(startLabel, startX-3, 9);
-                            ctxCanvas.textAlign = "left"; ctxCanvas.fillText(endLabel, endX+3, 9);
+                            ctxCanvas.textAlign = "right";
+                            ctxCanvas.fillText(
+                                `${Math.floor(p.start)}:${p.start%1===0?'00':'30'}`, sx - 3, 9);
+                            ctxCanvas.textAlign = "left";
+                            ctxCanvas.fillText(`${Math.floor(p.end)}:00`, ex + 3, 9);
                         }
                     }
                 } else {
-                    // 无适宜区间，显示提示文字
                     ctxCanvas.font = "bold 10px 'Segoe UI'";
                     ctxCanvas.textAlign = "center";
                     ctxCanvas.textBaseline = "middle";
-                    if(maxTemp < 28) {
-                        ctxCanvas.fillStyle = dark ? "#e0e0e0" : "#4a5b44";
-                        ctxCanvas.fillText("❄️ 全天偏冷", width/2, 9);
-                    } else if(minTemp > 35) {
-                        ctxCanvas.fillStyle = dark ? "#e0e0e0" : "#4a5b44";
-                        ctxCanvas.fillText("🔥 全天过热", width/2, 9);
-                    }
+                    ctxCanvas.fillStyle = dark ? "#e0e0e0" : "#4a5b44";
+                    if (maxT < 28) ctxCanvas.fillText("❄️ 全天偏冷", width / 2, 9);
+                    else if (minT > 35) ctxCanvas.fillText("🔥 全天过热", width / 2, 9);
                 }
             }
 
-            function updateLeftPanelAndTimeline(dayIdx){
-                let air = dailyTempCache[dayIdx] || {min:15,max:25,real:false,isHistory:false, weatherCode:3, hourlyTemps: null};
-                let airMin=air.min, airMax=air.max;
+            function updateLeftPanelAndTimeline(dayIdx) {
+                let air = dailyTempCache[dayIdx] || { min: 15, max: 25, real: false, isHistory: false, weatherCode: 3,
+                    hourlyTemps: null };
+                let airMin = air.min,
+                    airMax = air.max;
                 let targetDate = getDateStrFromIdx(dayIdx);
-                let useReal = (currentRealWeather.isReal && currentRealWeather.dateStr===targetDate);
-                let dataType = "估算数据";
+                let useReal = (currentRealWeather.isReal && currentRealWeather.dateStr === targetDate);
+                let dataType = useReal ? (new Date(targetDate) < new Date(new Date().toISOString().slice(0, 10)) ?
+                    "历史数据" : "预报数据") : "估算数据";
                 let weatherCode = useReal ? currentRealWeather.weatherCode : 3;
-                if (useReal) {
-                    const diffDays = Math.floor((new Date(targetDate) - new Date(new Date().toISOString().slice(0,10))) / 86400000);
-                    dataType = diffDays < 0 ? "历史数据" : "预报数据";
-                }
-                document.getElementById('cityTitle').innerHTML = `📍 ${currentLocation.name} · 自然足感 <span class="data-tag">${dataType}</span>`;
-                document.getElementById('airTempRange').innerHTML = `${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃`;
-                let feelsHtml = (useReal && currentRealWeather.feelsMin) ? `${currentRealWeather.feelsMin.toFixed(1)}~${currentRealWeather.feelsMax.toFixed(1)}℃` : `${(airMin+0.5).toFixed(1)}~${(airMax+2).toFixed(1)}℃`;
-                document.getElementById('feelsLikeTemp').innerHTML = feelsHtml;
+                cityTitleEl.innerHTML =
+                    `📍 ${currentLocation.name} · 自然足感 <span class="data-tag">${dataType}</span>`;
+                airTempRangeEl.innerHTML = `${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃`;
+                feelsLikeTempEl.innerHTML = (useReal && currentRealWeather.feelsMin) ?
+                    `${currentRealWeather.feelsMin.toFixed(1)}~${currentRealWeather.feelsMax.toFixed(1)}℃` :
+                    `${(airMin+0.5).toFixed(1)}~${(airMax+2).toFixed(1)}℃`;
                 const dayOfYear = getDayOfYearFromIndex(dayIdx);
-                let surfaceHtml = '';
+                let html = '';
                 MATERIALS.forEach((mat, idx) => {
                     let hourlyTemps = (air.hourlyTemps && air.hourlyTemps.length === 24) ? air.hourlyTemps : null;
-                    const profile = generateMaterialTempProfile(idx, airMin, airMax, dayOfYear, currentLocation.lat, weatherCode, hourlyTemps);
-                    const minT = Math.min(...profile);
-                    const maxT = Math.max(...profile);
-                    const canvasId = `timelineCanvas_${idx}`;
-                    surfaceHtml += `<div class="surface-row"><div class="surface-header"><span class="surface-name">${mat.name}</span><span class="surface-temp-range">${minT.toFixed(1)}~${maxT.toFixed(1)}℃</span></div><div class="timeline-canvas-wrapper"><canvas id="${canvasId}" class="timeline-canvas" width="600" height="18"></canvas></div></div>`;
+                    const profile = generateMaterialTempProfile(idx, airMin, airMax, dayOfYear, currentLocation
+                        .lat, weatherCode, hourlyTemps);
+                    const minT = Math.min(...profile),
+                        maxT = Math.max(...profile);
+                    html +=
+                        `<div class="surface-row"><div class="surface-header"><span class="surface-name">${mat.name}</span><span class="surface-temp-range">${minT.toFixed(1)}~${maxT.toFixed(1)}℃</span></div><div class="timeline-canvas-wrapper"><canvas id="timelineCanvas_${idx}" class="timeline-canvas" width="600" height="18"></canvas></div></div>`;
                 });
-                document.getElementById('surfaceList').innerHTML = surfaceHtml;
+                surfaceListEl.innerHTML = html;
                 setTimeout(() => {
-                    MATERIALS.forEach((mat, idx) => {
-                        let hourlyTemps = (air.hourlyTemps && air.hourlyTemps.length === 24) ? air.hourlyTemps : null;
-                        const profile = generateMaterialTempProfile(idx, airMin, airMax, dayOfYear, currentLocation.lat, weatherCode, hourlyTemps);
+                    MATERIALS.forEach((_, idx) => {
+                        let hourlyTemps = (air.hourlyTemps && air.hourlyTemps.length === 24) ? air
+                            .hourlyTemps : null;
+                        const profile = generateMaterialTempProfile(idx, airMin, airMax, dayOfYear,
+                            currentLocation.lat, weatherCode, hourlyTemps);
                         drawMaterialTimelineWithProfile(`timelineCanvas_${idx}`, profile);
                     });
                 }, 10);
             }
 
-            function getDayOfYearFromIndex(dayIdx) {
-                const d = getDateFromIndex(dayIdx);
-                return Math.floor((new Date(d.year, d.month-1, d.day) - new Date(d.year, 0, 0)) / 86400000);
-            }
-
             function syncDateTimePickerFromDayIndex() {
-                const dateObj = getDateFromIndex(currentDayIndex);
-                const year = dateObj.year;
-                const month = String(dateObj.month).padStart(2, '0');
-                const day = String(dateObj.day).padStart(2, '0');
-                let timePart = "12:00";
-                const currentPickerValue = document.getElementById('datetimePicker').value;
-                if (currentPickerValue && currentPickerValue.includes('T')) {
-                    const parts = currentPickerValue.split('T');
-                    if (parts[1]) timePart = parts[1].substring(0, 5);
+                const d = getDateFromIndex(currentDayIndex);
+                const timePart = timePickerEl.value || '12:00';
+                datetimePickerEl.value =
+                    `${d.year}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}T${timePart}`;
+            }
+
+            function updateCalendarUI() {
+                const year = currentCalendarYear,
+                    month = currentCalendarMonth;
+                yearMonthDisplay.textContent = `${year}年${month}月`;
+                ymYearLabel.textContent = year;
+                ymPickerYear = year;
+                updateYmMonthGridHighlight();
+                const firstDayOfMonth = new Date(year, month - 1, 1).getDay();
+                const daysInMonth = new Date(year, month, 0).getDate();
+                const prevMonthLastDay = new Date(year, month - 1, 0).getDate();
+                calendarGridEl.innerHTML = '';
+                ['日', '一', '二', '三', '四', '五', '六'].forEach(d => {
+                    const dn = document.createElement('div');
+                    dn.className = 'calendar-day-name';
+                    dn.textContent = d;
+                    calendarGridEl.appendChild(dn);
+                });
+                for (let i = firstDayOfMonth - 1; i >= 0; i--) {
+                    const day = prevMonthLastDay - i;
+                    calendarGridEl.appendChild(createDayCell(day, year, month - 1 || 12, month - 1 === 0 ? year - 1 :
+                        year, true));
                 }
-                document.getElementById('datetimePicker').value = `${year}-${month}-${day}T${timePart}`;
-            }
-
-            function hexToRgb(hex) { let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16); return [r,g,b]; }
-            function interpolateColor(c1,c2,t){ let rgb1=hexToRgb(c1),rgb2=hexToRgb(c2); return `rgb(${Math.round(rgb1[0]+(rgb2[0]-rgb1[0])*t)},${Math.round(rgb1[1]+(rgb2[1]-rgb1[1])*t)},${Math.round(rgb1[2]+(rgb2[2]-rgb1[2])*t)})`; }
-
-            function getSeasonColors() {
-                return [
-                    { deg:45, color:'#b0e1fa' },
-                    { deg:135, color:'#bcda8b' },
-                    { deg:225, color:'#fff999' },
-                    { deg:315, color:'#ffce81' },
-                    { deg:405, color:'#b0e1fa' }
-                ];
-            }
-
-            function getAngleGradientColor(deg) {
-                const points = getSeasonColors();
-                let target = deg; if(target<45) target+=360;
-                let extended = [];
-                for(let p of points){ extended.push({deg:p.deg,color:p.color}); extended.push({deg:p.deg+360,color:p.color});}
-                extended.sort((a,b)=>a.deg-b.deg);
-                for(let i=0;i<extended.length-1;i++){ let p1=extended[i],p2=extended[i+1]; if(target>=p1.deg && target<=p2.deg){ let t=(target-p1.deg)/(p2.deg-p1.deg); return interpolateColor(p1.color,p2.color,t);} }
-                return '#b0e1fa';
-            }
-
-            function drawSeasonTexts() {
-                if(!ctx) return;
-                const seasons = [
-                    { name: "春", month: 4, day: 15, color: "#2a7a2e" },
-                    { name: "夏", month: 7, day: 15, color: "#d69d2a" },
-                    { name: "秋", month: 10, day: 15, color: "#cc5720" },
-                    { name: "冬", month: 1, day: 15, color: "#2a73a5" }
-                ];
-                let dec1Idx = getDayIndex(12,1);
-                let angleOffset = -Math.PI/2 - getAngleFromDayIndex(dec1Idx);
-                const adjAngle = (dayIdx) => getAngleFromDayIndex(dayIdx) + angleOffset;
-                const radiusText = (radiusInner + radiusOuter)/2 + 10;
-                ctx.save();
-                ctx.font = "bold 24px 'Segoe UI', 'Noto Sans CJK SC', system-ui";
-                ctx.shadowBlur = 0;
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                const dark = isDarkMode();
-                for(let s of seasons) {
-                    let idx = getDayIndex(s.month, s.day);
-                    let ang = adjAngle(idx);
-                    let x = centerX + radiusText * Math.cos(ang);
-                    let y = centerY + radiusText * Math.sin(ang);
-                    let textColor = dark ? lightenColor(s.color, 0.35) : s.color;
-                    ctx.fillStyle = textColor;
-                    ctx.shadowColor = dark ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.25)";
-                    ctx.shadowBlur = 3;
-                    ctx.fillText(s.name, x, y);
+                for (let day = 1; day <= daysInMonth; day++) {
+                    calendarGridEl.appendChild(createDayCell(day, year, month, year, false));
                 }
-                ctx.shadowBlur = 0;
-                ctx.restore();
+                const remaining = (7 - (calendarGridEl.children.length % 7)) % 7;
+                for (let day = 1; day <= remaining; day++) {
+                    const nextMonth = month + 1 > 12 ? 1 : month + 1;
+                    const nextYear = month + 1 > 12 ? year + 1 : year;
+                    calendarGridEl.appendChild(createDayCell(day, nextYear, nextMonth, nextYear, true));
+                }
             }
 
-            function drawWheel() {
-                if(!ctx) return;
-                ctx.clearRect(0,0,size,size);
-                const dark = isDarkMode();
-                if(dark) {
-                    ctx.globalAlpha = 0.4;
+            function createDayCell(day, month, actualMonth, actualYear, isOtherMonth) {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-day';
+                const dateObj = new Date(actualYear, actualMonth - 1, day);
+                const dayOfWeek = dateObj.getDay();
+                if (dayOfWeek === 0 || dayOfWeek === 6) cell.classList.add('weekend');
+                const solarDateStr =
+                    `${actualYear}-${String(actualMonth).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const mmdd = solarDateStr.slice(5);
+                const today = new Date();
+                const isToday = (actualYear === today.getFullYear() && actualMonth === today.getMonth() + 1 && day ===
+                    today.getDate());
+                const isSelected = (actualYear === currentCalendarYear && actualMonth === currentCalendarMonth && day ===
+                    selectedCalendarDay);
+                if (isToday) cell.classList.add('today');
+                if (isSelected) cell.classList.add('selected');
+                if (isOtherMonth) cell.classList.add('other-month');
+
+                let lunarStr = '';
+                let holidayBadge = '';
+                const holidayInfo = holidayMap[mmdd];
+                let SolarClass = null;
+                if (typeof Lunar !== 'undefined' && Lunar.Solar) SolarClass = Lunar.Solar;
+                else if (typeof Solar !== 'undefined') SolarClass = Solar;
+
+                const dynamicFestivals = getDynamicFestivalsForYear(actualYear);
+                const solarFestivalName = SOLAR_FESTIVALS[mmdd] || dynamicFestivals[mmdd] || null;
+
+                if (SolarClass) {
+                    try {
+                        const d = SolarClass.fromYmd(actualYear, actualMonth, day);
+                        const lunar = d.getLunar();
+                        const lunarFestivals = lunar.getFestivals();
+                        const jieQi = lunar.getJieQi();
+                        if (lunarFestivals && lunarFestivals.length > 0) {
+                            lunarStr = lunarFestivals[0];
+                        } else if (jieQi) {
+                            lunarStr = jieQi;
+                        } else if (solarFestivalName) {
+                            lunarStr = solarFestivalName;
+                        } else {
+                            const dayCn = lunar.getDayInChinese();
+                            if (dayCn) {
+                                lunarStr = dayCn;
+                            } else {
+                                const monthCn = lunar.getMonthInChinese() || '';
+                                const dayNum = lunar.getDay() || day;
+                                lunarStr = monthCn ? monthCn + '月' + dayNum : dayNum + '日';
+                            }
+                        }
+                    } catch (e) {
+                        lunarStr = solarFestivalName || (actualMonth + '/' + day);
+                    }
+                } else if (solarFestivalName) {
+                    lunarStr = solarFestivalName;
                 } else {
-                    ctx.globalAlpha = 1.0;
+                    lunarStr = actualMonth + '/' + day;
                 }
-                let dec1Idx=getDayIndex(12,1);
-                let angleOffset=-Math.PI/2-getAngleFromDayIndex(dec1Idx);
-                function adjAngle(dayIdx){ return getAngleFromDayIndex(dayIdx)+angleOffset;}
-                for(let i=0;i<360;i++){
-                    let angStart=(i/360)*2*Math.PI,angEnd=((i+1)/360)*2*Math.PI;
-                    let midAng=(angStart+angEnd)/2;
-                    let deg=(midAng*180/Math.PI+90+360)%360;
-                    let color=getAngleGradientColor(deg);
-                    ctx.beginPath();
-                    ctx.moveTo(centerX,centerY);
-                    ctx.arc(centerX,centerY,radiusOuter,angStart,angEnd);
-                    ctx.closePath();
-                    ctx.fillStyle=color;
-                    ctx.fill();
+
+                if (holidayInfo) {
+                    if (holidayInfo.isHoliday) {
+                        holidayBadge = '<span class="holiday-badge holiday-rest">休</span>';
+                    } else if (holidayInfo.isWorkday) {
+                        holidayBadge = '<span class="holiday-badge holiday-work">班</span>';
+                    }
                 }
-                ctx.globalAlpha = 1.0;
-                ctx.save();
-                ctx.lineWidth=3;
-                ctx.strokeStyle= dark ? '#dddddd' : '#FFFFFF';
-                for(let m=1;m<=12;m++){ let idx=getDayIndex(m,1); let ang=adjAngle(idx); let x1=centerX+(radiusOuter-28)*Math.cos(ang),y1=centerY+(radiusOuter-28)*Math.sin(ang),x2=centerX+(radiusOuter-5)*Math.cos(ang),y2=centerY+(radiusOuter-5)*Math.sin(ang); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();}
-                ctx.lineWidth=1.5;
-                for(let d=7;d<=totalDays;d+=7){ let ang=adjAngle(d); let x1=centerX+(radiusOuter-22)*Math.cos(ang),y1=centerY+(radiusOuter-22)*Math.sin(ang),x2=centerX+(radiusOuter-5)*Math.cos(ang),y2=centerY+(radiusOuter-5)*Math.sin(ang); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); let dateObj=getDateFromIndex(d); let rLabel=radiusOuter+8; let xLabel=centerX+rLabel*Math.cos(ang),yLabel=centerY+rLabel*Math.sin(ang); ctx.font='bold 10px "Segoe UI"'; ctx.fillStyle= dark ? '#e5e7eb' : '#4a5b44'; ctx.fillText(dateObj.day.toString(),xLabel-6,yLabel+3);}
-                ctx.font='bold 13px "Segoe UI"'; ctx.fillStyle= dark ? '#e5e7eb' : '#2c4b32';
-                for(let m=1;m<=12;m++){ let idx=getDayIndex(m,1); let ang=adjAngle(idx); let r=radiusOuter+24; let x=centerX+r*Math.cos(ang),y=centerY+r*Math.sin(ang); ctx.fillText(`${m}月`,x-12,y+5);}
-                let terms=[[3,20,'春分'],[6,21,'夏至'],[9,23,'秋分'],[12,21,'冬至']];
-                ctx.font='bold 9px sans-serif'; ctx.fillStyle= dark ? '#d1d5db' : '#8b6946';
-                for(let [m,d,name] of terms){ let idx=getDayIndex(m,d); let ang=adjAngle(idx); let r=radiusOuter-24; let x=centerX+r*Math.cos(ang),y=centerY+r*Math.sin(ang); ctx.fillText(name,x-12,y-2);}
-                drawSeasonTexts();
-                let pAng=pointerAngle+angleOffset; let px=centerX+pointerLength*Math.cos(pAng),py=centerY+pointerLength*Math.sin(pAng);
-                ctx.beginPath(); ctx.moveTo(centerX,centerY); ctx.lineTo(px,py); ctx.lineWidth=5; ctx.strokeStyle='#e34234'; ctx.stroke();
-                ctx.beginPath(); ctx.arc(px,py,8,0,2*Math.PI); ctx.fillStyle='#e34c26'; ctx.fill(); ctx.fillStyle='white'; ctx.arc(px,py,3,0,2*Math.PI); ctx.fill();
-                ctx.beginPath(); ctx.arc(centerX,centerY,radiusInner,0,2*Math.PI); ctx.fillStyle= dark ? '#2d3748' : '#fff8ed'; ctx.fill(); ctx.strokeStyle= dark ? '#9ca3af' : '#d9c48b'; ctx.lineWidth=2.5; ctx.stroke();
-                ctx.font=`bold ${Math.floor(radiusInner*0.32)}px "Segoe UI"`; ctx.fillStyle= dark ? '#f3f4f6' : '#3c5e2b'; let dateText=formatDate(currentDayIndex); ctx.fillText(dateText,centerX-ctx.measureText(dateText).width/2,centerY+radiusInner*0.12);
-                ctx.restore();
+
+                cell.innerHTML = `${day}<span class="lunar">${lunarStr}</span>${holidayBadge}`;
+                cell.addEventListener('click', () => {
+                    if (actualYear !== currentYear) { currentYear = actualYear;
+                        updateCalendar(); }
+                    currentCalendarYear = actualYear;
+                    currentCalendarMonth = actualMonth;
+                    selectedCalendarDay = day;
+                    currentDayIndex = getDayIndex(actualMonth, day);
+                    syncDateTimePickerFromDayIndex();
+                    refreshWeatherForCurrentDate(true);
+                    updateCurrentCardByDateTime(datetimePickerEl.value);
+                    updateCalendarUI();
+                });
+                return cell;
             }
 
-            if (!CanvasRenderingContext2D.prototype.roundRect) {
-                CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-                    if (w < 2 * r) r = w / 2;
-                    if (h < 2 * r) r = h / 2;
-                    this.moveTo(x+r, y);
-                    this.lineTo(x+w-r, y);
-                    this.quadraticCurveTo(x+w, y, x+w, y+r);
-                    this.lineTo(x+w, y+h-r);
-                    this.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-                    this.lineTo(x+r, y+h);
-                    this.quadraticCurveTo(x, y+h, x, y+h-r);
-                    this.lineTo(x, y+r);
-                    this.quadraticCurveTo(x, y, x+r, y);
-                    return this;
-                };
-            }
-
-            function syncFromDateTimePicker() {
-                let dtValue = document.getElementById('datetimePicker').value;
-                if(!dtValue) return;
-                let dateObj = new Date(dtValue);
-                let year = dateObj.getFullYear();
-                if(year !== currentYear) { currentYear = year; updateCalendar(); }
-                let month = dateObj.getMonth()+1, day = dateObj.getDate();
-                let newIdx = getDayIndex(month, day);
-                currentDayIndex = newIdx;
-                pointerAngle = getAngleFromDayIndex(newIdx);
-                drawWheel();
-                refreshWeatherForCurrentDate(true);
-                updateCurrentCardByDateTime(dtValue);
+            function setCalendarToToday() {
+                const now = new Date();
+                currentCalendarYear = now.getFullYear();
+                currentCalendarMonth = now.getMonth() + 1;
+                selectedCalendarDay = now.getDate();
+                updateCalendarUI();
+                setNowDateTime();
             }
 
             function setNowDateTime() {
-                let now = new Date();
-                let year = now.getFullYear();
-                let month = String(now.getMonth()+1).padStart(2,'0');
-                let day = String(now.getDate()).padStart(2,'0');
-                let hour = String(now.getHours()).padStart(2,'0');
-                let minute = String(now.getMinutes()).padStart(2,'0');
-                let iso = `${year}-${month}-${day}T${hour}:${minute}`;
-                document.getElementById('datetimePicker').value = iso;
-                if(year !== currentYear) { currentYear = year; updateCalendar(); }
-                let idx = getDayIndex(now.getMonth()+1, now.getDate());
-                currentDayIndex = idx;
-                pointerAngle = getAngleFromDayIndex(idx);
-                drawWheel();
+                const now = new Date();
+                const year = now.getFullYear(),
+                    month = String(now.getMonth() + 1).padStart(2, '0'),
+                    day = String(now.getDate()).padStart(2, '0');
+                const hour = String(now.getHours()).padStart(2, '0'),
+                    minute = String(now.getMinutes()).padStart(2, '0');
+                timePickerEl.value = `${hour}:${minute}`;
+                datetimePickerEl.value = `${year}-${month}-${day}T${hour}:${minute}`;
+                if (year !== currentYear) { currentYear = year;
+                    updateCalendar(); }
+                currentDayIndex = getDayIndex(now.getMonth() + 1, now.getDate());
+                selectedCalendarDay = now.getDate();
+                currentCalendarYear = year;
+                currentCalendarMonth = now.getMonth() + 1;
+                updateCalendarUI();
                 refreshWeatherForCurrentDate(true);
-                updateCurrentCardByDateTime(iso);
+                updateCurrentCardByDateTime(datetimePickerEl.value);
             }
 
             async function setCity(city) {
                 currentLocation = { name: city.name, lat: city.lat, lng: city.lng };
-                document.getElementById('cityTitle').innerHTML = `📍 ${city.name} · 自然足感`;
+                cityTitleEl.innerHTML = `📍 ${city.name} · 自然足感`;
                 updateCalendar();
-                for(let idx=0; idx<totalDays; idx++){ let est=estimateDailyTemp(idx); dailyTempCache[idx]={ min:est.min, max:est.max, real:false, weatherCode:3, hourlyTemps: null }; }
+                for (let i = 0; i < totalDays; i++) {
+                    let e = estimateDailyTemp(i);
+                    dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
+                }
                 await refreshWeatherForCurrentDate(true);
-                let nowVal = document.getElementById('datetimePicker').value;
-                if(nowVal) updateCurrentCardByDateTime(nowVal);
+                const dtVal = datetimePickerEl.value;
+                if (dtVal) updateCurrentCardByDateTime(dtVal);
                 else setNowDateTime();
             }
 
-            async function searchCitiesOpenMeteo(keyword) { if(!keyword.trim()||keyword.length<2) return []; try { let url=`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(keyword)}&count=15&language=zh&format=json`; let resp=await fetch(url); let data=await resp.json(); if(data.results) return data.results.map(c=>({ name:c.name, admin1:c.admin1||'', country:c.country||'', lat:c.latitude, lng:c.longitude, display:`${c.name}${c.admin1?` · ${c.admin1}`:''}${c.country?` · ${c.country}`:''}` })); return []; } catch(e){ return []; } }
-            let searchDebounce=null;
-            function renderCitySelector(filterText=''){
-                let resultsDiv=document.getElementById('cityResultsList');
-                if(filterText.length<2){ resultsDiv.innerHTML='<div class="loading-tip">请输入至少2个字符搜索 (中/英)</div>'; return; }
-                resultsDiv.innerHTML='<div class="loading-tip">⏳ 检索中...</div>';
-                searchCitiesOpenMeteo(filterText).then(cities=>{
-                    if(cities.length===0){ resultsDiv.innerHTML='<div class="loading-tip">未找到城市，试试其他名称</div>'; return; }
-                    resultsDiv.innerHTML=cities.map(c=>`<div class="city-result-item" data-lat="${c.lat}" data-lng="${c.lng}" data-name="${c.name}">${c.display}</div>`).join('');
-                    document.querySelectorAll('.city-result-item').forEach(el=>{
-                        el.addEventListener('click',()=>{
-                            let name=el.dataset.name;
-                            let lat=parseFloat(el.dataset.lat);
-                            let lng=parseFloat(el.dataset.lng);
-                            setCity({ name, lat, lng });
-                            document.getElementById('citySelectorOverlay').classList.remove('active');
-                        });
-                    });
+            async function reverseGeocode(lat, lng) {
+                try {
+                    const res = await fetch(
+                        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`
+                        );
+                    const data = await res.json();
+                    let city = data.city || data.locality || data.principalSubdivision || '当前位置';
+                    if (city.endsWith('市')) city = city.slice(0, -1);
+                    return city;
+                } catch (e) { return null; }
+            }
+            async function tryBrowserLocation() {
+                if (!navigator.geolocation) return null;
+                return new Promise(resolve => {
+                    navigator.geolocation.getCurrentPosition(async pos => {
+                        const lat = pos.coords.latitude,
+                            lng = pos.coords.longitude;
+                        const name = await reverseGeocode(lat, lng);
+                        resolve(name ? { name, lat, lng } : { name: '当前位置', lat, lng });
+                    }, () => resolve(null), { timeout: 10000, enableHighAccuracy: false });
+                });
+            }
+            async function performLocation() {
+                if (locateToastEl.classList.contains('show')) return;
+                locateToastEl.classList.add('show');
+                locateButtonsEl.innerHTML = '';
+                locateMessageEl.innerHTML = '<span>📍 正在获取位置信息...</span>';
+                let location = await tryBrowserLocation();
+                if (!location || !location.lat) {
+                    locateMessageEl.innerHTML = '<span>🌏 通过IP定位中...</span>';
+                    location = await tryMultiIpLocation();
+                }
+                if (location && location.lat && location.lng) {
+                    locateToastEl.classList.remove('show');
+                    await setCity(location);
+                    window._autoLocated = true;
+                } else {
+                    locateMessageEl.innerHTML = '<span>⚠️ 定位失败，请重试或手动选择城市</span>';
+                    locateButtonsEl.innerHTML =
+                        `<button class="locate-btn" id="locateRetryBtn">🔄 重试</button><button class="locate-btn primary" id="locateSelectCityBtn">📌 选择城市</button>`;
+                    document.getElementById('locateRetryBtn').addEventListener('click', () => { locateToastEl.classList
+                            .remove('show');
+                        performLocation(); });
+                    document.getElementById('locateSelectCityBtn').addEventListener('click', () => { locateToastEl
+                            .classList.remove('show');
+                        $('openCityPickerBtn').click(); });
+                }
+            }
+            async function tryMultiIpLocation() {
+                const timeoutMs = 5000;
+                const fetchWithTimeout = (url) => { const ctrl = new AbortController();
+                    setTimeout(() => ctrl.abort(), timeoutMs); return fetch(url, { signal: ctrl.signal }).finally(
+                    () => {}); };
+                const services = [
+                    async () => { try { const r = await fetchWithTimeout(
+                                'https://ip-api.com/json/?fields=status,lat,lon,city&lang=zh-CN'); const d =
+                                await r.json(); if (d.status === 'success' && d.lat && d.lon && d.city) { let city =
+                                    d.city; if (city.endsWith('市')) city = city.slice(0, -1); return { name: city,
+                                    lat: d.lat, lng: d.lon }; } } catch (e) {} return null; },
+                    async () => { try { const r = await fetchWithTimeout('https://ipapi.co/json/'); const d = await r
+                                .json(); if (d && d.latitude && d.longitude) { let city = d.city || d.region || '';
+                                const cnName = await reverseGeocode(d.latitude, d.longitude); if (cnName) city =
+                                    cnName;
+                                else if (city.endsWith('市')) city = city.slice(0, -1); return { name: city ||
+                                        '未知位置', lat: d.latitude, lng: d.longitude }; } } catch (e) {} return null; }
+                ];
+                const results = await Promise.allSettled(services.map(fn => fn()));
+                for (const r of results)
+                    if (r.status === 'fulfilled' && r.value && r.value.lat) return r.value;
+                return null;
+            }
+
+            async function searchCitiesOpenMeteo(keyword) {
+                if (!keyword.trim() || keyword.length < 2) return [];
+                try {
+                    const url =
+                        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(keyword)}&count=12&language=zh&format=json`;
+                    const resp = await fetch(url);
+                    const data = await resp.json();
+                    if (data.results && data.results.length) {
+                        return data.results.map(r => ({ name: r.name || r.admin1 || '', lat: r.latitude, lng: r
+                                .longitude,
+                            display: `${r.name}${r.admin1?' · '+r.admin1:''}${r.country?' · '+r.country:''}` }));
+                    }
+                    return [];
+                } catch (e) { return []; }
+            }
+            let searchDebounce;
+
+            function renderCitySelector(filterText = '') {
+                if (filterText.length < 2) { cityResultsList.innerHTML =
+                        '<div class="loading-tip">请输入至少2个字符搜索</div>'; return; }
+                cityResultsList.innerHTML = '<div class="loading-tip">⏳ 检索中...</div>';
+                searchCitiesOpenMeteo(filterText).then(cities => {
+                    if (cities.length === 0) { cityResultsList.innerHTML =
+                            '<div class="loading-tip">未找到城市，试试其他名称</div>'; return; }
+                    cityResultsList.innerHTML = cities.map(c =>
+                        `<div class="city-result-item" data-lat="${c.lat}" data-lng="${c.lng}" data-name="${c.name}">${c.display}</div>`
+                        ).join('');
+                    document.querySelectorAll('.city-result-item').forEach(el => el.addEventListener('click', () => {
+                        setCity({ name: el.dataset.name, lat: parseFloat(el.dataset.lat), lng: parseFloat(el
+                            .dataset.lng) });
+                        citySelectorOverlay.classList.remove('active');
+                    }));
                 });
             }
 
-            document.getElementById('datetimePicker').addEventListener('change', syncFromDateTimePicker);
-            document.getElementById('todayBtnMobile').addEventListener('click', setNowDateTime);
-            document.getElementById('openCityPickerBtn').onclick = ()=>document.getElementById('citySelectorOverlay').classList.add('active');
-            document.getElementById('autoLocateBtn').onclick = performLocation;
-            document.getElementById('closeCityPicker').addEventListener('click',()=>{ document.getElementById('citySelectorOverlay').classList.remove('active'); });
-            document.getElementById('citySearchInput').addEventListener('input',(e)=>{ if(searchDebounce)clearTimeout(searchDebounce); searchDebounce=setTimeout(()=>renderCitySelector(e.target.value),300); });
-            document.querySelectorAll('.hot-city-btn').forEach(btn=>{
-                btn.addEventListener('click',()=>{
-                    let cityName=btn.dataset.city;
-                    let lat=parseFloat(btn.dataset.lat);
-                    let lng=parseFloat(btn.dataset.lng);
-                    setCity({ name:cityName, lat, lng });
-                    document.getElementById('citySelectorOverlay').classList.remove('active');
-                });
-            });
+            async function loadHolidays() {
+                try {
+                    const year = new Date().getFullYear();
+                    const resp = await fetch(`https://api.timor.tech/api/holiday/year/${year}`);
+                    const data = await resp.json();
+                    if (data.code === 0 && data.holiday) {
+                        // 先用API数据覆盖holidayMap，再合并默认数据确保不丢失关键节日
+                        const apiMap = {};
+                        for (let [date, info] of Object.entries(data.holiday)) {
+                            const mmdd = date.slice(5);
+                            apiMap[mmdd] = {
+                                name: info.name || '',
+                                isHoliday: info.holiday === true && !info.wage,
+                                isWorkday: info.wage === true
+                            };
+                        }
+                        // 合并逻辑：以API数据为准，但保证默认数据中独有的条目保留（API可能缺失部分节日）
+                        holidayMap = { ...DEFAULT_HOLIDAY_MAP, ...apiMap };
+                    }
+                } catch (e) {
+                    console.warn('节假日接口加载失败，已使用内置调休数据');
+                }
+            }
 
-            canvasWheel.addEventListener('mousedown',()=>{ drag=true; });
-            function handleDragMove(e){
-                if(!drag) return;
-                let rect=canvasWheel.getBoundingClientRect();
-                let clientX=e.clientX??(e.touches?e.touches[0].clientX:0);
-                let clientY=e.clientY??(e.touches?e.touches[0].clientY:0);
-                let mx=(clientX-rect.left)*size/rect.width;
-                let my=(clientY-rect.top)*size/rect.height;
-                let ang=Math.atan2(my-centerY,mx-centerX);
-                let dec1Idx=getDayIndex(12,1);
-                let angleOffset=-Math.PI/2-getAngleFromDayIndex(dec1Idx);
-                let rawAng=ang-angleOffset;
-                let dayIdx=Math.round((rawAng%(2*Math.PI))/(2*Math.PI)*totalDays)%totalDays;
-                if(dayIdx<0) dayIdx+=totalDays;
-                currentDayIndex = dayIdx;
-                pointerAngle = getAngleFromDayIndex(dayIdx);
-                drawWheel();
+            function openYmDropdown() {
+                yearMonthDropdown.classList.add('open');
+                ymPickerYear = currentCalendarYear;
+                ymYearLabel.textContent = ymPickerYear;
+                updateYmMonthGridHighlight();
+            }
+
+            function closeYmDropdown() {
+                yearMonthDropdown.classList.remove('open');
+            }
+
+            function toggleYmDropdown(e) {
+                e.stopPropagation();
+                if (yearMonthDropdown.classList.contains('open')) {
+                    closeYmDropdown();
+                } else {
+                    openYmDropdown();
+                }
+            }
+
+            function updateYmMonthGridHighlight() {
+                const cells = ymMonthGrid.querySelectorAll('.ym-month-cell');
+                cells.forEach(cell => {
+                    const cellMonth = parseInt(cell.dataset.month);
+                    if (cellMonth === currentCalendarMonth && ymPickerYear === currentCalendarYear) {
+                        cell.classList.add('active-month');
+                    } else {
+                        cell.classList.remove('active-month');
+                    }
+                });
+            }
+
+            function selectYmMonth(month) {
+                currentCalendarYear = ymPickerYear;
+                currentCalendarMonth = month;
+                if (currentCalendarYear !== currentYear) {
+                    currentYear = currentCalendarYear;
+                    updateCalendar();
+                    for (let i = 0; i < totalDays; i++) {
+                        let e = estimateDailyTemp(i);
+                        dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
+                    }
+                }
+                const daysInNewMonth = new Date(currentCalendarYear, month, 0).getDate();
+                if (selectedCalendarDay > daysInNewMonth) {
+                    selectedCalendarDay = daysInNewMonth;
+                }
+                currentDayIndex = getDayIndex(month, selectedCalendarDay);
                 syncDateTimePickerFromDayIndex();
-                if(pendingWeatherTimeout) clearTimeout(pendingWeatherTimeout);
-                pendingWeatherTimeout=setTimeout(async()=>{
-                    await refreshWeatherForCurrentDate(true);
-                    let dtVal = document.getElementById('datetimePicker').value;
-                    if(dtVal) updateCurrentCardByDateTime(dtVal);
-                    pendingWeatherTimeout=null;
-                },500);
+                updateCalendarUI();
+                refreshWeatherForCurrentDate(true);
+                updateCurrentCardByDateTime(datetimePickerEl.value);
+                closeYmDropdown();
             }
-            window.addEventListener('mousemove',handleDragMove);
-            window.addEventListener('mouseup',()=>{ drag=false; });
-            canvasWheel.addEventListener('touchstart',(e)=>{ drag=true; handleDragMove(e.touches[0]); e.preventDefault();});
-            window.addEventListener('touchmove',(e)=>{ if(drag){ handleDragMove(e.touches[0]); e.preventDefault();}});
-            window.addEventListener('touchend',()=>{ drag=false; });
-            canvasWheel.addEventListener('click',(e)=>{
-                let rect=canvasWheel.getBoundingClientRect();
-                let mx=(e.clientX-rect.left)*size/rect.width;
-                let my=(e.clientY-rect.top)*size/rect.height;
-                if(Math.hypot(mx-centerX,my-centerY)<=radiusInner){
-                    setNowDateTime();
+
+            yearMonthDisplay.addEventListener('click', toggleYmDropdown);
+            ymYearPrev.addEventListener('click', (e) => {
+                e.stopPropagation();
+                ymPickerYear--;
+                ymYearLabel.textContent = ymPickerYear;
+                updateYmMonthGridHighlight();
+            });
+            ymYearNext.addEventListener('click', (e) => {
+                e.stopPropagation();
+                ymPickerYear++;
+                ymYearLabel.textContent = ymPickerYear;
+                updateYmMonthGridHighlight();
+            });
+            ymMonthGrid.addEventListener('click', (e) => {
+                const cell = e.target.closest('.ym-month-cell');
+                if (!cell) return;
+                const month = parseInt(cell.dataset.month);
+                selectYmMonth(month);
+            });
+            document.addEventListener('click', (e) => {
+                if (!yearMonthPickerWrapper.contains(e.target)) {
+                    closeYmDropdown();
                 }
             });
-
-            updateCalendar();
-            for(let i=0;i<totalDays;i++){ let e=estimateDailyTemp(i); dailyTempCache[i]={ min:e.min, max:e.max, real:false, weatherCode:3, hourlyTemps: null }; }
-            let nowDate = new Date();
-            currentDayIndex = getDayIndex(nowDate.getMonth()+1, nowDate.getDate());
-            pointerAngle = getAngleFromDayIndex(currentDayIndex);
-            drawWheel();
-            setNowDateTime();
-            window.addEventListener('resize', ()=>{
-                if(dailyTempCache[currentDayIndex]) updateLeftPanelAndTimeline(currentDayIndex);
+            yearMonthDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
             });
 
+            function getSystemColorScheme() { return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' :
+                    'light'; }
+
+            function getStoredPreference() { return localStorage.getItem(COLOR_SCHEME_KEY); }
+
+            function setStoredPreference(s) { localStorage.setItem(COLOR_SCHEME_KEY, s); }
+
+            function getEffectiveColorScheme() { const stored = getStoredPreference(); return (stored === 'dark' ||
+                    stored === 'light') ? stored : getSystemColorScheme(); }
+
+            function isDarkMode() { return getEffectiveColorScheme() === 'dark'; }
+
+            function applyColorScheme(scheme) {
+                if (scheme === 'dark') {
+                    if (typeof DarkReader !== 'undefined') DarkReader.enable(darkReaderConfig);
+                    colorSchemeToggleBtn.innerHTML = '☀️';
+                    colorSchemeToggleBtn.setAttribute('aria-label', '切换浅色模式');
+                } else {
+                    if (typeof DarkReader !== 'undefined') DarkReader.disable();
+                    colorSchemeToggleBtn.innerHTML = '🌙';
+                    colorSchemeToggleBtn.setAttribute('aria-label', '切换深色模式');
+                }
+            }
+
+            function toggleColorScheme() {
+                const newScheme = getEffectiveColorScheme() === 'dark' ? 'light' : 'dark';
+                setStoredPreference(newScheme);
+                applyColorScheme(newScheme);
+                if (dailyTempCache[currentDayIndex]) updateLeftPanelAndTimeline(currentDayIndex);
+            }
+            colorSchemeToggleBtn.addEventListener('click', toggleColorScheme);
+
+            function initColorScheme() { applyColorScheme(getEffectiveColorScheme()); }
+            const systemColorSchemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+            systemColorSchemeMedia.addEventListener('change', e => { if (!getStoredPreference()) applyColorScheme(e.matches ?
+                    'dark' : 'light'); });
+            initColorScheme();
+
+            document.getElementById('prevMonthBtn').addEventListener('click', () => {
+                if (currentCalendarMonth === 1) { currentCalendarMonth = 12;
+                    currentCalendarYear--; } else currentCalendarMonth--;
+                if (currentCalendarYear !== currentYear) {
+                    currentYear = currentCalendarYear;
+                    updateCalendar();
+                    for (let i = 0; i < totalDays; i++) {
+                        let e = estimateDailyTemp(i);
+                        dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
+                    }
+                }
+                const daysInNewMonth = new Date(currentCalendarYear, currentCalendarMonth, 0).getDate();
+                if (selectedCalendarDay > daysInNewMonth) selectedCalendarDay = daysInNewMonth;
+                currentDayIndex = getDayIndex(currentCalendarMonth, selectedCalendarDay);
+                syncDateTimePickerFromDayIndex();
+                updateCalendarUI();
+                refreshWeatherForCurrentDate(true);
+                updateCurrentCardByDateTime(datetimePickerEl.value);
+            });
+            document.getElementById('nextMonthBtn').addEventListener('click', () => {
+                if (currentCalendarMonth === 12) { currentCalendarMonth = 1;
+                    currentCalendarYear++; } else currentCalendarMonth++;
+                if (currentCalendarYear !== currentYear) {
+                    currentYear = currentCalendarYear;
+                    updateCalendar();
+                    for (let i = 0; i < totalDays; i++) {
+                        let e = estimateDailyTemp(i);
+                        dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
+                    }
+                }
+                const daysInNewMonth = new Date(currentCalendarYear, currentCalendarMonth, 0).getDate();
+                if (selectedCalendarDay > daysInNewMonth) selectedCalendarDay = daysInNewMonth;
+                currentDayIndex = getDayIndex(currentCalendarMonth, selectedCalendarDay);
+                syncDateTimePickerFromDayIndex();
+                updateCalendarUI();
+                refreshWeatherForCurrentDate(true);
+                updateCurrentCardByDateTime(datetimePickerEl.value);
+            });
+            timePickerEl.addEventListener('change', () => {
+                syncDateTimePickerFromDayIndex();
+                updateCurrentCardByDateTime(datetimePickerEl.value);
+            });
+            document.getElementById('calendarTodayBtn').addEventListener('click', setCalendarToToday);
+            $('openCityPickerBtn').addEventListener('click', () => citySelectorOverlay.classList.add('active'));
+            $('autoLocateBtn').addEventListener('click', performLocation);
+            $('closeCityPicker').addEventListener('click', () => citySelectorOverlay.classList.remove('active'));
+            citySearchInput.addEventListener('input', e => {
+                if (searchDebounce) clearTimeout(searchDebounce);
+                searchDebounce = setTimeout(() => renderCitySelector(e.target.value), 300);
+            });
+            document.querySelectorAll('.hot-city-btn').forEach(btn => btn.addEventListener('click', () => {
+                setCity({ name: btn.dataset.city, lat: parseFloat(btn.dataset.lat), lng: parseFloat(btn.dataset
+                        .lng) });
+                citySelectorOverlay.classList.remove('active');
+            }));
+
+            $('scrollToCalendarBtn').addEventListener('click', () => {
+                $('dateCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+            $('scrollToCurrentBtn').addEventListener('click', () => {
+                $('currentDetailCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+            $('scrollToInfoBtn').addEventListener('click', () => {
+                $('mainInfoCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+
+            const riskModal = $('riskModal');
+            $('riskConfirmBtn').addEventListener('click', () => {
+                localStorage.setItem('riskAcknowledged', 'true');
+                riskModal.classList.remove('active');
+                if (typeof window._autoLocated === 'undefined' || !window._autoLocated) performLocation();
+            });
+            if (!localStorage.getItem('riskAcknowledged')) riskModal.classList.add('active');
+
+            // 初始化节假日数据：先使用完整的默认调休安排，确保页面加载后立刻显示
+            holidayMap = { ...DEFAULT_HOLIDAY_MAP };
+
+            updateCalendar();
+            for (let i = 0; i < totalDays; i++) {
+                let e = estimateDailyTemp(i);
+                dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
+            }
+
+            const now = new Date();
+            currentDayIndex = getDayIndex(now.getMonth() + 1, now.getDate());
+            selectedCalendarDay = now.getDate();
+            currentCalendarYear = now.getFullYear();
+            currentCalendarMonth = now.getMonth() + 1;
+            ymPickerYear = currentCalendarYear;
+            updateCalendarUI();
+            setNowDateTime();
+
+            // 后台获取官方节假日数据，成功后自动刷新日历
+            loadHolidays().then(() => {
+                updateCalendarUI();
+            });
+
+            window.addEventListener('resize', () => {
+                if (dailyTempCache[currentDayIndex]) updateLeftPanelAndTimeline(currentDayIndex);
+            });
             if (localStorage.getItem('riskAcknowledged') === 'true') {
                 setTimeout(() => { performLocation(); }, 100);
             }
