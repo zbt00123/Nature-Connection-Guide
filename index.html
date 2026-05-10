@@ -1086,9 +1086,9 @@
                 const ctxCanvas = canvas.getContext('2d');
                 const dark = isDarkMode();
                 
-                // 1. 绘制基于温度渐变的背景 (透明度40%)
+                // 1. 绘制基于温度渐变的背景
                 ctxCanvas.save();
-                ctxCanvas.globalAlpha = 0.4;
+                ctxCanvas.globalAlpha = 0.2;
                 for (let i = 0; i < 24; i++) {
                     const x1 = (i / 24) * width;
                     const x2 = ((i+1) / 24) * width;
@@ -1273,7 +1273,7 @@
                 ctx.clearRect(0,0,size,size);
                 const dark = isDarkMode();
                 if(dark) {
-                    ctx.globalAlpha = 0.3;
+                    ctx.globalAlpha = 0.4;
                 } else {
                     ctx.globalAlpha = 1.0;
                 }
