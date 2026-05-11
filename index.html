@@ -2891,11 +2891,6 @@
                         console.warn(`节假日接口加载失败 (${year})`);
                     }
 
-                    const nowYear = new Date().getFullYear();
-                    if (Object.keys(apiMap).length === 0 && year === nowYear) {
-                        apiMap = { ...DEFAULT_HOLIDAY_MAP };
-                    }
-
                     holidayMaps[year] = apiMap;
                     delete holidayFetching[year];
                     return apiMap;
