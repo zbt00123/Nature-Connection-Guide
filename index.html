@@ -23,7 +23,6 @@
             --ease-elastic: cubic-bezier(0.34, 1.15, 0.64, 1);
             --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
         }
-
         .color-scheme-toggle {
             width: 44px;
             height: 44px;
@@ -58,7 +57,6 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             transition: transform 0.08s ease, box-shadow 0.08s ease;
         }
-
         .quick-nav-buttons {
             position: fixed;
             top: 120px;
@@ -94,7 +92,6 @@
         .quick-nav-btn:active {
             transform: scale(0.92);
         }
-
         .risk-modal {
             position: fixed;
             top: 0;
@@ -195,7 +192,6 @@
         .risk-button:active {
             transform: scale(0.98);
         }
-
         .loading-toast {
             position: fixed;
             top: 0;
@@ -240,7 +236,6 @@
             transform: scale(1);
             transition: transform var(--animate-duration) var(--ease-elastic);
         }
-
         .locate-toast {
             position: fixed;
             top: 0;
@@ -322,7 +317,6 @@
             background: #e67e22;
             border-color: #ffb347;
         }
-
         .city-selector-overlay {
             position: fixed;
             top: 0;
@@ -421,7 +415,6 @@
             padding: 20px;
             color: #6b5a3a;
         }
-
         .year-month-picker-wrapper {
             position: relative;
             display: inline-block;
@@ -538,7 +531,6 @@
             border-color: #4a6b3e;
             font-weight: 700;
         }
-
         html {
             height: 100%;
             background: linear-gradient(135deg, #fce5c4 0%, #c8e0f0 50%, #e8d4f0 100%);
@@ -826,22 +818,41 @@
         .current-temp-row {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
+            align-items: center;
+            flex-wrap: nowrap;
+            overflow: hidden;
             margin-bottom: 1rem;
             font-size: 1.2rem;
             font-weight: 600;
             color: #2c5a2e;
             border-bottom: 1px dashed rgba(100, 80, 40, 0.2);
             padding-bottom: 8px;
+            gap: 6px;
+            min-width: 0;
+        }
+        .current-temp-row span:first-child {
+            flex-shrink: 0;
         }
         .current-weather-badge {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             background: rgba(235, 225, 195, 0.5);
             border-radius: 60px;
-            padding: 4px 14px;
+            padding: 4px 10px;
+            flex-shrink: 1;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .current-weather-badge span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+        }
+        .current-weather-badge span:first-child {
+            flex-shrink: 0;
         }
         .material-grid {
             display: flex;
@@ -905,7 +916,6 @@
         .status-na {
             background: #9ca3af;
         }
-
         .card-header {
             display: flex;
             flex-wrap: wrap;
@@ -917,8 +927,6 @@
             font-size: clamp(1.3rem, 5vw, 1.7rem);
             font-weight: 600;
             color: #2c3e2f;
-            border-left: 5px solid #ffb347;
-            padding-left: 0.8rem;
             margin: 0;
             display: inline-flex;
             align-items: center;
@@ -1112,7 +1120,6 @@
             appearance: auto;
             cursor: pointer;
         }
-
         .sticky-date-dropdown {
             position: absolute;
             top: calc(100% + 8px);
@@ -1275,7 +1282,6 @@
         .sdd-day-cell.selected .holiday-badge {
             z-index: 20;
         }
-
         .footer-info {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -1319,7 +1325,6 @@
         .footer-info a:hover {
             color: #2c5a2e;
         }
-
         @media (max-width: 480px) {
             .quick-nav-buttons {
                 top: 100px;
@@ -1400,6 +1405,20 @@
                 font-size: 0.6rem;
                 padding: 4px 2px;
                 border-radius: 14px;
+            }
+            .current-temp-row {
+                font-size: 0.9rem;
+                gap: 4px;
+            }
+            .current-weather-badge {
+                gap: 4px;
+                padding: 4px 6px;
+            }
+            .current-weather-badge span {
+                font-size: 0.75rem;
+            }
+            .card-header h3 {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -1515,8 +1534,8 @@
                 <ul>
                     <li>🌍 气象数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>（全球免费气象API）</li>
                     <li>🗺️ 地理编码：<a href="https://geocoding-api.open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo Geocoding</a>（城市搜索） · 反向定位：<a href="https://www.bigdatacloud.com/" target="_blank" rel="noopener noreferrer">BigDataCloud</a></li>
-                    <li>📅 农历与节气：<a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noopener noreferrer">lunar-javascript</a>（阳历/农历/节假日）</li>
-                    <li>🇨🇳 节假日数据：<a href="https://api.timor.tech" target="_blank" rel="noopener noreferrer">Timor.tech</a>（中国法定节假日）</li>
+                    <li>📅 农历与节气：<a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noopener noreferrer">lunar-javascript</a>（阳历/农历/节气）</li>
+                    <li>🇨🇳 节假日与调休：<a href="https://timor.tech/api/holiday" target="_blank" rel="noopener noreferrer">Timor.tech</a>（中国法定节假日及调休安排） · 备用来源：<a href="https://github.com/zbt00123/Nature-Connection-Guide" target="_blank" rel="noopener noreferrer">GitHub</a>（开源项目内置数据）</li>
                     <li>🎨 深色模式适配：<a href="https://github.com/darkreader/darkreader" target="_blank" rel="noopener noreferrer">Dark Reader</a>（开源项目）</li>
                     <li>🤖 核心交互与算法：<a href="https://chat.deepseek.com" target="_blank" rel="noopener noreferrer">DeepSeek</a> · 辅助集成：<a href="https://www.qianwen.com" target="_blank" rel="noopener noreferrer">通义千问</a> · 图标设计：<a href="https://www.doubao.com/chat" target="_blank" rel="noopener noreferrer">豆包AI</a></li>
                 </ul>
@@ -2871,31 +2890,44 @@
             async function loadHolidaysForYear(year) {
                 if (holidayMaps[year]) return holidayMaps[year];
                 if (holidayFetching[year]) return holidayFetching[year];
-
                 const promise = (async () => {
-                    let apiMap = {};
-                    try {
-                        const resp = await fetch(`https://api.timor.tech/api/holiday/year/${year}`);
-                        const data = await resp.json();
-                        if (data.code === 0 && data.holiday) {
-                            for (let [date, info] of Object.entries(data.holiday)) {
-                                const mmdd = date.slice(5);
-                                apiMap[mmdd] = {
-                                    name: info.name || '',
-                                    isHoliday: info.holiday === true && !info.wage,
-                                    isWorkday: info.wage === true
-                                };
+                    let apiMap = null;
+                    const urls = [
+                        `https://timor.tech/api/holiday/year/${year}/`,
+                        `https://timor.tech/api/holiday/year/${year}`
+                    ];
+                    for (const url of urls) {
+                        try {
+                            const resp = await fetch(url);
+                            if (!resp.ok) continue;
+                            const data = await resp.json();
+                            if (data && data.code === 0 && data.holiday) {
+                                apiMap = {};
+                                for (let [date, info] of Object.entries(data.holiday)) {
+                                    const mmdd = date.slice(5);
+                                    apiMap[mmdd] = {
+                                        name: info.name || '',
+                                        isHoliday: info.holiday === true && !info.wage,
+                                        isWorkday: info.wage === true
+                                    };
+                                }
+                                break;
                             }
+                        } catch (e) {
+                            console.warn(`节假日接口请求失败: ${url}`);
                         }
-                    } catch (e) {
-                        console.warn(`节假日接口加载失败 (${year})`);
                     }
-
+                    const nowYear = new Date().getFullYear();
+                    if (!apiMap && year === nowYear) {
+                        apiMap = { ...DEFAULT_HOLIDAY_MAP };
+                    }
+                    if (!apiMap) {
+                        apiMap = {};
+                    }
                     holidayMaps[year] = apiMap;
                     delete holidayFetching[year];
                     return apiMap;
                 })();
-
                 holidayFetching[year] = promise;
                 return promise;
             }
