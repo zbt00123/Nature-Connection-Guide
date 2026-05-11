@@ -19,13 +19,12 @@
             --footer-link: #5a7a4a;
             --footer-text: #4a3b28;
             --overlay-blur: 4px;
+            --animate-duration: 0.3s;
+            --ease-elastic: cubic-bezier(0.34, 1.15, 0.64, 1);
+            --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
         .color-scheme-toggle {
-            position: fixed;
-            top: 16px;
-            right: 16px;
-            z-index: 600;
             width: 44px;
             height: 44px;
             border-radius: 50%;
@@ -39,13 +38,15 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+            transition: transform var(--animate-duration) ease, box-shadow var(--animate-duration) ease, background var(--animate-duration) ease;
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
             outline: none;
             line-height: 1;
             padding: 0;
+            position: static;
+            margin: 0;
         }
         .color-scheme-toggle:hover {
             transform: scale(1.08);
@@ -60,7 +61,7 @@
 
         .quick-nav-buttons {
             position: fixed;
-            top: 70px;
+            top: 120px;
             right: 16px;
             display: flex;
             flex-direction: column;
@@ -68,8 +69,8 @@
             z-index: 599;
         }
         .quick-nav-btn {
-            width: 38px;
-            height: 38px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             border: 1.5px solid rgba(180, 150, 100, 0.5);
             background: rgba(255, 255, 245, 0.75);
@@ -81,7 +82,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, background 0.2s;
+            transition: transform var(--animate-duration) ease, background var(--animate-duration) ease;
             outline: none;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
@@ -100,20 +101,26 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(var(--overlay-blur));
-            -webkit-backdrop-filter: blur(var(--overlay-blur));
+            background: rgba(0, 0, 0, 0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 2000;
             visibility: hidden;
             opacity: 0;
-            transition: visibility 0s, opacity 0.3s;
+            pointer-events: none;
+            transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
         .risk-modal.active {
             visibility: visible;
             opacity: 1;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
         .risk-content {
             max-width: 480px;
@@ -126,6 +133,12 @@
             text-align: left;
             border: 1px solid rgba(255, 240, 180, 0.8);
             font-family: inherit;
+            transform: scale(0.5);
+            transition: transform var(--animate-duration) ease-out;
+        }
+        .risk-modal.active .risk-content {
+            transform: scale(1);
+            transition: transform var(--animate-duration) var(--ease-elastic);
         }
         .risk-content h3 {
             font-size: 1.8rem;
@@ -189,16 +202,26 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(var(--overlay-blur));
-            -webkit-backdrop-filter: blur(var(--overlay-blur));
-            display: none;
+            background: rgba(0, 0, 0, 0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1100;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
         .loading-toast.show {
-            display: flex;
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
         .toast-content {
             background: rgba(30, 40, 30, 0.95);
@@ -210,6 +233,12 @@
             font-size: 1rem;
             text-align: center;
             min-width: 200px;
+            transform: scale(0.5);
+            transition: transform var(--animate-duration) ease-out;
+        }
+        .loading-toast.show .toast-content {
+            transform: scale(1);
+            transition: transform var(--animate-duration) var(--ease-elastic);
         }
 
         .locate-toast {
@@ -218,16 +247,26 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(var(--overlay-blur));
-            -webkit-backdrop-filter: blur(var(--overlay-blur));
-            display: none;
+            background: rgba(0, 0, 0, 0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1200;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
         .locate-toast.show {
-            display: flex;
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
         .locate-card {
             background: rgba(30, 40, 30, 0.96);
@@ -244,6 +283,12 @@
             flex-direction: column;
             align-items: center;
             gap: 20px;
+            transform: scale(0.5);
+            transition: transform var(--animate-duration) ease-out;
+        }
+        .locate-toast.show .locate-card {
+            transform: scale(1);
+            transition: transform var(--animate-duration) var(--ease-elastic);
         }
         .locate-message {
             font-size: 1rem;
@@ -284,20 +329,26 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(var(--overlay-blur));
-            -webkit-backdrop-filter: blur(var(--overlay-blur));
+            background: rgba(0, 0, 0, 0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             visibility: hidden;
             opacity: 0;
-            transition: 0.2s;
+            pointer-events: none;
+            transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
         .city-selector-overlay.active {
             visibility: visible;
             opacity: 1;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
         .city-selector-panel {
             background: rgba(255, 255, 245, 0.97);
@@ -309,6 +360,12 @@
             padding: 1.2rem;
             overflow-y: auto;
             border: 1px solid rgba(255, 240, 180, 0.8);
+            transform: scale(0.5);
+            transition: transform var(--animate-duration) ease-out;
+        }
+        .city-selector-overlay.active .city-selector-panel {
+            transform: scale(1);
+            transition: transform var(--animate-duration) var(--ease-elastic);
         }
         .city-search input {
             width: 100%;
@@ -398,19 +455,27 @@
             position: absolute;
             top: calc(100% + 8px);
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) scaleY(0.8);
+            transform-origin: top center;
             z-index: 100;
             background: #fffef9;
             border-radius: 1.2rem;
             padding: 1rem;
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(180, 150, 100, 0.5);
-            display: none;
             min-width: 220px;
             text-align: center;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration);
         }
         .year-month-dropdown.open {
-            display: block;
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) scaleY(1);
+            transition: transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
         .ym-year-row {
             display: flex;
@@ -617,7 +682,7 @@
         .calendar-time-actions {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             white-space: nowrap;
             position: relative;
             z-index: 2;
@@ -625,30 +690,35 @@
             min-width: 0;
         }
         .calendar-time-actions input[type="time"] {
-            padding: 2px 4px;
-            border-radius: 16px;
-            border: 1px solid #c7b280;
+            padding: 4px 8px;
+            border-radius: 20px;
+            border: 1px solid rgba(180, 150, 100, 0.35);
             background: rgba(255, 255, 250, 0.95);
             font-family: inherit;
-            font-size: clamp(0.6rem, 2.5cqw, 0.8rem);
+            font-size: clamp(0.8rem, 3.5cqw, 1.1rem);
+            font-weight: 600;
+            color: #2c5a2e;
             width: auto;
-            min-width: 65px;
-            max-width: 85px;
+            min-width: 75px;
+            max-width: 100px;
             flex-shrink: 1;
+            height: auto;
+            line-height: 1.3;
         }
         .calendar-today-btn {
             background: #6b8c5c;
             border: none;
             color: white;
-            padding: 2px 8px;
-            border-radius: 16px;
+            padding: 4px 10px;
+            border-radius: 20px;
             cursor: pointer;
-            font-weight: 500;
-            font-size: clamp(0.6rem, 2.5cqw, 0.8rem);
+            font-weight: 600;
+            font-size: clamp(0.8rem, 3.5cqw, 1.1rem);
             transition: 0.1s;
             white-space: nowrap;
             -webkit-tap-highlight-color: transparent;
             flex-shrink: 1;
+            line-height: 1.3;
         }
         .calendar-today-btn:active {
             transform: scale(0.96);
@@ -721,7 +791,7 @@
             pointer-events: none;
             z-index: 15;
             letter-spacing: 0.5px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
         }
         .holiday-rest {
             color: #16a34a;
@@ -903,6 +973,7 @@
         .surface-row {
             margin-bottom: 1rem;
             padding-bottom: 0.2rem;
+            position: relative;
         }
         .surface-header {
             display: flex;
@@ -923,13 +994,284 @@
             width: 100%;
             height: 18px;
             margin: 2px 0;
+            position: relative;
         }
         .timeline-canvas {
             width: 100%;
             height: 18px;
             display: block;
             border-radius: 12px;
+            cursor: default;
         }
+        .timeline-tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 0;
+            transform: translateX(-50%) scale(0);
+            transform-origin: bottom center;
+            background: rgba(255, 255, 245, 0.96);
+            color: #2c5a2e;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0;
+            text-align: left;
+            line-height: 1.5;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), 0 1px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(180, 150, 100, 0.5);
+            user-select: none;
+            -webkit-user-select: none;
+            transition: transform var(--animate-duration) ease-out, opacity var(--animate-duration) ease-out;
+        }
+        .timeline-tooltip.visible {
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+            transition: transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic);
+        }
+        .timeline-tooltip .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: baseline;
+        }
+        .timeline-tooltip .tooltip-label {
+            font-weight: 500;
+            color: inherit;
+        }
+        .timeline-tooltip .tooltip-value {
+            font-weight: 700;
+            color: #2c5a2e;
+            text-align: right;
+        }
+        .timeline-tooltip .tooltip-temp-row .tooltip-value {
+            color: #2f5e3a;
+        }
+        .sticky-header-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 245, 0.95);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            z-index: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(180, 150, 100, 0.4);
+            box-sizing: border-box;
+            transform: translateY(-100%);
+            pointer-events: none;
+            transition: transform var(--animate-duration) var(--ease-smooth);
+        }
+        .sticky-header-bar.show {
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .sticky-date-label {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #2c5a2e;
+            white-space: nowrap;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(255, 255, 250, 0.5);
+            border: 1px solid rgba(180, 150, 100, 0.35);
+            transition: background 0.2s, transform 0.1s;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+        }
+        .sticky-date-label:hover {
+            background: rgba(255, 255, 250, 0.85);
+            transform: scale(1.03);
+        }
+        .sticky-date-label:active {
+            transform: scale(0.96);
+        }
+        .sticky-header-bar input[type="time"] {
+            padding: 4px 8px;
+            border-radius: 20px;
+            border: 1px solid rgba(180, 150, 100, 0.35);
+            background: rgba(255, 255, 250, 0.95);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c5a2e;
+        }
+
+        .sticky-date-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) scaleY(0.8);
+            transform-origin: top center;
+            z-index: 710;
+            background: #fffef9;
+            border-radius: 1.2rem;
+            padding: 0.8rem;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(180, 150, 100, 0.5);
+            min-width: 240px;
+            text-align: center;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration);
+        }
+        .sticky-date-dropdown.open {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) scaleY(1);
+            transition: transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
+        }
+        .sdd-year-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2c5a2e;
+        }
+        .sdd-year-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: #6b8c5c;
+            padding: 2px 6px;
+            border-radius: 50%;
+            transition: background 0.15s, transform 0.1s;
+            line-height: 1;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .sdd-year-btn:hover {
+            background: rgba(107, 140, 92, 0.15);
+        }
+        .sdd-year-btn:active {
+            transform: scale(0.9);
+        }
+        .sdd-month-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .sdd-month-cell {
+            padding: 5px 3px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.7rem;
+            transition: background 0.15s, transform 0.1s, color 0.15s;
+            color: #3a5a2a;
+            background: #f5efdf;
+            border: 1px solid transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .sdd-month-cell:hover {
+            background: #e2d2af;
+            transform: scale(1.04);
+        }
+        .sdd-month-cell:active {
+            transform: scale(0.94);
+        }
+        .sdd-month-cell.active-month {
+            background: #6b8c5c;
+            color: white;
+            border-color: #4a6b3e;
+            font-weight: 700;
+        }
+        .sdd-day-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+            text-align: center;
+        }
+        .sdd-day-name {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #7c6b4a;
+            padding: 2px 0;
+        }
+        .sdd-day-cell {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: background 0.15s, transform 0.1s;
+            color: #3a2e22;
+            background: rgba(255, 255, 250, 0.7);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            position: relative;
+            line-height: 1.1;
+            padding: 1px;
+        }
+        .sdd-day-cell:hover {
+            background: rgba(200, 180, 120, 0.25);
+            transform: scale(1.05);
+        }
+        .sdd-day-cell:active {
+            transform: scale(0.9);
+        }
+        .sdd-day-cell.today {
+            border: 2px solid #e67e22;
+        }
+        .sdd-day-cell.selected {
+            background: #6b8c5c;
+            color: white;
+            font-weight: 700;
+        }
+        .sdd-day-cell.other-month {
+            opacity: 0.4;
+        }
+        .sdd-day-cell.weekend {
+            background-color: rgba(255, 165, 0, 0.1);
+        }
+        .sdd-day-cell .sdd-festival {
+            font-size: 0.55em;
+            line-height: 1;
+            margin-top: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        .sdd-day-cell .holiday-badge {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            font-size: 0.5em;
+            font-weight: 800;
+            line-height: 1;
+            padding: 0px 1px;
+            color: inherit;
+            pointer-events: none;
+            z-index: 15;
+        }
+        .sdd-day-cell.selected .holiday-badge {
+            z-index: 20;
+        }
+
         .footer-info {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -975,22 +1317,20 @@
         }
 
         @media (max-width: 480px) {
-            .color-scheme-toggle {
-                width: 38px;
-                height: 38px;
-                top: 10px;
-                right: 10px;
-                font-size: 1.2rem;
-            }
             .quick-nav-buttons {
-                top: 56px;
+                top: 100px;
                 right: 10px;
                 gap: 6px;
             }
             .quick-nav-btn {
-                width: 34px;
-                height: 34px;
+                width: 38px;
+                height: 38px;
                 font-size: 1rem;
+            }
+            .color-scheme-toggle {
+                width: 38px;
+                height: 38px;
+                font-size: 1.2rem;
             }
             .nature-container {
                 padding: 1rem;
@@ -1026,16 +1366,75 @@
                 font-size: 0.7rem;
                 border-radius: 16px;
             }
+            .calendar-time-actions input[type="time"] {
+                font-size: clamp(0.7rem, 3cqw, 0.9rem);
+                min-width: 60px;
+                max-width: 80px;
+                padding: 3px 6px;
+            }
+            .calendar-today-btn {
+                font-size: clamp(0.7rem, 3cqw, 0.9rem);
+                padding: 3px 8px;
+            }
+            .timeline-tooltip {
+                font-size: 0.75rem;
+                padding: 4px 10px;
+            }
+            .sticky-header-bar {
+                padding: 6px 12px;
+                gap: 8px;
+            }
+            .sticky-date-dropdown {
+                min-width: 200px;
+                padding: 0.6rem;
+            }
+            .sdd-day-cell {
+                font-size: 0.6rem;
+                border-radius: 8px;
+            }
+            .sdd-month-cell {
+                font-size: 0.6rem;
+                padding: 4px 2px;
+                border-radius: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <button class="color-scheme-toggle" id="colorSchemeToggleBtn" aria-label="切换深色模式" title="切换深色/浅色模式">🌙</button>
-
     <div class="quick-nav-buttons">
+        <button class="color-scheme-toggle" id="colorSchemeToggleBtn" aria-label="切换深色模式" title="切换深色/浅色模式">🌙</button>
         <button class="quick-nav-btn" id="scrollToCalendarBtn" aria-label="日历" title="跳转至日历">📅</button>
         <button class="quick-nav-btn" id="scrollToCurrentBtn" aria-label="当前温度" title="跳转至当前温度">🌡️</button>
         <button class="quick-nav-btn" id="scrollToInfoBtn" aria-label="自然足感" title="跳转至自然足感卡片">📍</button>
+        <button class="quick-nav-btn" id="scrollToFooterBtn" aria-label="页脚" title="滚动至页脚">⚠️</button>
+    </div>
+
+    <div id="stickyHeaderBar" class="sticky-header-bar">
+        <span class="sticky-date-label" id="stickyDateLabel">2026年5月11日</span>
+        <div class="sticky-date-dropdown" id="stickyDateDropdown">
+            <div class="sdd-year-row">
+                <button class="sdd-year-btn" id="sddYearPrev" aria-label="上一年">◀</button>
+                <span id="sddYearLabel">2026</span>
+                <button class="sdd-year-btn" id="sddYearNext" aria-label="下一年">▶</button>
+            </div>
+            <div class="sdd-month-grid" id="sddMonthGrid">
+                <div class="sdd-month-cell" data-month="1">1月</div>
+                <div class="sdd-month-cell" data-month="2">2月</div>
+                <div class="sdd-month-cell" data-month="3">3月</div>
+                <div class="sdd-month-cell" data-month="4">4月</div>
+                <div class="sdd-month-cell" data-month="5">5月</div>
+                <div class="sdd-month-cell" data-month="6">6月</div>
+                <div class="sdd-month-cell" data-month="7">7月</div>
+                <div class="sdd-month-cell" data-month="8">8月</div>
+                <div class="sdd-month-cell" data-month="9">9月</div>
+                <div class="sdd-month-cell" data-month="10">10月</div>
+                <div class="sdd-month-cell" data-month="11">11月</div>
+                <div class="sdd-month-cell" data-month="12">12月</div>
+            </div>
+            <div class="sdd-day-grid" id="sddDayGrid"></div>
+        </div>
+        <input type="time" id="stickyTimePicker" value="12:00">
+        <button class="calendar-today-btn" id="stickyNowBtn">📍 现在</button>
     </div>
 
     <div class="nature-container">
@@ -1106,7 +1505,7 @@
                 <div class="surface-list" id="surfaceList"></div>
             </div>
         </div>
-        <div class="footer-info">
+        <div class="footer-info" id="footerInfo">
             <div class="footer-info-inner">
                 <h4>🔗 数据来源与技术服务</h4>
                 <ul>
@@ -1214,6 +1613,15 @@
             const ymYearPrev = $('ymYearPrev');
             const ymYearNext = $('ymYearNext');
             const yearMonthPickerWrapper = $('yearMonthPickerWrapper');
+            const stickyHeaderBar = $('stickyHeaderBar');
+            const stickyDateLabel = $('stickyDateLabel');
+            const stickyTimePicker = $('stickyTimePicker');
+            const stickyDateDropdown = $('stickyDateDropdown');
+            const sddYearLabel = $('sddYearLabel');
+            const sddMonthGrid = $('sddMonthGrid');
+            const sddDayGrid = $('sddDayGrid');
+            const sddYearPrev = $('sddYearPrev');
+            const sddYearNext = $('sddYearNext');
 
             const COLOR_SCHEME_KEY = 'colorSchemePreference';
             const darkReaderConfig = { brightness: 100, contrast: 90, sepia: 10 };
@@ -1384,15 +1792,15 @@
             let holidayMap = {};
             let ymPickerYear = currentCalendarYear;
             let dynamicSolarFestivalsCache = {};
+            let sddPickerYear = currentCalendarYear;
+            let sddPickerMonth = currentCalendarMonth;
+            let sddPickerDay = selectedCalendarDay;
 
-            // 2026年完整法定节假日调休默认数据（权威预测，保障核心标注）
             const DEFAULT_HOLIDAY_MAP = {
-                // 元旦
                 '01-01': { name: '元旦', isHoliday: true, isWorkday: false },
                 '01-02': { name: '元旦', isHoliday: true, isWorkday: false },
                 '01-03': { name: '元旦', isHoliday: true, isWorkday: false },
                 '01-04': { name: '', isHoliday: false, isWorkday: true },
-                // 春节 (2月15日除夕~2月21日)
                 '02-15': { name: '春节', isHoliday: true, isWorkday: false },
                 '02-16': { name: '春节', isHoliday: true, isWorkday: false },
                 '02-17': { name: '春节', isHoliday: true, isWorkday: false },
@@ -1402,27 +1810,22 @@
                 '02-21': { name: '春节', isHoliday: true, isWorkday: false },
                 '02-14': { name: '', isHoliday: false, isWorkday: true },
                 '02-28': { name: '', isHoliday: false, isWorkday: true },
-                // 清明节 (4月4日~6日)
                 '04-04': { name: '清明节', isHoliday: true, isWorkday: false },
                 '04-05': { name: '清明节', isHoliday: true, isWorkday: false },
                 '04-06': { name: '清明节', isHoliday: true, isWorkday: false },
-                // 劳动节 (5月1日~5日，5月9日上班)
                 '05-01': { name: '劳动节', isHoliday: true, isWorkday: false },
                 '05-02': { name: '', isHoliday: true, isWorkday: false },
                 '05-03': { name: '', isHoliday: true, isWorkday: false },
                 '05-04': { name: '', isHoliday: true, isWorkday: false },
                 '05-05': { name: '', isHoliday: true, isWorkday: false },
                 '05-09': { name: '', isHoliday: false, isWorkday: true },
-                // 端午节 (6月19日~21日)
                 '06-19': { name: '端午节', isHoliday: true, isWorkday: false },
                 '06-20': { name: '', isHoliday: true, isWorkday: false },
                 '06-21': { name: '', isHoliday: true, isWorkday: false },
-                // 中秋节 (9月25日~27日，9月20日上班)
                 '09-25': { name: '中秋节', isHoliday: true, isWorkday: false },
                 '09-26': { name: '', isHoliday: true, isWorkday: false },
                 '09-27': { name: '', isHoliday: true, isWorkday: false },
                 '09-20': { name: '', isHoliday: false, isWorkday: true },
-                // 国庆节 (10月1日~7日，10月10日上班)
                 '10-01': { name: '国庆节', isHoliday: true, isWorkday: false },
                 '10-02': { name: '', isHoliday: true, isWorkday: false },
                 '10-03': { name: '', isHoliday: true, isWorkday: false },
@@ -1447,17 +1850,30 @@
                 dynamicSolarFestivalsCache = {};
             }
 
-            function getDayIndex(month, day) { let idx = 0; for (let i = 1; i < month; i++) idx += monthDays[i -
-                    1]; return idx + day - 1; }
+            function getDayIndex(month, day) {
+                let idx = 0;
+                for (let i = 1; i < month; i++) idx += monthDays[i - 1];
+                return idx + day - 1;
+            }
 
-            function getDateFromIndex(idx) { let r = idx; for (let m = 0; m < 12; m++) { if (r < monthDays[m])
-                        return { year: currentYear, month: m + 1, day: r + 1 };
-                r -= monthDays[m]; } return { year: currentYear, month: 12, day: 31 }; }
+            function getDateFromIndex(idx) {
+                let r = idx;
+                for (let m = 0; m < 12; m++) {
+                    if (r < monthDays[m]) return { year: currentYear, month: m + 1, day: r + 1 };
+                    r -= monthDays[m];
+                }
+                return { year: currentYear, month: 12, day: 31 };
+            }
 
-            function getDateStrFromIdx(idx) { let d = getDateFromIndex(idx); return `${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`; }
+            function getDateStrFromIdx(idx) {
+                let d = getDateFromIndex(idx);
+                return `${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`;
+            }
 
-            function getDayOfYearFromIndex(dayIdx) { const d = getDateFromIndex(dayIdx); return Math.floor((new Date(d
-                    .year, d.month - 1, d.day) - new Date(d.year, 0, 0)) / 86400000); }
+            function getDayOfYearFromIndex(dayIdx) {
+                const d = getDateFromIndex(dayIdx);
+                return Math.floor((new Date(d.year, d.month - 1, d.day) - new Date(d.year, 0, 0)) / 86400000);
+            }
 
             function estimateDailyTemp(idx) {
                 let rad = (idx / totalDays) * 2 * Math.PI;
@@ -1489,13 +1905,13 @@
             }
 
             function computeMaterialTempForHour(materialIdx, airTemp, hour, dayOfYear, lat, weatherCode, prevTemp =
-            null) {
+                null) {
                 const mat = MATERIALS[materialIdx];
                 const solarGain = calcSolarGain(lat, dayOfYear, hour, weatherCode);
                 let radHeating = solarGain * mat.absorptivity;
                 let nightCool = 0;
                 if (solarGain === 0) nightCool = -(1.5 + 2.0 * (1 - getCloudAttenuation(weatherCode))) * mat
-                .nightCooling;
+                    .nightCooling;
                 const steadyTemp = airTemp + radHeating + nightCool;
                 if (prevTemp !== null) {
                     const alpha = 0.3 + 0.5 * (1 - mat.thermalInertia);
@@ -1505,7 +1921,7 @@
             }
 
             function generateMaterialTempProfile(materialIdx, airMin, airMax, dayOfYear, lat, weatherCode,
-            hourlyAirTemps = null) {
+                hourlyAirTemps = null) {
                 const hours = 24;
                 const profile = new Array(hours + 1).fill(0);
                 let airTemps = new Array(hours + 1);
@@ -1653,25 +2069,54 @@
                 let airTemp = null,
                     weatherCode = null,
                     isEstimated = false;
-                const hourlyData = await fetchHourlyWeather(currentLocation.lat, currentLocation.lng, targetDateStr,
-                    hour);
-                if (hourlyData) { airTemp = hourlyData.temp;
-                    weatherCode = hourlyData.weatherCode; } else {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const diffDays = Math.floor((new Date(targetDateStr) - today) / 86400000);
-                    if (diffDays > 7 || diffDays < -90) isEstimated = true;
-                    else {
-                        const dayIdx = getDayIndex(month, day);
-                        const est = dailyTempCache[dayIdx] || estimateDailyTemp(dayIdx);
-                        airTemp = (est.min + est.max) / 2;
-                        weatherCode = 3;
+                let usedCache = false;
+
+                if (year === currentYear) {
+                    const dayIdx = getDayIndex(month, day);
+                    const cached = dailyTempCache[dayIdx];
+                    if (cached && cached.real && cached.hourlyTemps && cached.hourlyTemps.length === 24) {
+                        airTemp = cached.hourlyTemps[Math.min(hour, 23)];
+                        weatherCode = cached.weatherCode;
+                        isEstimated = false;
+                        usedCache = true;
+                    } else if (cached && cached.real) {
+                        const airMid = (cached.min + cached.max) / 2;
+                        const airAmp = (cached.max - cached.min) / 2;
+                        airTemp = airMid + airAmp * Math.cos((hour - 14) * Math.PI / 12);
+                        weatherCode = cached.weatherCode;
+                        isEstimated = false;
+                        usedCache = true;
                     }
                 }
+
+                if (!usedCache) {
+                    const hourlyData = await fetchHourlyWeather(currentLocation.lat, currentLocation.lng,
+                        targetDateStr, hour);
+                    if (hourlyData) {
+                        airTemp = hourlyData.temp;
+                        weatherCode = hourlyData.weatherCode;
+                    } else {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const diffDays = Math.floor((new Date(targetDateStr) - today) / 86400000);
+                        if (diffDays > 7 || diffDays < -90) isEstimated = true;
+                        if (year === currentYear) {
+                            const dayIdx = getDayIndex(month, day);
+                            const est = dailyTempCache[dayIdx] || estimateDailyTemp(dayIdx);
+                            airTemp = (est.min + est.max) / 2;
+                            weatherCode = est.weatherCode || 3;
+                        } else {
+                            airTemp = 20;
+                            weatherCode = 3;
+                            isEstimated = true;
+                        }
+                    }
+                }
+
                 const [emoji, desc] = getWeatherEmojiAndDesc(weatherCode);
                 currentAirTempEl.innerHTML = (airTemp !== null && !isEstimated) ? `${airTemp.toFixed(1)}°C` : '--';
                 currentWeatherIconEl.innerHTML = emoji;
-                currentWeatherDescEl.innerHTML = (isEstimated && !hourlyData) ? '估算数据' : desc;
+                currentWeatherDescEl.innerHTML = (isEstimated && !usedCache && !airTemp) ? '估算数据' : desc;
                 const dayOfYear = Math.floor((dt - new Date(dt.getFullYear(), 0, 0)) / 86400000);
                 let gridHtml = '',
                     prevTemp = airTemp;
@@ -1687,10 +2132,93 @@
                 currentMaterialGridEl.innerHTML = gridHtml;
             }
 
-            function drawMaterialTimelineWithProfile(canvasId, tempProfile) {
+            function formatHourFloat(hourFloat) {
+                const h = Math.floor(hourFloat);
+                const m = Math.round((hourFloat - h) * 60);
+                if (m >= 60) return `${String(h + 1).padStart(2, '0')}:00`;
+                return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+            }
+
+            function interpolateProfile(profile, hourFloat) {
+                const h = Math.max(0, Math.min(24, hourFloat));
+                const lo = Math.floor(h);
+                const hi = Math.min(24, lo + 1);
+                const frac = h - lo;
+                if (lo === 24) return profile[24];
+                return profile[lo] * (1 - frac) + profile[hi] * frac;
+            }
+
+            function setupTooltipEvents(canvas, tempProfile, materialName, tooltipEl) {
+                function updateTooltipVisibility() {
+                    const dark = isDarkMode();
+                    if (dark) {
+                        tooltipEl.style.background = 'rgba(30,38,30,0.96)';
+                        tooltipEl.style.color = '#e8e4d8';
+                        tooltipEl.style.borderColor = 'rgba(180,150,100,0.35)';
+                        tooltipEl.querySelectorAll('.tooltip-value').forEach(el => el.style.color = '#e8e4d8');
+                    } else {
+                        tooltipEl.style.background = 'rgba(255,255,245,0.96)';
+                        tooltipEl.style.color = '#2c5a2e';
+                        tooltipEl.style.borderColor = 'rgba(180,150,100,0.5)';
+                        tooltipEl.querySelectorAll('.tooltip-value').forEach(el => el.style.color = '#2f5e3a');
+                    }
+                }
+
+                let hideTimeout = null;
+
+                canvas.addEventListener('mousemove', function(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const ratio = canvas.width / rect.width;
+                    const canvasX = x * ratio;
+                    const hourFloat = Math.max(0, Math.min(24, (canvasX / canvas.width) * 24));
+                    const tempAtPoint = interpolateProfile(tempProfile, hourFloat);
+                    const timeStr = formatHourFloat(hourFloat);
+                    const tempStr = tempAtPoint.toFixed(1) + '℃';
+
+                    tooltipEl.querySelector('.time-value').textContent = timeStr;
+                    tooltipEl.querySelector('.temp-label').textContent = materialName;
+                    tooltipEl.querySelector('.temp-value').textContent = tempStr;
+
+                    const percentX = (hourFloat / 24) * 100;
+                    tooltipEl.style.left = percentX + '%';
+
+                    updateTooltipVisibility();
+
+                    if (hideTimeout) clearTimeout(hideTimeout);
+                    if (!tooltipEl.classList.contains('visible')) {
+                        tooltipEl.classList.add('visible');
+                    }
+                });
+
+                canvas.addEventListener('mouseleave', function() {
+                    hideTimeout = setTimeout(() => {
+                        tooltipEl.classList.remove('visible');
+                        tooltipEl.style.transform = '';
+                    }, 50);
+                });
+
+                canvas.addEventListener('mouseenter', function() {
+                    if (hideTimeout) clearTimeout(hideTimeout);
+                    updateTooltipVisibility();
+                });
+
+                tooltipEl.addEventListener('mouseenter', function() {
+                    if (hideTimeout) clearTimeout(hideTimeout);
+                });
+                tooltipEl.addEventListener('mouseleave', function() {
+                    hideTimeout = setTimeout(() => {
+                        tooltipEl.classList.remove('visible');
+                        tooltipEl.style.transform = '';
+                    }, 50);
+                });
+            }
+
+            function drawMaterialTimelineWithProfile(canvasId, tempProfile, materialName) {
                 const canvas = document.getElementById(canvasId);
                 if (!canvas) return;
                 const container = canvas.parentElement;
+                const tooltipEl = container.querySelector('.timeline-tooltip');
                 const width = container.clientWidth;
                 canvas.width = width;
                 canvas.height = 18;
@@ -1760,6 +2288,18 @@
                     if (maxT < 28) ctxCanvas.fillText("❄️ 全天偏冷", width / 2, 9);
                     else if (minT > 35) ctxCanvas.fillText("🔥 全天过热", width / 2, 9);
                 }
+
+                if (tooltipEl) {
+                    canvas._tooltipProfile = tempProfile;
+                    canvas._tooltipMaterialName = materialName;
+                    if (!canvas._tooltipEventsSetup) {
+                        setupTooltipEvents(canvas, tempProfile, materialName, tooltipEl);
+                        canvas._tooltipEventsSetup = true;
+                    } else {
+                        canvas._tooltipProfile = tempProfile;
+                        canvas._tooltipMaterialName = materialName;
+                    }
+                }
             }
 
             function updateLeftPanelAndTimeline(dayIdx) {
@@ -1771,7 +2311,7 @@
                 let useReal = (currentRealWeather.isReal && currentRealWeather.dateStr === targetDate);
                 let dataType = useReal ? (new Date(targetDate) < new Date(new Date().toISOString().slice(0, 10)) ?
                     "历史数据" : "预报数据") : "估算数据";
-                let weatherCode = useReal ? currentRealWeather.weatherCode : 3;
+                let weatherCode = useReal ? currentRealWeather.weatherCode : (air.weatherCode || 3);
                 cityTitleEl.innerHTML =
                     `📍 ${currentLocation.name} · 自然足感 <span class="data-tag">${dataType}</span>`;
                 airTempRangeEl.innerHTML = `${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃`;
@@ -1787,7 +2327,7 @@
                     const minT = Math.min(...profile),
                         maxT = Math.max(...profile);
                     html +=
-                        `<div class="surface-row"><div class="surface-header"><span class="surface-name">${mat.name}</span><span class="surface-temp-range">${minT.toFixed(1)}~${maxT.toFixed(1)}℃</span></div><div class="timeline-canvas-wrapper"><canvas id="timelineCanvas_${idx}" class="timeline-canvas" width="600" height="18"></canvas></div></div>`;
+                        `<div class="surface-row"><div class="surface-header"><span class="surface-name">${mat.name}</span><span class="surface-temp-range">${minT.toFixed(1)}~${maxT.toFixed(1)}℃</span></div><div class="timeline-canvas-wrapper"><canvas id="timelineCanvas_${idx}" class="timeline-canvas" width="600" height="18"></canvas><div class="timeline-tooltip" id="tooltip_${idx}"><div class="tooltip-row"><span class="tooltip-label">⌚️ 时间</span><span class="tooltip-value time-value">00:00</span></div><div class="tooltip-row tooltip-temp-row"><span class="tooltip-label temp-label">${mat.name}</span><span class="tooltip-value temp-value">--℃</span></div></div></div></div>`;
                 });
                 surfaceListEl.innerHTML = html;
                 setTimeout(() => {
@@ -1796,7 +2336,12 @@
                             .hourlyTemps : null;
                         const profile = generateMaterialTempProfile(idx, airMin, airMax, dayOfYear,
                             currentLocation.lat, weatherCode, hourlyTemps);
-                        drawMaterialTimelineWithProfile(`timelineCanvas_${idx}`, profile);
+                        const canvas = document.getElementById(`timelineCanvas_${idx}`);
+                        if (canvas) {
+                            canvas._tooltipEventsSetup = false;
+                        }
+                        drawMaterialTimelineWithProfile(`timelineCanvas_${idx}`, profile, MATERIALS[
+                            idx].name);
                     });
                 }, 10);
             }
@@ -1807,6 +2352,194 @@
                 datetimePickerEl.value =
                     `${d.year}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}T${timePart}`;
             }
+
+            function updateStickyHeader() {
+                const d = getDateFromIndex(currentDayIndex);
+                stickyDateLabel.textContent = `${d.year}年${d.month}月${d.day}日`;
+                stickyTimePicker.value = timePickerEl.value;
+                sddPickerYear = currentCalendarYear;
+                sddPickerMonth = currentCalendarMonth;
+                sddPickerDay = selectedCalendarDay;
+                updateSddDropdownState();
+            }
+
+            function getCellFestivalInfo(year, month, day) {
+                const mmdd = `${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const holidayInfo = holidayMap[mmdd];
+                let festivalName = '';
+                let holidayBadge = '';
+                const dynamicFestivals = getDynamicFestivalsForYear(year);
+                const solarFestivalName = SOLAR_FESTIVALS[mmdd] || dynamicFestivals[mmdd] || null;
+                let SolarClass = null;
+                if (typeof Lunar !== 'undefined' && Lunar.Solar) SolarClass = Lunar.Solar;
+                else if (typeof Solar !== 'undefined') SolarClass = Solar;
+                if (SolarClass) {
+                    try {
+                        const d = SolarClass.fromYmd(year, month, day);
+                        const lunar = d.getLunar();
+                        const lunarFestivals = lunar.getFestivals();
+                        const jieQi = lunar.getJieQi();
+                        if (lunarFestivals && lunarFestivals.length > 0) {
+                            festivalName = lunarFestivals[0];
+                        } else if (jieQi) {
+                            festivalName = jieQi;
+                        } else if (solarFestivalName) {
+                            festivalName = solarFestivalName;
+                        }
+                    } catch (e) {
+                        festivalName = solarFestivalName || '';
+                    }
+                } else if (solarFestivalName) {
+                    festivalName = solarFestivalName;
+                }
+                if (holidayInfo) {
+                    if (holidayInfo.isHoliday) {
+                        holidayBadge = '<span class="holiday-badge holiday-rest">休</span>';
+                    } else if (holidayInfo.isWorkday) {
+                        holidayBadge = '<span class="holiday-badge holiday-work">班</span>';
+                    }
+                }
+                return { festivalName, holidayBadge };
+            }
+
+            function updateSddDropdownState() {
+                sddYearLabel.textContent = sddPickerYear;
+                const monthCells = sddMonthGrid.querySelectorAll('.sdd-month-cell');
+                monthCells.forEach(cell => {
+                    const cellMonth = parseInt(cell.dataset.month);
+                    if (cellMonth === sddPickerMonth && sddPickerYear === currentCalendarYear &&
+                        sddPickerMonth === currentCalendarMonth) {
+                        cell.classList.add('active-month');
+                    } else {
+                        cell.classList.remove('active-month');
+                    }
+                });
+                renderSddDayGrid();
+            }
+
+            function renderSddDayGrid() {
+                const year = sddPickerYear;
+                const month = sddPickerMonth;
+                const firstDayOfMonth = new Date(year, month - 1, 1).getDay();
+                const daysInMonth = new Date(year, month, 0).getDate();
+                const prevMonthLastDay = new Date(year, month - 1, 0).getDate();
+                sddDayGrid.innerHTML = '';
+                ['日', '一', '二', '三', '四', '五', '六'].forEach(d => {
+                    const dn = document.createElement('div');
+                    dn.className = 'sdd-day-name';
+                    dn.textContent = d;
+                    sddDayGrid.appendChild(dn);
+                });
+                for (let i = firstDayOfMonth - 1; i >= 0; i--) {
+                    const day = prevMonthLastDay - i;
+                    const prevMonth = month - 1 || 12;
+                    const prevYear = month - 1 === 0 ? year - 1 : year;
+                    sddDayGrid.appendChild(createSddDayCell(day, prevYear, prevMonth, true));
+                }
+                for (let day = 1; day <= daysInMonth; day++) {
+                    sddDayGrid.appendChild(createSddDayCell(day, year, month, false));
+                }
+                const remaining = (7 - (sddDayGrid.children.length % 7)) % 7;
+                const nextMonth = month + 1 > 12 ? 1 : month + 1;
+                const nextYear = month + 1 > 12 ? year + 1 : year;
+                for (let day = 1; day <= remaining; day++) {
+                    sddDayGrid.appendChild(createSddDayCell(day, nextYear, nextMonth, true));
+                }
+            }
+
+            function createSddDayCell(day, actualYear, actualMonth, isOtherMonth) {
+                const cell = document.createElement('div');
+                cell.className = 'sdd-day-cell';
+                const dateObj = new Date(actualYear, actualMonth - 1, day);
+                const dayOfWeek = dateObj.getDay();
+                if (dayOfWeek === 0 || dayOfWeek === 6) cell.classList.add('weekend');
+                const today = new Date();
+                const isToday = (actualYear === today.getFullYear() && actualMonth === today.getMonth() + 1 && day ===
+                    today.getDate());
+                const isSelected = (actualYear === currentCalendarYear && actualMonth === currentCalendarMonth && day ===
+                    selectedCalendarDay);
+                if (isToday) cell.classList.add('today');
+                if (isSelected) cell.classList.add('selected');
+                if (isOtherMonth) cell.classList.add('other-month');
+
+                const { festivalName, holidayBadge } = getCellFestivalInfo(actualYear, actualMonth, day);
+                cell.innerHTML = `${day}${festivalName ? `<span class="sdd-festival">${festivalName}</span>` : ''}${holidayBadge}`;
+                cell.addEventListener('click', () => {
+                    selectDateFromSticky(actualYear, actualMonth, day);
+                });
+                return cell;
+            }
+
+            function selectDateFromSticky(year, month, day) {
+                if (year !== currentYear) {
+                    currentYear = year;
+                    updateCalendar();
+                    for (let i = 0; i < totalDays; i++) {
+                        let e = estimateDailyTemp(i);
+                        dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
+                    }
+                }
+                currentCalendarYear = year;
+                currentCalendarMonth = month;
+                selectedCalendarDay = day;
+                currentDayIndex = getDayIndex(month, day);
+                syncDateTimePickerFromDayIndex();
+                updateCalendarUI();
+                refreshWeatherForCurrentDate(true);
+                updateCurrentCardByDateTime(datetimePickerEl.value);
+                closeSddDropdown();
+                updateStickyHeader();
+            }
+
+            function closeSddDropdown() {
+                stickyDateDropdown.classList.remove('open');
+            }
+
+            function toggleSddDropdown(e) {
+                e.stopPropagation();
+                if (stickyDateDropdown.classList.contains('open')) {
+                    closeSddDropdown();
+                } else {
+                    sddPickerYear = currentCalendarYear;
+                    sddPickerMonth = currentCalendarMonth;
+                    sddPickerDay = selectedCalendarDay;
+                    updateSddDropdownState();
+                    stickyDateDropdown.classList.add('open');
+                }
+            }
+
+            stickyDateLabel.addEventListener('click', toggleSddDropdown);
+            stickyDateDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            document.addEventListener('click', (e) => {
+                if (!stickyDateLabel.contains(e.target) && !stickyDateDropdown.contains(e.target)) {
+                    closeSddDropdown();
+                }
+            });
+
+            sddYearPrev.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sddPickerYear--;
+                updateSddDropdownState();
+            });
+            sddYearNext.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sddPickerYear++;
+                updateSddDropdownState();
+            });
+            sddMonthGrid.addEventListener('click', (e) => {
+                const cell = e.target.closest('.sdd-month-cell');
+                if (!cell) return;
+                const month = parseInt(cell.dataset.month);
+                sddPickerMonth = month;
+                if (sddPickerYear === currentCalendarYear && sddPickerMonth === currentCalendarMonth) {
+                    sddPickerDay = selectedCalendarDay;
+                } else {
+                    sddPickerDay = Math.min(selectedCalendarDay, new Date(sddPickerYear, month, 0).getDate());
+                }
+                updateSddDropdownState();
+            });
 
             function updateCalendarUI() {
                 const year = currentCalendarYear,
@@ -1839,6 +2572,7 @@
                     const nextYear = month + 1 > 12 ? year + 1 : year;
                     calendarGridEl.appendChild(createDayCell(day, nextYear, nextMonth, nextYear, true));
                 }
+                updateStickyHeader();
             }
 
             function createDayCell(day, month, actualMonth, actualYear, isOtherMonth) {
@@ -1971,7 +2705,7 @@
                 try {
                     const res = await fetch(
                         `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`
-                        );
+                    );
                     const data = await res.json();
                     let city = data.city || data.locality || data.principalSubdivision || '当前位置';
                     if (city.endsWith('市')) city = city.slice(0, -1);
@@ -2019,7 +2753,7 @@
                 const timeoutMs = 5000;
                 const fetchWithTimeout = (url) => { const ctrl = new AbortController();
                     setTimeout(() => ctrl.abort(), timeoutMs); return fetch(url, { signal: ctrl.signal }).finally(
-                    () => {}); };
+                        () => {}); };
                 const services = [
                     async () => { try { const r = await fetchWithTimeout(
                                 'https://ip-api.com/json/?fields=status,lat,lon,city&lang=zh-CN'); const d =
@@ -2065,7 +2799,7 @@
                             '<div class="loading-tip">未找到城市，试试其他名称</div>'; return; }
                     cityResultsList.innerHTML = cities.map(c =>
                         `<div class="city-result-item" data-lat="${c.lat}" data-lng="${c.lng}" data-name="${c.name}">${c.display}</div>`
-                        ).join('');
+                    ).join('');
                     document.querySelectorAll('.city-result-item').forEach(el => el.addEventListener('click', () => {
                         setCity({ name: el.dataset.name, lat: parseFloat(el.dataset.lat), lng: parseFloat(el
                             .dataset.lng) });
@@ -2080,7 +2814,6 @@
                     const resp = await fetch(`https://api.timor.tech/api/holiday/year/${year}`);
                     const data = await resp.json();
                     if (data.code === 0 && data.holiday) {
-                        // 先用API数据覆盖holidayMap，再合并默认数据确保不丢失关键节日
                         const apiMap = {};
                         for (let [date, info] of Object.entries(data.holiday)) {
                             const mmdd = date.slice(5);
@@ -2090,7 +2823,6 @@
                                 isWorkday: info.wage === true
                             };
                         }
-                        // 合并逻辑：以API数据为准，但保证默认数据中独有的条目保留（API可能缺失部分节日）
                         holidayMap = { ...DEFAULT_HOLIDAY_MAP, ...apiMap };
                     }
                 } catch (e) {
@@ -2219,6 +2951,37 @@
                     'dark' : 'light'); });
             initColorScheme();
 
+            function handleStickyHeaderVisibility() {
+                const todayBtn = $('calendarTodayBtn');
+                if (!todayBtn) return;
+                const rect = todayBtn.getBoundingClientRect();
+                if (rect.bottom < 0) {
+                    stickyHeaderBar.classList.add('show');
+                } else {
+                    stickyHeaderBar.classList.remove('show');
+                }
+            }
+
+            window.addEventListener('scroll', () => {
+                handleStickyHeaderVisibility();
+            }, { passive: true });
+            window.addEventListener('resize', () => {
+                handleStickyHeaderVisibility();
+            });
+
+            stickyTimePicker.addEventListener('change', () => {
+                timePickerEl.value = stickyTimePicker.value;
+                syncDateTimePickerFromDayIndex();
+                updateCurrentCardByDateTime(datetimePickerEl.value);
+            });
+            $('stickyNowBtn').addEventListener('click', setCalendarToToday);
+
+            timePickerEl.addEventListener('change', () => {
+                syncDateTimePickerFromDayIndex();
+                updateCurrentCardByDateTime(datetimePickerEl.value);
+                updateStickyHeader();
+            });
+
             document.getElementById('prevMonthBtn').addEventListener('click', () => {
                 if (currentCalendarMonth === 1) { currentCalendarMonth = 12;
                     currentCalendarYear--; } else currentCalendarMonth--;
@@ -2257,10 +3020,6 @@
                 refreshWeatherForCurrentDate(true);
                 updateCurrentCardByDateTime(datetimePickerEl.value);
             });
-            timePickerEl.addEventListener('change', () => {
-                syncDateTimePickerFromDayIndex();
-                updateCurrentCardByDateTime(datetimePickerEl.value);
-            });
             document.getElementById('calendarTodayBtn').addEventListener('click', setCalendarToToday);
             $('openCityPickerBtn').addEventListener('click', () => citySelectorOverlay.classList.add('active'));
             $('autoLocateBtn').addEventListener('click', performLocation);
@@ -2284,6 +3043,9 @@
             $('scrollToInfoBtn').addEventListener('click', () => {
                 $('mainInfoCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
+            $('scrollToFooterBtn').addEventListener('click', () => {
+                $('footerInfo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
 
             const riskModal = $('riskModal');
             $('riskConfirmBtn').addEventListener('click', () => {
@@ -2293,7 +3055,6 @@
             });
             if (!localStorage.getItem('riskAcknowledged')) riskModal.classList.add('active');
 
-            // 初始化节假日数据：先使用完整的默认调休安排，确保页面加载后立刻显示
             holidayMap = { ...DEFAULT_HOLIDAY_MAP };
 
             updateCalendar();
@@ -2308,20 +3069,24 @@
             currentCalendarYear = now.getFullYear();
             currentCalendarMonth = now.getMonth() + 1;
             ymPickerYear = currentCalendarYear;
+            sddPickerYear = currentCalendarYear;
+            sddPickerMonth = currentCalendarMonth;
+            sddPickerDay = selectedCalendarDay;
             updateCalendarUI();
             setNowDateTime();
 
-            // 后台获取官方节假日数据，成功后自动刷新日历
             loadHolidays().then(() => {
                 updateCalendarUI();
             });
 
             window.addEventListener('resize', () => {
                 if (dailyTempCache[currentDayIndex]) updateLeftPanelAndTimeline(currentDayIndex);
+                handleStickyHeaderVisibility();
             });
             if (localStorage.getItem('riskAcknowledged') === 'true') {
                 setTimeout(() => { performLocation(); }, 100);
             }
+            handleStickyHeaderVisibility();
         })();
     </script>
 </body>
