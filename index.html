@@ -23,6 +23,7 @@
             --ease-elastic: cubic-bezier(0.34, 1.15, 0.64, 1);
             --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
         }
+
         .color-scheme-toggle {
             width: 44px;
             height: 44px;
@@ -47,16 +48,19 @@
             position: static;
             margin: 0;
         }
+
         .color-scheme-toggle:hover {
             transform: scale(1.08);
             box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.1);
             background: rgba(255, 255, 250, 0.9);
         }
+
         .color-scheme-toggle:active {
             transform: scale(0.94);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             transition: transform 0.08s ease, box-shadow 0.08s ease;
         }
+
         .quick-nav-buttons {
             position: fixed;
             top: 120px;
@@ -66,6 +70,7 @@
             gap: 8px;
             z-index: 599;
         }
+
         .quick-nav-btn {
             width: 44px;
             height: 44px;
@@ -85,13 +90,16 @@
             -webkit-tap-highlight-color: transparent;
             user-select: none;
         }
+
         .quick-nav-btn:hover {
             transform: scale(1.1);
             background: rgba(255, 255, 250, 0.92);
         }
+
         .quick-nav-btn:active {
             transform: scale(0.92);
         }
+
         .risk-modal {
             position: fixed;
             top: 0;
@@ -110,6 +118,7 @@
             pointer-events: none;
             transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
+
         .risk-modal.active {
             visibility: visible;
             opacity: 1;
@@ -119,6 +128,7 @@
             -webkit-backdrop-filter: blur(4px);
             transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
+
         .risk-content {
             max-width: 480px;
             width: 85%;
@@ -133,10 +143,12 @@
             transform: scale(0.5);
             transition: transform var(--animate-duration) ease-out;
         }
+
         .risk-modal.active .risk-content {
             transform: scale(1);
             transition: transform var(--animate-duration) var(--ease-elastic);
         }
+
         .risk-content h3 {
             font-size: 1.8rem;
             margin-bottom: 1rem;
@@ -146,6 +158,7 @@
             color: transparent;
             text-align: center;
         }
+
         .risk-warning-icon {
             background: none;
             -webkit-background-clip: unset;
@@ -154,6 +167,7 @@
             display: inline-block;
             margin-right: 4px;
         }
+
         .risk-content p {
             font-size: 1rem;
             line-height: 1.5;
@@ -161,15 +175,18 @@
             margin-bottom: 1rem;
             text-align: left;
         }
+
         .risk-content .risk-list {
             text-align: left;
             margin: 1rem 0;
             padding-left: 1.5rem;
         }
+
         .risk-content .risk-list li {
             margin-bottom: 0.5rem;
             color: #6b4c2c;
         }
+
         .risk-button {
             background: #6b8c5c;
             border: none;
@@ -185,13 +202,16 @@
             margin-left: auto;
             margin-right: auto;
         }
+
         .risk-button:hover {
             background: #5a7a4a;
             transform: scale(1.02);
         }
+
         .risk-button:active {
             transform: scale(0.98);
         }
+
         .loading-toast {
             position: fixed;
             top: 0;
@@ -210,6 +230,7 @@
             pointer-events: none;
             transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
+
         .loading-toast.show {
             visibility: visible;
             opacity: 1;
@@ -219,6 +240,7 @@
             -webkit-backdrop-filter: blur(4px);
             transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
+
         .toast-content {
             background: rgba(30, 40, 30, 0.95);
             backdrop-filter: blur(20px);
@@ -232,10 +254,12 @@
             transform: scale(0.5);
             transition: transform var(--animate-duration) ease-out;
         }
+
         .loading-toast.show .toast-content {
             transform: scale(1);
             transition: transform var(--animate-duration) var(--ease-elastic);
         }
+
         .locate-toast {
             position: fixed;
             top: 0;
@@ -254,6 +278,7 @@
             pointer-events: none;
             transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
+
         .locate-toast.show {
             visibility: visible;
             opacity: 1;
@@ -263,6 +288,7 @@
             -webkit-backdrop-filter: blur(4px);
             transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
+
         .locate-card {
             background: rgba(30, 40, 30, 0.96);
             backdrop-filter: blur(20px);
@@ -281,10 +307,12 @@
             transform: scale(0.5);
             transition: transform var(--animate-duration) ease-out;
         }
+
         .locate-toast.show .locate-card {
             transform: scale(1);
             transition: transform var(--animate-duration) var(--ease-elastic);
         }
+
         .locate-message {
             font-size: 1rem;
             line-height: 1.4;
@@ -292,12 +320,14 @@
             align-items: center;
             gap: 12px;
         }
+
         .locate-buttons {
             display: flex;
             gap: 16px;
             flex-wrap: wrap;
             justify-content: center;
         }
+
         .locate-btn {
             background: rgba(255, 255, 220, 0.2);
             border: 1px solid rgba(255, 255, 200, 0.6);
@@ -309,14 +339,17 @@
             transition: 0.1s;
             font-weight: 500;
         }
+
         .locate-btn:hover {
             background: rgba(255, 255, 220, 0.4);
             transform: scale(1.02);
         }
+
         .locate-btn.primary {
             background: #e67e22;
             border-color: #ffb347;
         }
+
         .city-selector-overlay {
             position: fixed;
             top: 0;
@@ -335,6 +368,7 @@
             pointer-events: none;
             transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
+
         .city-selector-overlay.active {
             visibility: visible;
             opacity: 1;
@@ -344,6 +378,7 @@
             -webkit-backdrop-filter: blur(4px);
             transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
+
         .city-selector-panel {
             background: rgba(255, 255, 245, 0.97);
             backdrop-filter: blur(20px);
@@ -357,10 +392,12 @@
             transform: scale(0.5);
             transition: transform var(--animate-duration) ease-out;
         }
+
         .city-selector-overlay.active .city-selector-panel {
             transform: scale(1);
             transition: transform var(--animate-duration) var(--ease-elastic);
         }
+
         .city-search input {
             width: 100%;
             padding: 10px 15px;
@@ -371,6 +408,7 @@
             outline: none;
             box-sizing: border-box;
         }
+
         .city-results {
             display: flex;
             flex-direction: column;
@@ -378,6 +416,7 @@
             max-height: 50vh;
             overflow-y: auto;
         }
+
         .city-result-item {
             background: #f5efdf;
             padding: 8px 12px;
@@ -386,9 +425,11 @@
             transition: 0.1s;
             font-size: 0.9rem;
         }
+
         .city-result-item:hover {
             background: #e2d2af;
         }
+
         .hot-cities {
             display: flex;
             flex-wrap: wrap;
@@ -396,6 +437,7 @@
             margin: 12px 0;
             justify-content: center;
         }
+
         .hot-city-btn {
             background: #e8e0c8;
             border: none;
@@ -406,19 +448,23 @@
             transition: 0.1s;
             color: #3a5a2a;
         }
+
         .hot-city-btn:hover {
             background: #cfc49e;
             transform: scale(1.02);
         }
+
         .loading-tip {
             text-align: center;
             padding: 20px;
             color: #6b5a3a;
         }
+
         .year-month-picker-wrapper {
             position: relative;
             display: inline-block;
         }
+
         .year-month-display {
             cursor: pointer;
             font-weight: 600;
@@ -437,13 +483,16 @@
             align-items: center;
             gap: 2px;
         }
+
         .year-month-display:hover {
             background: rgba(255, 255, 250, 0.85);
             transform: scale(1.03);
         }
+
         .year-month-display:active {
             transform: scale(0.96);
         }
+
         .year-month-dropdown {
             position: absolute;
             top: calc(100% + 8px);
@@ -463,6 +512,7 @@
             pointer-events: none;
             transition: transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration);
         }
+
         .year-month-dropdown.open {
             visibility: visible;
             opacity: 1;
@@ -470,6 +520,7 @@
             transform: translateX(-50%) scaleY(1);
             transition: transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
+
         .ym-year-row {
             display: flex;
             align-items: center;
@@ -480,6 +531,7 @@
             font-size: 1rem;
             color: #2c5a2e;
         }
+
         .ym-year-btn {
             background: none;
             border: none;
@@ -493,17 +545,21 @@
             -webkit-tap-highlight-color: transparent;
             user-select: none;
         }
+
         .ym-year-btn:hover {
             background: rgba(107, 140, 92, 0.15);
         }
+
         .ym-year-btn:active {
             transform: scale(0.9);
         }
+
         .ym-month-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 6px;
         }
+
         .ym-month-cell {
             padding: 6px 4px;
             border-radius: 20px;
@@ -518,24 +574,29 @@
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
+
         .ym-month-cell:hover {
             background: #e2d2af;
             transform: scale(1.04);
         }
+
         .ym-month-cell:active {
             transform: scale(0.94);
         }
+
         .ym-month-cell.active-month {
             background: #6b8c5c;
             color: white;
             border-color: #4a6b3e;
             font-weight: 700;
         }
+
         html {
             height: 100%;
             background: linear-gradient(135deg, #fce5c4 0%, #c8e0f0 50%, #e8d4f0 100%);
             background-attachment: fixed;
         }
+
         body {
             margin: 0;
             padding: 1rem;
@@ -546,6 +607,7 @@
             justify-content: center;
             align-items: center;
         }
+
         .nature-container {
             max-width: 1600px;
             width: 100%;
@@ -555,6 +617,7 @@
             padding: 1.5rem;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
         }
+
         .main-title {
             text-align: center;
             font-size: clamp(1.8rem, 8vw, 3rem);
@@ -570,6 +633,7 @@
             gap: 8px;
             flex-wrap: wrap;
         }
+
         .main-title::after {
             content: '👣';
             font-size: clamp(1.5rem, 6vw, 2.5rem);
@@ -577,6 +641,7 @@
             color: transparent;
             display: inline-block;
         }
+
         .main-title::before {
             content: '🌿';
             font-size: clamp(1.5rem, 6vw, 2.5rem);
@@ -584,6 +649,7 @@
             color: transparent;
             display: inline-block;
         }
+
         .dashboard {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -594,6 +660,7 @@
             gap: 1.5rem;
             align-items: start;
         }
+
         @media (max-width: 880px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -604,6 +671,7 @@
                     "info";
             }
         }
+
         .date-card {
             grid-area: calendar;
             background: rgba(255, 255, 255, 0.6);
@@ -615,6 +683,7 @@
             position: relative;
             container-type: inline-size;
         }
+
         .current-card {
             grid-area: current;
             background: rgba(255, 255, 255, 0.6);
@@ -624,6 +693,7 @@
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 240, 0.7);
         }
+
         .info-card {
             grid-area: info;
             background: rgba(255, 255, 255, 0.6);
@@ -633,6 +703,7 @@
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 240, 0.7);
         }
+
         .calendar-header {
             display: flex;
             justify-content: space-between;
@@ -643,6 +714,7 @@
             position: relative;
             z-index: 1;
         }
+
         .calendar-nav {
             display: flex;
             align-items: center;
@@ -656,6 +728,7 @@
             flex-shrink: 1;
             min-width: 0;
         }
+
         .calendar-nav button {
             background: none;
             border: none;
@@ -668,9 +741,11 @@
             -webkit-tap-highlight-color: transparent;
             flex-shrink: 0;
         }
+
         .calendar-nav button:active {
             transform: scale(0.9);
         }
+
         .calendar-time-actions {
             display: flex;
             align-items: center;
@@ -681,6 +756,7 @@
             flex-shrink: 1;
             min-width: 0;
         }
+
         .calendar-time-select {
             padding: 4px 8px;
             border-radius: 20px;
@@ -699,6 +775,7 @@
             appearance: auto;
             cursor: pointer;
         }
+
         .calendar-today-btn {
             background: #6b8c5c;
             border: none;
@@ -714,9 +791,11 @@
             flex-shrink: 1;
             line-height: 1.3;
         }
+
         .calendar-today-btn:active {
             transform: scale(0.96);
         }
+
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -725,12 +804,14 @@
             position: relative;
             z-index: 0;
         }
+
         .calendar-day-name {
             font-weight: 600;
             font-size: clamp(0.6rem, 2.2cqw, 0.8rem);
             color: #7c6b4a;
             padding: 4px 0;
         }
+
         .calendar-day {
             aspect-ratio: 1 / 1;
             display: flex;
@@ -750,14 +831,17 @@
             overflow: hidden;
             z-index: 1;
         }
+
         .calendar-day:hover {
             background: rgba(200, 180, 120, 0.25);
             transform: scale(1.02);
             z-index: 3;
         }
+
         .calendar-day.today:not(.selected) {
             border: 2px solid #e67e22;
         }
+
         .calendar-day .lunar {
             font-size: 0.68em;
             opacity: 0.85;
@@ -771,6 +855,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+
         .holiday-badge {
             position: absolute;
             top: 1px;
@@ -787,18 +872,23 @@
             letter-spacing: 0.5px;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
         }
+
         .holiday-rest {
             color: #dc2626;
         }
+
         .holiday-work {
             color: #1e3a8a;
         }
+
         .calendar-day.weekend {
             background-color: rgba(255, 165, 0, 0.1);
         }
+
         .calendar-day.other-month {
             opacity: 0.5;
         }
+
         .calendar-day.selected {
             background: #6b8c5c;
             color: white;
@@ -806,15 +896,19 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             z-index: 2;
         }
+
         .calendar-day.selected.weekend {
             background: #6b8c5c;
         }
+
         .calendar-day.selected .lunar {
             color: rgba(255, 255, 255, 0.9);
         }
+
         .calendar-day.selected .holiday-badge {
             z-index: 20;
         }
+
         .current-temp-row {
             display: flex;
             justify-content: space-between;
@@ -830,9 +924,11 @@
             gap: 6px;
             min-width: 0;
         }
+
         .current-temp-row span:first-child {
             flex-shrink: 0;
         }
+
         .current-weather-badge {
             display: flex;
             align-items: center;
@@ -845,21 +941,25 @@
             overflow: hidden;
             white-space: nowrap;
         }
+
         .current-weather-badge span {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             min-width: 0;
         }
+
         .current-weather-badge span:first-child {
             flex-shrink: 0;
         }
+
         .material-grid {
             display: flex;
             flex-direction: column;
             gap: 10px;
             margin-top: 8px;
         }
+
         .material-row {
             display: flex;
             align-items: center;
@@ -868,21 +968,25 @@
             gap: 8px;
             font-size: 0.9rem;
         }
+
         .material-name {
             width: 70px;
             font-weight: 600;
             color: #4a5b44;
         }
+
         .material-temp {
             width: 70px;
             text-align: right;
             font-weight: 700;
             color: #2f5e3a;
         }
+
         .material-status {
             width: 70px;
             text-align: center;
         }
+
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -892,30 +996,39 @@
             color: white;
             background: #aaa;
         }
+
         .status-danger {
             background: #1e3a8a;
         }
+
         .status-too-cold {
             background: #3b82f6;
         }
+
         .status-cool {
             background: #60a5fa;
         }
+
         .status-good {
             background: #22c55e;
         }
+
         .status-warm {
             background: #f97316;
         }
+
         .status-hot {
             background: #ea580c;
         }
+
         .status-danger-hot {
             background: #dc2626;
         }
+
         .status-na {
             background: #9ca3af;
         }
+
         .card-header {
             display: flex;
             flex-wrap: wrap;
@@ -923,6 +1036,7 @@
             margin-bottom: 1rem;
             align-items: flex-start;
         }
+
         .card-header h3 {
             font-size: clamp(1.3rem, 5vw, 1.7rem);
             font-weight: 600;
@@ -933,12 +1047,14 @@
             flex-wrap: wrap;
             gap: 8px;
         }
+
         .location-actions {
             display: flex;
             gap: 8px;
             width: 100%;
             margin-top: 4px;
         }
+
         .city-picker-btn,
         .auto-locate-btn {
             background: #6b8c5c;
@@ -950,15 +1066,18 @@
             font-weight: 500;
             -webkit-tap-highlight-color: transparent;
         }
+
         .auto-locate-btn {
             background: #b48c48;
         }
+
         .temp-block {
             background: rgba(245, 245, 235, 0.5);
             border-radius: 1.2rem;
             padding: 0.6rem 1rem;
             margin-bottom: 1rem;
         }
+
         .temp-item {
             display: flex;
             justify-content: space-between;
@@ -967,6 +1086,7 @@
             padding: 0.4rem 0;
             border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
         }
+
         .data-tag {
             background: #e67e22;
             color: white;
@@ -977,14 +1097,17 @@
             display: inline-block;
             margin-right: 8px;
         }
+
         .surface-list {
             margin-top: 0.5rem;
         }
+
         .surface-row {
             margin-bottom: 1rem;
             padding-bottom: 0.2rem;
             position: relative;
         }
+
         .surface-header {
             display: flex;
             justify-content: space-between;
@@ -992,20 +1115,24 @@
             margin-bottom: 4px;
             font-size: 0.85rem;
         }
+
         .surface-name {
             font-weight: 700;
             color: #4a5b44;
         }
+
         .surface-temp-range {
             font-size: 0.75rem;
             color: #7c6b4a;
         }
+
         .timeline-canvas-wrapper {
             width: 100%;
             height: 18px;
             margin: 2px 0;
             position: relative;
         }
+
         .timeline-canvas {
             width: 100%;
             height: 18px;
@@ -1014,6 +1141,7 @@
             cursor: default;
             touch-action: none;
         }
+
         .timeline-tooltip {
             position: absolute;
             bottom: calc(100% + 10px);
@@ -1038,29 +1166,35 @@
             -webkit-user-select: none;
             transition: transform var(--animate-duration) ease-out, opacity var(--animate-duration) ease-out;
         }
+
         .timeline-tooltip.visible {
             transform: translateX(-50%) scale(1);
             opacity: 1;
             transition: transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic);
         }
+
         .timeline-tooltip .tooltip-row {
             display: flex;
             justify-content: space-between;
             gap: 12px;
             align-items: baseline;
         }
+
         .timeline-tooltip .tooltip-label {
             font-weight: 500;
             color: inherit;
         }
+
         .timeline-tooltip .tooltip-value {
             font-weight: 700;
             color: #2c5a2e;
             text-align: right;
         }
+
         .timeline-tooltip .tooltip-temp-row .tooltip-value {
             color: #2f5e3a;
         }
+
         .sticky-header-bar {
             position: fixed;
             top: 0;
@@ -1081,10 +1215,12 @@
             pointer-events: none;
             transition: transform var(--animate-duration) var(--ease-smooth);
         }
+
         .sticky-header-bar.show {
             transform: translateY(0);
             pointer-events: auto;
         }
+
         .sticky-date-label {
             font-weight: 700;
             font-size: 1rem;
@@ -1101,13 +1237,16 @@
             -webkit-tap-highlight-color: transparent;
             position: relative;
         }
+
         .sticky-date-label:hover {
             background: rgba(255, 255, 250, 0.85);
             transform: scale(1.03);
         }
+
         .sticky-date-label:active {
             transform: scale(0.96);
         }
+
         .sticky-header-bar .sticky-time-select {
             padding: 4px 8px;
             border-radius: 20px;
@@ -1120,6 +1259,7 @@
             appearance: auto;
             cursor: pointer;
         }
+
         .sticky-date-dropdown {
             position: absolute;
             top: calc(100% + 8px);
@@ -1139,6 +1279,7 @@
             pointer-events: none;
             transition: transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration);
         }
+
         .sticky-date-dropdown.open {
             visibility: visible;
             opacity: 1;
@@ -1146,6 +1287,7 @@
             transform: translateX(-50%) scaleY(1);
             transition: transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
+
         .sdd-year-row {
             display: flex;
             align-items: center;
@@ -1156,6 +1298,7 @@
             font-size: 0.9rem;
             color: #2c5a2e;
         }
+
         .sdd-year-btn {
             background: none;
             border: none;
@@ -1169,18 +1312,22 @@
             -webkit-tap-highlight-color: transparent;
             user-select: none;
         }
+
         .sdd-year-btn:hover {
             background: rgba(107, 140, 92, 0.15);
         }
+
         .sdd-year-btn:active {
             transform: scale(0.9);
         }
+
         .sdd-month-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 4px;
             margin-bottom: 8px;
         }
+
         .sdd-month-cell {
             padding: 5px 3px;
             border-radius: 16px;
@@ -1195,31 +1342,37 @@
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
+
         .sdd-month-cell:hover {
             background: #e2d2af;
             transform: scale(1.04);
         }
+
         .sdd-month-cell:active {
             transform: scale(0.94);
         }
+
         .sdd-month-cell.active-month {
             background: #6b8c5c;
             color: white;
             border-color: #4a6b3e;
             font-weight: 700;
         }
+
         .sdd-day-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 3px;
             text-align: center;
         }
+
         .sdd-day-name {
             font-size: 0.6rem;
             font-weight: 600;
             color: #7c6b4a;
             padding: 2px 0;
         }
+
         .sdd-day-cell {
             aspect-ratio: 1 / 1;
             display: flex;
@@ -1238,27 +1391,34 @@
             line-height: 1.1;
             padding: 1px;
         }
+
         .sdd-day-cell:hover {
             background: rgba(200, 180, 120, 0.25);
             transform: scale(1.05);
         }
+
         .sdd-day-cell:active {
             transform: scale(0.9);
         }
+
         .sdd-day-cell.today {
             border: 2px solid #e67e22;
         }
+
         .sdd-day-cell.selected {
             background: #6b8c5c;
             color: white;
             font-weight: 700;
         }
+
         .sdd-day-cell.other-month {
             opacity: 0.4;
         }
+
         .sdd-day-cell.weekend {
             background-color: rgba(255, 165, 0, 0.1);
         }
+
         .sdd-day-cell .sdd-festival {
             font-size: 0.55em;
             line-height: 1;
@@ -1268,6 +1428,7 @@
             text-overflow: ellipsis;
             max-width: 100%;
         }
+
         .sdd-day-cell .holiday-badge {
             position: absolute;
             top: 0px;
@@ -1279,9 +1440,11 @@
             pointer-events: none;
             z-index: 15;
         }
+
         .sdd-day-cell.selected .holiday-badge {
             z-index: 20;
         }
+
         .footer-info {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -1295,17 +1458,20 @@
             width: 100%;
             box-sizing: border-box;
         }
+
         .footer-info-inner {
             max-width: 750px;
             margin: 0 auto;
             text-align: left;
         }
+
         .footer-info h4 {
             font-size: 0.95rem;
             margin: 1rem 0 0.3rem;
             color: #2c5a2e;
             font-weight: 600;
         }
+
         .footer-info ul,
         .footer-info p {
             margin: 0.4rem 0;
@@ -1314,109 +1480,136 @@
             word-break: break-word;
             max-width: 100%;
         }
+
         .footer-info li {
             margin-bottom: 0.25rem;
         }
+
         .footer-info a {
             color: #5a7a4a;
             text-decoration: underline;
             font-weight: 500;
         }
+
         .footer-info a:hover {
             color: #2c5a2e;
         }
+
         @media (max-width: 480px) {
             .quick-nav-buttons {
                 top: 100px;
                 right: 10px;
                 gap: 6px;
             }
+
             .quick-nav-btn {
                 width: 38px;
                 height: 38px;
                 font-size: 1rem;
             }
+
             .color-scheme-toggle {
                 width: 38px;
                 height: 38px;
                 font-size: 1.2rem;
             }
+
             .nature-container {
                 padding: 1rem;
             }
+
             .material-row {
                 font-size: 0.75rem;
             }
+
             .calendar-day {
                 font-size: clamp(0.6rem, 5.5cqw, 0.85rem);
             }
+
             .calendar-day .lunar {
                 font-size: 0.7em;
             }
+
             .city-selector-panel {
                 min-width: 280px;
             }
+
             .toast-content {
                 padding: 20px 24px;
             }
+
             .locate-card {
                 padding: 20px 24px;
                 min-width: 240px;
             }
+
             .year-month-dropdown {
                 min-width: 180px;
                 padding: 0.8rem;
             }
+
             .ym-month-grid {
                 gap: 4px;
             }
+
             .ym-month-cell {
                 padding: 5px 3px;
                 font-size: 0.7rem;
                 border-radius: 16px;
             }
+
             .calendar-time-actions .calendar-time-select {
                 font-size: clamp(0.7rem, 3cqw, 0.9rem);
                 min-width: 60px;
                 max-width: 80px;
                 padding: 3px 6px;
             }
+
             .calendar-today-btn {
                 font-size: clamp(0.7rem, 3cqw, 0.9rem);
                 padding: 3px 8px;
             }
+
             .timeline-tooltip {
                 font-size: 0.75rem;
                 padding: 4px 10px;
             }
+
             .sticky-header-bar {
                 padding: 6px 12px;
                 gap: 8px;
             }
+
             .sticky-date-dropdown {
                 min-width: 200px;
                 padding: 0.6rem;
             }
+
             .sdd-day-cell {
                 font-size: 0.6rem;
                 border-radius: 8px;
             }
+
             .sdd-month-cell {
                 font-size: 0.6rem;
                 padding: 4px 2px;
                 border-radius: 14px;
             }
+
             .current-temp-row {
                 font-size: 0.9rem;
                 gap: 4px;
             }
+
             .current-weather-badge {
                 gap: 4px;
                 padding: 4px 6px;
             }
+
             .current-weather-badge span {
                 font-size: 0.75rem;
             }
+
             .card-header h3 {
                 font-size: 1.2rem;
             }
@@ -1431,7 +1624,6 @@
         <button class="quick-nav-btn" id="scrollToInfoBtn" aria-label="自然足感" title="跳转至自然足感卡片">📍</button>
         <button class="quick-nav-btn" id="scrollToFooterBtn" aria-label="页脚" title="滚动至页脚">⚠️</button>
     </div>
-
     <div id="stickyHeaderBar" class="sticky-header-bar">
         <span class="sticky-date-label" id="stickyDateLabel">2026年5月11日</span>
         <div class="sticky-date-dropdown" id="stickyDateDropdown">
@@ -1459,7 +1651,6 @@
         <select class="sticky-time-select" id="stickyTimePicker"></select>
         <button class="calendar-today-btn" id="stickyNowBtn">📍 现在</button>
     </div>
-
     <div class="nature-container">
         <h1 class="main-title">亲近自然指南</h1>
         <div class="dashboard">
@@ -1535,7 +1726,7 @@
                     <li>🌍 气象数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>（全球免费气象API）</li>
                     <li>🗺️ 地理编码：<a href="https://geocoding-api.open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo Geocoding</a>（城市搜索） · 反向定位：<a href="https://www.bigdatacloud.com/" target="_blank" rel="noopener noreferrer">BigDataCloud</a></li>
                     <li>📅 农历与节气：<a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noopener noreferrer">lunar-javascript</a>（阳历/农历/节气）</li>
-                    <li>🇨🇳 节假日与调休：<a href="https://timor.tech/api/holiday" target="_blank" rel="noopener noreferrer">Timor.tech</a>（中国法定节假日及调休安排）</li>
+                    <li>🇨🇳 节假日与调休：<a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noopener noreferrer">lunar-javascript</a>（中国法定节假日及调休安排）</li>
                     <li>🤖 核心交互与算法：<a href="https://chat.deepseek.com" target="_blank" rel="noopener noreferrer">DeepSeek</a> · 辅助集成：<a href="https://www.qianwen.com" target="_blank" rel="noopener noreferrer">通义千问</a> · 图标设计：<a href="https://www.doubao.com/chat" target="_blank" rel="noopener noreferrer">豆包AI</a></li>
                 </ul>
                 <h4>⚠️ 安全须知与免责</h4>
@@ -1556,7 +1747,6 @@
             </div>
         </div>
     </div>
-
     <div id="riskModal" class="risk-modal">
         <div class="risk-content">
             <h3><span class="risk-warning-icon">⚠️</span> 赤足安全须知</h3>
@@ -1595,7 +1785,6 @@
             <div style="text-align:right; margin-top:1rem;"><button id="closeCityPicker" style="background:#bbaa7a; border:none; padding:5px 16px; border-radius:40px; cursor:pointer;">关闭</button></div>
         </div>
     </div>
-
     <div id="loadingToast" class="loading-toast">
         <div class="toast-content">获取天气中...</div>
     </div>
@@ -1605,7 +1794,6 @@
             <div class="locate-buttons" id="locateButtons"></div>
         </div>
     </div>
-
     <script>
         (function() {
             const $ = (id) => document.getElementById(id);
@@ -1811,53 +1999,11 @@
             let currentCalendarMonth = new Date().getMonth() + 1;
             let currentCalendarYear = new Date().getFullYear();
             let selectedCalendarDay = new Date().getDate();
-            let holidayMaps = {};
-            const holidayFetching = {};
             let ymPickerYear = currentCalendarYear;
             let dynamicSolarFestivalsCache = {};
             let sddPickerYear = currentCalendarYear;
             let sddPickerMonth = currentCalendarMonth;
             let sddPickerDay = selectedCalendarDay;
-
-            const DEFAULT_HOLIDAY_MAP = {
-                '01-01': { name: '元旦', isHoliday: true, isWorkday: false },
-                '01-02': { name: '元旦', isHoliday: true, isWorkday: false },
-                '01-03': { name: '元旦', isHoliday: true, isWorkday: false },
-                '01-04': { name: '', isHoliday: false, isWorkday: true },
-                '02-15': { name: '春节', isHoliday: true, isWorkday: false },
-                '02-16': { name: '春节', isHoliday: true, isWorkday: false },
-                '02-17': { name: '春节', isHoliday: true, isWorkday: false },
-                '02-18': { name: '春节', isHoliday: true, isWorkday: false },
-                '02-19': { name: '春节', isHoliday: true, isWorkday: false },
-                '02-20': { name: '春节', isHoliday: true, isWorkday: false },
-                '02-21': { name: '春节', isHoliday: true, isWorkday: false },
-                '02-14': { name: '', isHoliday: false, isWorkday: true },
-                '02-28': { name: '', isHoliday: false, isWorkday: true },
-                '04-04': { name: '清明节', isHoliday: true, isWorkday: false },
-                '04-05': { name: '清明节', isHoliday: true, isWorkday: false },
-                '04-06': { name: '清明节', isHoliday: true, isWorkday: false },
-                '05-01': { name: '劳动节', isHoliday: true, isWorkday: false },
-                '05-02': { name: '', isHoliday: true, isWorkday: false },
-                '05-03': { name: '', isHoliday: true, isWorkday: false },
-                '05-04': { name: '', isHoliday: true, isWorkday: false },
-                '05-05': { name: '', isHoliday: true, isWorkday: false },
-                '05-09': { name: '', isHoliday: false, isWorkday: true },
-                '06-19': { name: '端午节', isHoliday: true, isWorkday: false },
-                '06-20': { name: '', isHoliday: true, isWorkday: false },
-                '06-21': { name: '', isHoliday: true, isWorkday: false },
-                '09-25': { name: '中秋节', isHoliday: true, isWorkday: false },
-                '09-26': { name: '', isHoliday: true, isWorkday: false },
-                '09-27': { name: '', isHoliday: true, isWorkday: false },
-                '09-20': { name: '', isHoliday: false, isWorkday: true },
-                '10-01': { name: '国庆节', isHoliday: true, isWorkday: false },
-                '10-02': { name: '', isHoliday: true, isWorkday: false },
-                '10-03': { name: '', isHoliday: true, isWorkday: false },
-                '10-04': { name: '', isHoliday: true, isWorkday: false },
-                '10-05': { name: '', isHoliday: true, isWorkday: false },
-                '10-06': { name: '', isHoliday: true, isWorkday: false },
-                '10-07': { name: '', isHoliday: true, isWorkday: false },
-                '10-10': { name: '', isHoliday: false, isWorkday: true }
-            };
 
             function generateTimeOptions() {
                 const options = [];
@@ -2437,7 +2583,7 @@
 
             function getCellFestivalInfo(year, month, day) {
                 const mmdd = `${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-                const holidayInfo = (holidayMaps[year] || {})[mmdd];
+                const holidayInfo = getHolidayInfo(year, month, day);
                 let festivalName = '';
                 let holidayBadge = '';
                 const dynamicFestivals = getDynamicFestivalsForYear(year);
@@ -2550,9 +2696,6 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
-                    loadHolidaysForYear(currentYear).then(() => {
-                        if (currentYear === currentCalendarYear) updateCalendarUI();
-                    });
                 }
                 currentCalendarYear = year;
                 currentCalendarMonth = month;
@@ -2670,7 +2813,7 @@
 
                 let lunarStr = '';
                 let holidayBadge = '';
-                const holidayInfo = (holidayMaps[actualYear] || {})[mmdd];
+                const holidayInfo = getHolidayInfo(actualYear, actualMonth, day);
                 let SolarClass = null;
                 if (typeof Lunar !== 'undefined' && Lunar.Solar) SolarClass = Lunar.Solar;
                 else if (typeof Solar !== 'undefined') SolarClass = Solar;
@@ -2886,54 +3029,21 @@
                 });
             }
 
-            async function loadHolidaysForYear(year) {
-                if (holidayMaps[year]) return holidayMaps[year];
-                if (holidayFetching[year]) return holidayFetching[year];
-                const promise = (async () => {
-                    let apiMap = null;
-                    const urls = [
-                        `https://timor.tech/api/holiday/year/${year}/`,
-                        `https://timor.tech/api/holiday/year/${year}`
-                    ];
-                    for (const url of urls) {
-                        try {
-                            const resp = await fetch(url);
-                            if (!resp.ok) continue;
-                            const data = await resp.json();
-                            if (data && data.code === 0 && data.holiday) {
-                                apiMap = {};
-                                for (let [date, info] of Object.entries(data.holiday)) {
-                                    const mmdd = date.slice(5);
-                                    apiMap[mmdd] = {
-                                        name: info.name || '',
-                                        isHoliday: info.holiday === true && !info.wage,
-                                        isWorkday: info.wage === true
-                                    };
-                                }
-                                break;
-                            }
-                        } catch (e) {
-                            console.warn(`节假日接口请求失败: ${url}`);
-                        }
+            function getHolidayInfo(year, month, day) {
+                if (typeof HolidayUtil === 'undefined') return null;
+                try {
+                    const holiday = HolidayUtil.getHoliday(year, month, day);
+                    if (!holiday) return null;
+                    const isWork = holiday.isWork();
+                    const name = holiday.getName();
+                    if (isWork) {
+                        return { isHoliday: false, isWorkday: true, name: name };
+                    } else {
+                        return { isHoliday: true, isWorkday: false, name: name };
                     }
-                    const nowYear = new Date().getFullYear();
-                    if (!apiMap && year === nowYear) {
-                        apiMap = { ...DEFAULT_HOLIDAY_MAP };
-                    }
-                    if (!apiMap) {
-                        apiMap = {};
-                    }
-                    holidayMaps[year] = apiMap;
-                    delete holidayFetching[year];
-                    return apiMap;
-                })();
-                holidayFetching[year] = promise;
-                return promise;
-            }
-
-            async function loadHolidays() {
-                const nowYear = new Date().getFullYear();
-                await loadHolidaysForYear(nowYear);
+                } catch (e) {
+                    return null;
+                }
             }
 
             function openYmDropdown() {
@@ -2978,9 +3088,6 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
-                    loadHolidaysForYear(currentYear).then(() => {
-                        if (currentYear === currentCalendarYear) updateCalendarUI();
-                    });
                 }
                 const daysInNewMonth = new Date(currentCalendarYear, month, 0).getDate();
                 if (selectedCalendarDay > daysInNewMonth) {
@@ -3101,9 +3208,6 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
-                    loadHolidaysForYear(currentYear).then(() => {
-                        if (currentYear === currentCalendarYear) updateCalendarUI();
-                    });
                 }
                 const daysInNewMonth = new Date(currentCalendarYear, currentCalendarMonth, 0).getDate();
                 if (selectedCalendarDay > daysInNewMonth) selectedCalendarDay = daysInNewMonth;
@@ -3123,9 +3227,6 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
-                    loadHolidaysForYear(currentYear).then(() => {
-                        if (currentYear === currentCalendarYear) updateCalendarUI();
-                    });
                 }
                 const daysInNewMonth = new Date(currentCalendarYear, currentCalendarMonth, 0).getDate();
                 if (selectedCalendarDay > daysInNewMonth) selectedCalendarDay = daysInNewMonth;
@@ -3188,10 +3289,6 @@
             sddPickerDay = selectedCalendarDay;
             updateCalendarUI();
             setNowDateTime();
-
-            loadHolidays().then(() => {
-                updateCalendarUI();
-            });
 
             window.addEventListener('resize', () => {
                 if (dailyTempCache[currentDayIndex]) updateLeftPanelAndTimeline(currentDayIndex);
