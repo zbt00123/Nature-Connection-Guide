@@ -1793,7 +1793,8 @@
             let currentCalendarMonth = new Date().getMonth() + 1;
             let currentCalendarYear = new Date().getFullYear();
             let selectedCalendarDay = new Date().getDate();
-            let holidayMap = {};
+            let holidayMaps = {};
+            const holidayFetching = {};
             let ymPickerYear = currentCalendarYear;
             let dynamicSolarFestivalsCache = {};
             let sddPickerYear = currentCalendarYear;
@@ -2418,7 +2419,7 @@
 
             function getCellFestivalInfo(year, month, day) {
                 const mmdd = `${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-                const holidayInfo = holidayMap[mmdd];
+                const holidayInfo = (holidayMaps[year] || {})[mmdd];
                 let festivalName = '';
                 let holidayBadge = '';
                 const dynamicFestivals = getDynamicFestivalsForYear(year);
@@ -2531,6 +2532,9 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
+                    loadHolidaysForYear(currentYear).then(() => {
+                        if (currentYear === currentCalendarYear) updateCalendarUI();
+                    });
                 }
                 currentCalendarYear = year;
                 currentCalendarMonth = month;
@@ -2648,7 +2652,7 @@
 
                 let lunarStr = '';
                 let holidayBadge = '';
-                const holidayInfo = holidayMap[mmdd];
+                const holidayInfo = (holidayMaps[actualYear] || {})[mmdd];
                 let SolarClass = null;
                 if (typeof Lunar !== 'undefined' && Lunar.Solar) SolarClass = Lunar.Solar;
                 else if (typeof Solar !== 'undefined') SolarClass = Solar;
@@ -2864,26 +2868,46 @@
                 });
             }
 
-            async function loadHolidays() {
-                try {
-                    const year = new Date().getFullYear();
-                    const resp = await fetch(`https://api.timor.tech/api/holiday/year/${year}`);
-                    const data = await resp.json();
-                    if (data.code === 0 && data.holiday) {
-                        const apiMap = {};
-                        for (let [date, info] of Object.entries(data.holiday)) {
-                            const mmdd = date.slice(5);
-                            apiMap[mmdd] = {
-                                name: info.name || '',
-                                isHoliday: info.holiday === true && !info.wage,
-                                isWorkday: info.wage === true
-                            };
+            async function loadHolidaysForYear(year) {
+                if (holidayMaps[year]) return holidayMaps[year];
+                if (holidayFetching[year]) return holidayFetching[year];
+
+                const promise = (async () => {
+                    let apiMap = {};
+                    try {
+                        const resp = await fetch(`https://api.timor.tech/api/holiday/year/${year}`);
+                        const data = await resp.json();
+                        if (data.code === 0 && data.holiday) {
+                            for (let [date, info] of Object.entries(data.holiday)) {
+                                const mmdd = date.slice(5);
+                                apiMap[mmdd] = {
+                                    name: info.name || '',
+                                    isHoliday: info.holiday === true && !info.wage,
+                                    isWorkday: info.wage === true
+                                };
+                            }
                         }
-                        holidayMap = { ...DEFAULT_HOLIDAY_MAP, ...apiMap };
+                    } catch (e) {
+                        console.warn(`节假日接口加载失败 (${year})`);
                     }
-                } catch (e) {
-                    console.warn('节假日接口加载失败，已使用内置调休数据');
-                }
+
+                    const nowYear = new Date().getFullYear();
+                    if (Object.keys(apiMap).length === 0 && year === nowYear) {
+                        apiMap = { ...DEFAULT_HOLIDAY_MAP };
+                    }
+
+                    holidayMaps[year] = apiMap;
+                    delete holidayFetching[year];
+                    return apiMap;
+                })();
+
+                holidayFetching[year] = promise;
+                return promise;
+            }
+
+            async function loadHolidays() {
+                const nowYear = new Date().getFullYear();
+                await loadHolidaysForYear(nowYear);
             }
 
             function openYmDropdown() {
@@ -2928,6 +2952,9 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
+                    loadHolidaysForYear(currentYear).then(() => {
+                        if (currentYear === currentCalendarYear) updateCalendarUI();
+                    });
                 }
                 const daysInNewMonth = new Date(currentCalendarYear, month, 0).getDate();
                 if (selectedCalendarDay > daysInNewMonth) {
@@ -3048,6 +3075,9 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
+                    loadHolidaysForYear(currentYear).then(() => {
+                        if (currentYear === currentCalendarYear) updateCalendarUI();
+                    });
                 }
                 const daysInNewMonth = new Date(currentCalendarYear, currentCalendarMonth, 0).getDate();
                 if (selectedCalendarDay > daysInNewMonth) selectedCalendarDay = daysInNewMonth;
@@ -3067,6 +3097,9 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
+                    loadHolidaysForYear(currentYear).then(() => {
+                        if (currentYear === currentCalendarYear) updateCalendarUI();
+                    });
                 }
                 const daysInNewMonth = new Date(currentCalendarYear, currentCalendarMonth, 0).getDate();
                 if (selectedCalendarDay > daysInNewMonth) selectedCalendarDay = daysInNewMonth;
@@ -3110,8 +3143,6 @@
                 if (typeof window._autoLocated === 'undefined' || !window._autoLocated) performLocation();
             });
             if (!localStorage.getItem('riskAcknowledged')) riskModal.classList.add('active');
-
-            holidayMap = { ...DEFAULT_HOLIDAY_MAP };
 
             populateTimeSelects();
             updateCalendar();
