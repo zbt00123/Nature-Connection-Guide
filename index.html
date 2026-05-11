@@ -689,7 +689,7 @@
             flex-shrink: 1;
             min-width: 0;
         }
-        .calendar-time-actions input[type="time"] {
+        .calendar-time-select {
             padding: 4px 8px;
             border-radius: 20px;
             border: 1px solid rgba(180, 150, 100, 0.35);
@@ -704,6 +704,8 @@
             flex-shrink: 1;
             height: auto;
             line-height: 1.3;
+            appearance: auto;
+            cursor: pointer;
         }
         .calendar-today-btn {
             background: #6b8c5c;
@@ -794,10 +796,10 @@
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
         }
         .holiday-rest {
-            color: #16a34a;
+            color: #dc2626;
         }
         .holiday-work {
-            color: #dc2626;
+            color: #1e3a8a;
         }
         .calendar-day.weekend {
             background-color: rgba(255, 165, 0, 0.1);
@@ -1002,6 +1004,7 @@
             display: block;
             border-radius: 12px;
             cursor: default;
+            touch-action: none;
         }
         .timeline-tooltip {
             position: absolute;
@@ -1097,7 +1100,7 @@
         .sticky-date-label:active {
             transform: scale(0.96);
         }
-        .sticky-header-bar input[type="time"] {
+        .sticky-header-bar .sticky-time-select {
             padding: 4px 8px;
             border-radius: 20px;
             border: 1px solid rgba(180, 150, 100, 0.35);
@@ -1106,6 +1109,8 @@
             font-size: 0.9rem;
             font-weight: 600;
             color: #2c5a2e;
+            appearance: auto;
+            cursor: pointer;
         }
 
         .sticky-date-dropdown {
@@ -1366,7 +1371,7 @@
                 font-size: 0.7rem;
                 border-radius: 16px;
             }
-            .calendar-time-actions input[type="time"] {
+            .calendar-time-actions .calendar-time-select {
                 font-size: clamp(0.7rem, 3cqw, 0.9rem);
                 min-width: 60px;
                 max-width: 80px;
@@ -1433,7 +1438,7 @@
             </div>
             <div class="sdd-day-grid" id="sddDayGrid"></div>
         </div>
-        <input type="time" id="stickyTimePicker" value="12:00">
+        <select class="sticky-time-select" id="stickyTimePicker"></select>
         <button class="calendar-today-btn" id="stickyNowBtn">📍 现在</button>
     </div>
 
@@ -1471,7 +1476,7 @@
                         <button id="nextMonthBtn" aria-label="下一月">▶</button>
                     </div>
                     <div class="calendar-time-actions">
-                        <input type="time" id="timePicker" value="12:00">
+                        <select class="calendar-time-select" id="timePicker"></select>
                         <button class="calendar-today-btn" id="calendarTodayBtn">📍 现在</button>
                     </div>
                 </div>
@@ -1836,6 +1841,31 @@
                 '10-10': { name: '', isHoliday: false, isWorkday: true }
             };
 
+            function generateTimeOptions() {
+                const options = [];
+                for (let h = 0; h < 24; h++) {
+                    const hourStr = String(h).padStart(2, '0');
+                    options.push(`${hourStr}:00`);
+                    options.push(`${hourStr}:30`);
+                }
+                return options;
+            }
+
+            function populateTimeSelects() {
+                const timeOptions = generateTimeOptions();
+                const fragment = document.createDocumentFragment();
+                timeOptions.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t;
+                    opt.textContent = t;
+                    fragment.appendChild(opt);
+                });
+                timePickerEl.innerHTML = '';
+                timePickerEl.appendChild(fragment.cloneNode(true));
+                stickyTimePicker.innerHTML = '';
+                stickyTimePicker.appendChild(fragment.cloneNode(true));
+            }
+
             function getDynamicFestivalsForYear(year) {
                 if (!dynamicSolarFestivalsCache[year]) {
                     dynamicSolarFestivalsCache[year] = getDynamicSolarFestivals(year);
@@ -2166,9 +2196,9 @@
 
                 let hideTimeout = null;
 
-                canvas.addEventListener('mousemove', function(e) {
+                function updateFromClientX(clientX) {
                     const rect = canvas.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
+                    const x = clientX - rect.left;
                     const ratio = canvas.width / rect.width;
                     const canvasX = x * ratio;
                     const hourFloat = Math.max(0, Math.min(24, (canvasX / canvas.width) * 24));
@@ -2189,28 +2219,54 @@
                     if (!tooltipEl.classList.contains('visible')) {
                         tooltipEl.classList.add('visible');
                     }
-                });
+                }
 
-                canvas.addEventListener('mouseleave', function() {
+                function showTooltip() {
+                    if (!tooltipEl.classList.contains('visible')) {
+                        tooltipEl.classList.add('visible');
+                    }
+                }
+                function hideTooltip() {
                     hideTimeout = setTimeout(() => {
                         tooltipEl.classList.remove('visible');
                         tooltipEl.style.transform = '';
                     }, 50);
-                });
+                }
 
+                canvas.addEventListener('mousemove', function(e) {
+                    updateFromClientX(e.clientX);
+                });
+                canvas.addEventListener('mouseleave', hideTooltip);
                 canvas.addEventListener('mouseenter', function() {
                     if (hideTimeout) clearTimeout(hideTimeout);
                     updateTooltipVisibility();
                 });
-
                 tooltipEl.addEventListener('mouseenter', function() {
                     if (hideTimeout) clearTimeout(hideTimeout);
                 });
-                tooltipEl.addEventListener('mouseleave', function() {
-                    hideTimeout = setTimeout(() => {
-                        tooltipEl.classList.remove('visible');
-                        tooltipEl.style.transform = '';
-                    }, 50);
+                tooltipEl.addEventListener('mouseleave', hideTooltip);
+
+                canvas.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    if (touch) {
+                        updateFromClientX(touch.clientX);
+                        showTooltip();
+                    }
+                }, { passive: false });
+                canvas.addEventListener('touchmove', function(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    if (touch) {
+                        updateFromClientX(touch.clientX);
+                    }
+                }, { passive: false });
+                canvas.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    hideTooltip();
+                }, { passive: false });
+                canvas.addEventListener('touchcancel', function(e) {
+                    hideTooltip();
                 });
             }
 
@@ -2290,8 +2346,6 @@
                 }
 
                 if (tooltipEl) {
-                    canvas._tooltipProfile = tempProfile;
-                    canvas._tooltipMaterialName = materialName;
                     if (!canvas._tooltipEventsSetup) {
                         setupTooltipEvents(canvas, tempProfile, materialName, tooltipEl);
                         canvas._tooltipEventsSetup = true;
@@ -2674,8 +2728,11 @@
                     day = String(now.getDate()).padStart(2, '0');
                 const hour = String(now.getHours()).padStart(2, '0'),
                     minute = String(now.getMinutes()).padStart(2, '0');
-                timePickerEl.value = `${hour}:${minute}`;
-                datetimePickerEl.value = `${year}-${month}-${day}T${hour}:${minute}`;
+                let roundedMinute = minute < 30 ? '00' : '30';
+                const timeValue = `${hour}:${roundedMinute}`;
+                timePickerEl.value = timeValue;
+                stickyTimePicker.value = timeValue;
+                datetimePickerEl.value = `${year}-${month}-${day}T${timeValue}`;
                 if (year !== currentYear) { currentYear = year;
                     updateCalendar(); }
                 currentDayIndex = getDayIndex(now.getMonth() + 1, now.getDate());
@@ -2969,18 +3026,18 @@
                 handleStickyHeaderVisibility();
             });
 
+            function onTimeChange() {
+                syncDateTimePickerFromDayIndex();
+                updateCurrentCardByDateTime(datetimePickerEl.value);
+                updateStickyHeader();
+            }
+            timePickerEl.addEventListener('change', onTimeChange);
             stickyTimePicker.addEventListener('change', () => {
                 timePickerEl.value = stickyTimePicker.value;
                 syncDateTimePickerFromDayIndex();
                 updateCurrentCardByDateTime(datetimePickerEl.value);
             });
             $('stickyNowBtn').addEventListener('click', setCalendarToToday);
-
-            timePickerEl.addEventListener('change', () => {
-                syncDateTimePickerFromDayIndex();
-                updateCurrentCardByDateTime(datetimePickerEl.value);
-                updateStickyHeader();
-            });
 
             document.getElementById('prevMonthBtn').addEventListener('click', () => {
                 if (currentCalendarMonth === 1) { currentCalendarMonth = 12;
@@ -3057,6 +3114,7 @@
 
             holidayMap = { ...DEFAULT_HOLIDAY_MAP };
 
+            populateTimeSelects();
             updateCalendar();
             for (let i = 0; i < totalDays; i++) {
                 let e = estimateDailyTemp(i);
