@@ -878,7 +878,7 @@
         }
 
         .holiday-work {
-            color: #1e3a8a;
+            color: #0052d9;
         }
 
         .calendar-day.weekend {
@@ -1726,7 +1726,7 @@
                     <li>🌍 气象数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>（全球免费气象API）</li>
                     <li>🗺️ 地理编码：<a href="https://geocoding-api.open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo Geocoding</a>（城市搜索） · 反向定位：<a href="https://www.bigdatacloud.com/" target="_blank" rel="noopener noreferrer">BigDataCloud</a></li>
                     <li>📅 农历与节气：<a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noopener noreferrer">lunar-javascript</a>（阳历/农历/节气）</li>
-                    <li>🇨🇳 节假日与调休：<a href="https://github.com/6tail/lunar-javascript" target="_blank" rel="noopener noreferrer">lunar-javascript</a>（内置 HolidayUtil，支持最新法定节假日）</li>
+                    <li>🇨🇳 节假日与调休：<a href="https://github.com/NateScarlet/holiday-cn" target="_blank" rel="noopener noreferrer">holiday-cn</a>（中国法定节假日数据，支持2007‑2027年自动更新）</li>
                     <li>🎨 深色模式适配：<a href="https://github.com/darkreader/darkreader" target="_blank" rel="noopener noreferrer">Dark Reader</a>（开源项目）</li>
                     <li>🤖 核心交互与算法：<a href="https://chat.deepseek.com" target="_blank" rel="noopener noreferrer">DeepSeek</a> · 辅助集成：<a href="https://www.qianwen.com" target="_blank" rel="noopener noreferrer">通义千问</a> · 图标设计：<a href="https://www.doubao.com/chat" target="_blank" rel="noopener noreferrer">豆包AI</a></li>
                 </ul>
@@ -1872,6 +1872,79 @@
                 '10-31': '万圣节',
                 '12-25': '圣诞节'
             };
+
+            const holidayDataCache = {};
+            const holidayPendingRequests = {};
+
+            async function loadHolidayDataForYear(year) {
+                if (holidayDataCache[year]) return holidayDataCache[year];
+                if (holidayPendingRequests[year]) return holidayPendingRequests[year];
+
+                const promise = (async () => {
+                    try {
+                        const url = `https://cdn.jsdelivr.net/gh/NateScarlet/holiday-cn@master/${year}.json`;
+                        const resp = await fetch(url);
+                        if (!resp.ok) throw new Error('Failed to fetch holiday data for ' + year);
+                        const data = await resp.json();
+                        const daysMap = {};
+                        const daysArray = data.days || [];
+                        daysArray.forEach(entry => {
+                            if (entry.date) {
+                                daysMap[entry.date] = {
+                                    name: entry.name || '',
+                                    isOffDay: entry.isOffDay === true
+                                };
+                            }
+                        });
+                        holidayDataCache[year] = daysMap;
+                        return daysMap;
+                    } catch (e) {
+                        holidayDataCache[year] = null;
+                        return null;
+                    } finally {
+                        delete holidayPendingRequests[year];
+                    }
+                })();
+
+                holidayPendingRequests[year] = promise;
+                return promise;
+            }
+
+            async function preloadHolidayData(centerYear) {
+                const yearsToLoad = [];
+                for (let offset = -1; offset <= 1; offset++) {
+                    const y = centerYear + offset;
+                    if (!holidayDataCache[y] && !holidayPendingRequests[y]) {
+                        yearsToLoad.push(y);
+                    }
+                }
+                if (yearsToLoad.length === 0) return;
+                const results = await Promise.allSettled(yearsToLoad.map(y => loadHolidayDataForYear(y)));
+                updateCalendarUI();
+                updateSddDropdownState();
+                return results;
+            }
+
+            function getHolidayInfo(year, month, day) {
+                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const cache = holidayDataCache[year];
+                if (!cache) {
+                    if (!holidayPendingRequests[year]) {
+                        loadHolidayDataForYear(year).then(() => {
+                            updateCalendarUI();
+                            updateSddDropdownState();
+                        }).catch(() => {});
+                    }
+                    return null;
+                }
+                const entry = cache[dateStr];
+                if (!entry) return null;
+                if (entry.isOffDay) {
+                    return { isHoliday: true, isWorkday: false, name: entry.name };
+                } else {
+                    return { isHoliday: false, isWorkday: true, name: entry.name };
+                }
+            }
 
             function getEasterDate(year) {
                 const a = year % 19;
@@ -2697,6 +2770,7 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
+                    preloadHolidayData(year);
                 }
                 currentCalendarYear = year;
                 currentCalendarMonth = month;
@@ -2864,7 +2938,8 @@
                 cell.innerHTML = `${day}<span class="lunar">${lunarStr}</span>${holidayBadge}`;
                 cell.addEventListener('click', () => {
                     if (actualYear !== currentYear) { currentYear = actualYear;
-                        updateCalendar(); }
+                        updateCalendar();
+                        preloadHolidayData(currentYear); }
                     currentCalendarYear = actualYear;
                     currentCalendarMonth = actualMonth;
                     selectedCalendarDay = day;
@@ -2899,7 +2974,8 @@
                 stickyTimePicker.value = timeValue;
                 datetimePickerEl.value = `${year}-${month}-${day}T${timeValue}`;
                 if (year !== currentYear) { currentYear = year;
-                    updateCalendar(); }
+                    updateCalendar();
+                    preloadHolidayData(currentYear); }
                 currentDayIndex = getDayIndex(now.getMonth() + 1, now.getDate());
                 selectedCalendarDay = now.getDate();
                 currentCalendarYear = year;
@@ -3030,23 +3106,6 @@
                 });
             }
 
-            function getHolidayInfo(year, month, day) {
-                if (typeof HolidayUtil === 'undefined') return null;
-                try {
-                    const holiday = HolidayUtil.getHoliday(year, month, day);
-                    if (!holiday) return null;
-                    const isWork = holiday.isWork();
-                    const name = holiday.getName();
-                    if (isWork) {
-                        return { isHoliday: false, isWorkday: true, name: name };
-                    } else {
-                        return { isHoliday: true, isWorkday: false, name: name };
-                    }
-                } catch (e) {
-                    return null;
-                }
-            }
-
             function openYmDropdown() {
                 yearMonthDropdown.classList.add('open');
                 ymPickerYear = currentCalendarYear;
@@ -3089,6 +3148,7 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
+                    preloadHolidayData(currentYear);
                 }
                 const daysInNewMonth = new Date(currentCalendarYear, month, 0).getDate();
                 if (selectedCalendarDay > daysInNewMonth) {
@@ -3209,6 +3269,7 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
+                    preloadHolidayData(currentYear);
                 }
                 const daysInNewMonth = new Date(currentCalendarYear, currentCalendarMonth, 0).getDate();
                 if (selectedCalendarDay > daysInNewMonth) selectedCalendarDay = daysInNewMonth;
@@ -3228,6 +3289,7 @@
                         let e = estimateDailyTemp(i);
                         dailyTempCache[i] = { min: e.min, max: e.max, real: false, weatherCode: 3, hourlyTemps: null };
                     }
+                    preloadHolidayData(currentYear);
                 }
                 const daysInNewMonth = new Date(currentCalendarYear, currentCalendarMonth, 0).getDate();
                 if (selectedCalendarDay > daysInNewMonth) selectedCalendarDay = daysInNewMonth;
@@ -3290,6 +3352,8 @@
             sddPickerDay = selectedCalendarDay;
             updateCalendarUI();
             setNowDateTime();
+
+            preloadHolidayData(currentCalendarYear);
 
             window.addEventListener('resize', () => {
                 if (dailyTempCache[currentDayIndex]) updateLeftPanelAndTimeline(currentDayIndex);
