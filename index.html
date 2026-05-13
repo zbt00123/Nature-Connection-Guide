@@ -2553,33 +2553,116 @@
                     }
                     if (inPeriod) periods.push({ start: startH, end: 24 });
                     const hlColor = dark ? "#15803d" : "#22c55e";
+                    
+                    // 计算所有标签的放置方案
+                    const labelPlacements = [];
+                    
                     for (let p of periods) {
                         let sx = (p.start / 24) * width,
                             ex = (p.end / 24) * width,
                             bw = ex - sx;
                         if (bw <= 0) continue;
+                        
+                        const startText = `${Math.floor(p.start)}:${p.start%1===0?'00':'30'}`;
+                        const endText = `${Math.floor(p.end)}:00`;
+                        
                         ctxCanvas.fillStyle = hlColor;
                         ctxCanvas.beginPath();
                         if (ctxCanvas.roundRect) ctxCanvas.roundRect(sx, 0, bw, 18, 9);
                         else ctxCanvas.fillRect(sx, 0, bw, 18);
                         ctxCanvas.fill();
+                        
                         ctxCanvas.font = "bold 9px 'Segoe UI'";
                         ctxCanvas.textBaseline = "middle";
-                        let inside = bw > 38 * 1.5;
-                        ctxCanvas.fillStyle = dark ? "#e0e0e0" : "white";
-                        if (inside) {
+                        
+                        const startWidth = ctxCanvas.measureText(startText).width;
+                        const endWidth = ctxCanvas.measureText(endText).width;
+                        const inside = bw > 38 * 1.5;
+                        
+                        labelPlacements.push({
+                            startText,
+                            endText,
+                            startWidth,
+                            endWidth,
+                            sx,
+                            ex,
+                            bw,
+                            inside,
+                            periodIndex: periods.indexOf(p)
+                        });
+                    }
+                    
+                    // 检查外部标签是否重叠，并调整放置
+                    for (let i = 0; i < labelPlacements.length; i++) {
+                        const placement = labelPlacements[i];
+                        
+                        if (placement.inside) {
+                            // 内部放置：白色文字
+                            ctxCanvas.fillStyle = dark ? "#e0e0e0" : "white";
                             ctxCanvas.textAlign = "left";
-                            ctxCanvas.fillText(
-                                `${Math.floor(p.start)}:${p.start%1===0?'00':'30'}`, sx + 3, 9);
+                            ctxCanvas.fillText(placement.startText, placement.sx + 3, 9);
                             ctxCanvas.textAlign = "right";
-                            ctxCanvas.fillText(`${Math.floor(p.end)}:00`, ex - 3, 9);
+                            ctxCanvas.fillText(placement.endText, placement.ex - 3, 9);
                         } else {
-                            ctxCanvas.fillStyle = dark ? "#d1d5db" : "#2c5a2e";
-                            ctxCanvas.textAlign = "right";
-                            ctxCanvas.fillText(
-                                `${Math.floor(p.start)}:${p.start%1===0?'00':'30'}`, sx - 3, 9);
-                            ctxCanvas.textAlign = "left";
-                            ctxCanvas.fillText(`${Math.floor(p.end)}:00`, ex + 3, 9);
+                            // 外部放置：需要检查重叠
+                            let startInside = false;
+                            let endInside = false;
+                            
+                            // 检查开始标签是否与左侧元素重叠
+                            let startX = placement.sx - 3;
+                            if (startX - placement.startWidth < 0) {
+                                startInside = true;
+                            }
+                            
+                            // 检查结束标签是否与右侧元素重叠
+                            let endX = placement.ex + 3;
+                            if (endX + placement.endWidth > canvas.width) {
+                                endInside = true;
+                            }
+                            
+                            // 检查与相邻高亮条的重叠
+                            if (i > 0 && !startInside) {
+                                const prevPlacement = labelPlacements[i - 1];
+                                if (!prevPlacement.inside) {
+                                    const prevEndX = prevPlacement.ex + 3;
+                                    const prevEndWidth = prevPlacement.endWidth;
+                                    if (prevEndX + prevEndWidth > startX) {
+                                        startInside = true;
+                                    }
+                                }
+                            }
+                            
+                            if (i < labelPlacements.length - 1 && !endInside) {
+                                const nextPlacement = labelPlacements[i + 1];
+                                if (!nextPlacement.inside) {
+                                    const nextStartX = nextPlacement.sx - 3;
+                                    if (endX + placement.endWidth > nextStartX) {
+                                        endInside = true;
+                                    }
+                                }
+                            }
+                            
+                            // 绘制开始标签
+                            if (startInside) {
+                                ctxCanvas.fillStyle = dark ? "#e0e0e0" : "white";
+                                ctxCanvas.textAlign = "left";
+                                ctxCanvas.fillText(placement.startText, placement.sx + 2, 9);
+                            } else {
+                                ctxCanvas.fillStyle = dark ? "#d1d5db" : "#2c5a2e";
+                                ctxCanvas.textAlign = "right";
+                                ctxCanvas.fillText(placement.startText, startX, 9);
+                            }
+                            
+                            // 绘制结束标签
+                            if (endInside) {
+                                ctxCanvas.fillStyle = dark ? "#e0e0e0" : "white";
+                                ctxCanvas.textAlign = "right";
+                                ctxCanvas.fillText(placement.endText, placement.ex - 2, 9);
+                            } else {
+                                ctxCanvas.fillStyle = dark ? "#d1d5db" : "#2c5a2e";
+                                ctxCanvas.textAlign = "left";
+                                ctxCanvas.fillText(placement.endText, endX, 9);
+                            }
                         }
                     }
                 } else {
@@ -2871,7 +2954,7 @@
                 for (let day = 1; day <= remaining; day++) {
                     const nextMonth = month + 1 > 12 ? 1 : month + 1;
                     const nextYear = month + 1 > 12 ? year + 1 : year;
-                    calendarGridEl.appendChild(createDayCell(day, nextYear, nextMonth, nextYear, true));
+                    calendarGridEl.appendChild(createDayCell(day, nextMonth, nextMonth, nextYear, true));
                 }
                 updateStickyHeader();
             }
