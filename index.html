@@ -241,6 +241,7 @@
         .sdd-day-cell.selected { background:#6b8c5c; color:white; font-weight:700; }
         .sdd-day-cell.other-month { opacity:0.4; }
         .sdd-day-cell.weekend { background-color:rgba(255,165,0,0.1); }
+        .sdd-day-cell.selected.weekend { background:#6b8c5c; }
         .sdd-day-cell .sdd-festival { font-size:0.55em; line-height:1; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
         .sdd-day-cell .holiday-badge { position:absolute; top:0; right:0; font-size:0.5em; font-weight:800; line-height:1; padding:0 1px; pointer-events:none; z-index:15; }
         .sdd-day-cell.selected .holiday-badge { z-index:20; }
@@ -496,7 +497,6 @@
                 localStorage.setItem(HOT_CITIES_KEY, JSON.stringify(hotCities));
             }
 
-            // 拖动排序相关状态
             let dragIndex = null;
             let dragTarget = null;
             let lastSwapTime = 0;
@@ -657,7 +657,6 @@
                 citySelectorOverlay.classList.remove('active');
             });
 
-            // 其他功能代码保持不变...
             const MATERIALS = [
                 { name: '🌱 草地', baseOffset: 0, absorptivity: 0.65, thermalInertia: 0.7, nightCooling: 0.5 },
                 { name: '🟫 土地', baseOffset: 2, absorptivity: 0.75, thermalInertia: 0.6, nightCooling: 0.6 },
