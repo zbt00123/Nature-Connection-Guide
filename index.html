@@ -25,23 +25,23 @@
         }
 
         .color-scheme-toggle {
-            width: 44px; height: 44px; border-radius: 50%;
-            border: 1.5px solid rgba(180,150,100,0.5);
-            background: rgba(255,255,245,0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            cursor: pointer; font-size: 1.4rem; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08);
+            width:44px; height:44px; border-radius:50%;
+            border:1.5px solid rgba(180,150,100,0.5);
+            background:rgba(255,255,245,0.75); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+            cursor:pointer; font-size:1.4rem; display:flex; align-items:center; justify-content:center;
+            box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08);
             transition: transform var(--animate-duration) ease, box-shadow var(--animate-duration) ease, background var(--animate-duration) ease;
-            user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; outline: none; line-height:1; padding:0; position:static; margin:0;
+            user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; outline:none; line-height:1; padding:0; position:static; margin:0;
         }
-        .color-scheme-toggle:hover { transform: scale(1.08); box-shadow:0 6px 22px rgba(0,0,0,0.18),0 2px 6px rgba(0,0,0,0.1); background:rgba(255,255,250,0.9); }
-        .color-scheme-toggle:active { transform: scale(0.94); box-shadow:0 2px 8px rgba(0,0,0,0.15); transition: transform 0.08s ease, box-shadow 0.08s ease; }
+        .color-scheme-toggle:hover { transform:scale(1.08); box-shadow:0 6px 22px rgba(0,0,0,0.18),0 2px 6px rgba(0,0,0,0.1); background:rgba(255,255,250,0.9); }
+        .color-scheme-toggle:active { transform:scale(0.94); box-shadow:0 2px 8px rgba(0,0,0,0.15); transition:transform 0.08s ease, box-shadow 0.08s ease; }
 
-        .quick-nav-buttons { position: fixed; top:120px; right:16px; display:flex; flex-direction:column; gap:8px; z-index:599; }
+        .quick-nav-buttons { position:fixed; top:120px; right:16px; display:flex; flex-direction:column; gap:8px; z-index:599; }
         .quick-nav-btn {
             width:44px; height:44px; border-radius:50%; border:1.5px solid rgba(180,150,100,0.5);
             background:rgba(255,255,245,0.75); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
             cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center;
-            box-shadow:0 4px 12px rgba(0,0,0,0.1); transition: transform var(--animate-duration) ease, background var(--animate-duration) ease;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1); transition:transform var(--animate-duration) ease, background var(--animate-duration) ease;
             outline:none; -webkit-tap-highlight-color:transparent; user-select:none;
         }
         .quick-nav-btn:hover { transform:scale(1.1); background:rgba(255,255,250,0.92); }
@@ -51,37 +51,37 @@
             position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0);
             backdrop-filter:blur(0px); -webkit-backdrop-filter:blur(0px); display:flex; justify-content:center; align-items:center;
             z-index:2000; visibility:hidden; opacity:0; pointer-events:none;
-            transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
+            transition:opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
         .risk-modal.active {
             visibility:visible; opacity:1; pointer-events:auto; background:rgba(0,0,0,0.5);
             backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
-            transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
+            transition:opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
         .risk-content {
             max-width:480px; width:85%; background:rgba(255,255,245,0.98); backdrop-filter:blur(20px); border-radius:2rem;
             padding:2rem 1.8rem; box-shadow:0 25px 40px rgba(0,0,0,0.2); text-align:left;
-            border:1px solid rgba(255,240,180,0.8); font-family:inherit; transform:scale(0.5); transition: transform var(--animate-duration) ease-out;
+            border:1px solid rgba(255,240,180,0.8); font-family:inherit; transform:scale(0.5); transition:transform var(--animate-duration) ease-out;
         }
-        .risk-modal.active .risk-content { transform:scale(1); transition: transform var(--animate-duration) var(--ease-elastic); }
+        .risk-modal.active .risk-content { transform:scale(1); transition:transform var(--animate-duration) var(--ease-elastic); }
         .risk-content h3 { font-size:1.8rem; margin-bottom:1rem; background:linear-gradient(135deg,#2c5a2e,#c7a252); background-clip:text; -webkit-background-clip:text; color:transparent; text-align:center; }
         .risk-warning-icon { background:none; -webkit-background-clip:unset; background-clip:unset; color:#f4a261; display:inline-block; margin-right:4px; }
         .risk-content p { font-size:1rem; line-height:1.5; color:#3a2e22; margin-bottom:1rem; text-align:left; }
         .risk-content .risk-list { text-align:left; margin:1rem 0; padding-left:1.5rem; }
         .risk-content .risk-list li { margin-bottom:0.5rem; color:#6b4c2c; }
-        .risk-button { background:#6b8c5c; border:none; color:white; padding:12px 28px; border-radius:40px; font-size:1rem; font-weight:600; cursor:pointer; margin-top:1rem; transition: transform 0.1s, background 0.2s; display:block; margin-left:auto; margin-right:auto; }
+        .risk-button { background:#6b8c5c; border:none; color:white; padding:12px 28px; border-radius:40px; font-size:1rem; font-weight:600; cursor:pointer; margin-top:1rem; transition:transform 0.1s, background 0.2s; display:block; margin-left:auto; margin-right:auto; }
         .risk-button:hover { background:#5a7a4a; transform:scale(1.02); }
         .risk-button:active { transform:scale(0.98); }
 
-        .loading-toast { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0); backdrop-filter:blur(0px); -webkit-backdrop-filter:blur(0px); display:flex; justify-content:center; align-items:center; z-index:1100; visibility:hidden; opacity:0; pointer-events:none; transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration); }
-        .loading-toast.show { visibility:visible; opacity:1; pointer-events:auto; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
-        .toast-content { background:rgba(30,40,30,0.95); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); color:#f9f2e0; padding:24px 32px; border-radius:40px; font-size:1rem; text-align:center; min-width:200px; transform:scale(0.5); transition: transform var(--animate-duration) ease-out; }
-        .loading-toast.show .toast-content { transform:scale(1); transition: transform var(--animate-duration) var(--ease-elastic); }
+        .loading-toast { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0); backdrop-filter:blur(0px); -webkit-backdrop-filter:blur(0px); display:flex; justify-content:center; align-items:center; z-index:1100; visibility:hidden; opacity:0; pointer-events:none; transition:opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration); }
+        .loading-toast.show { visibility:visible; opacity:1; pointer-events:auto; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); transition:opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
+        .toast-content { background:rgba(30,40,30,0.95); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); color:#f9f2e0; padding:24px 32px; border-radius:40px; font-size:1rem; text-align:center; min-width:200px; transform:scale(0.5); transition:transform var(--animate-duration) ease-out; }
+        .loading-toast.show .toast-content { transform:scale(1); transition:transform var(--animate-duration) var(--ease-elastic); }
 
-        .locate-toast { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0); backdrop-filter:blur(0px); -webkit-backdrop-filter:blur(0px); display:flex; justify-content:center; align-items:center; z-index:1200; visibility:hidden; opacity:0; pointer-events:none; transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration); }
-        .locate-toast.show { visibility:visible; opacity:1; pointer-events:auto; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
-        .locate-card { background:rgba(30,40,30,0.96); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); color:#f9f2e0; padding:24px 32px; border-radius:40px; text-align:center; min-width:280px; box-shadow:0 20px 35px rgba(0,0,0,0.3); border:1px solid rgba(255,220,150,0.3); display:flex; flex-direction:column; align-items:center; gap:20px; transform:scale(0.5); transition: transform var(--animate-duration) ease-out; }
-        .locate-toast.show .locate-card { transform:scale(1); transition: transform var(--animate-duration) var(--ease-elastic); }
+        .locate-toast { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0); backdrop-filter:blur(0px); -webkit-backdrop-filter:blur(0px); display:flex; justify-content:center; align-items:center; z-index:1200; visibility:hidden; opacity:0; pointer-events:none; transition:opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration); }
+        .locate-toast.show { visibility:visible; opacity:1; pointer-events:auto; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); transition:opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
+        .locate-card { background:rgba(30,40,30,0.96); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); color:#f9f2e0; padding:24px 32px; border-radius:40px; text-align:center; min-width:280px; box-shadow:0 20px 35px rgba(0,0,0,0.3); border:1px solid rgba(255,220,150,0.3); display:flex; flex-direction:column; align-items:center; gap:20px; transform:scale(0.5); transition:transform var(--animate-duration) ease-out; }
+        .locate-toast.show .locate-card { transform:scale(1); transition:transform var(--animate-duration) var(--ease-elastic); }
         .locate-message { font-size:1rem; line-height:1.4; display:flex; align-items:center; gap:12px; }
         .locate-buttons { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
         .locate-btn { background:rgba(255,255,220,0.2); border:1px solid rgba(255,255,200,0.6); color:white; padding:8px 20px; border-radius:40px; font-size:0.9rem; cursor:pointer; transition:0.1s; font-weight:500; }
@@ -92,19 +92,19 @@
             position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0);
             backdrop-filter:blur(0px); -webkit-backdrop-filter:blur(0px); display:flex; justify-content:center; align-items:center;
             z-index:1000; visibility:hidden; opacity:0; pointer-events:none;
-            transition: opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
+            transition:opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
         .city-selector-overlay.active {
             visibility:visible; opacity:1; pointer-events:auto; background:rgba(0,0,0,0.4);
             backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
-            transition: opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
+            transition:opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
         .city-selector-panel {
             background:rgba(255,255,245,0.97); backdrop-filter:blur(20px); width:auto; min-width:360px; max-width:90vw;
             border-radius:1.8rem; padding:1.2rem; overflow-y:auto; border:1px solid rgba(255,240,180,0.8);
-            transform:scale(0.5); transition: transform var(--animate-duration) ease-out;
+            transform:scale(0.5); transition:transform var(--animate-duration) ease-out;
         }
-        .city-selector-overlay.active .city-selector-panel { transform:scale(1); transition: transform var(--animate-duration) var(--ease-elastic); }
+        .city-selector-overlay.active .city-selector-panel { transform:scale(1); transition:transform var(--animate-duration) var(--ease-elastic); }
         .city-search input { width:100%; padding:10px 15px; border-radius:40px; border:1px solid #ddcca8; background:#fffef7; font-size:1rem; outline:none; box-sizing:border-box; }
         .city-results { display:flex; flex-direction:column; gap:8px; max-height:50vh; overflow-y:auto; }
         .city-result-item { background:#f5efdf; padding:8px 12px; border-radius:40px; cursor:pointer; transition:0.1s; font-size:0.9rem; }
@@ -112,7 +112,7 @@
         .hot-cities { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; justify-content:center; align-items:center; }
         .hot-city-btn { position:relative; background:#e8e0c8; border:none; padding:5px 12px; border-radius:30px; font-size:0.8rem; cursor:pointer; transition:0.1s; color:#3a5a2a; white-space:nowrap; user-select:none; }
         .hot-city-btn:hover { background:#cfc49e; transform:scale(1.02); }
-        .hot-city-btn.dragging { opacity:0.5; }
+        .edit-mode .hot-city-btn { touch-action:none; }
         .delete-city-btn { position:absolute; top:-6px; right:-6px; width:18px; height:18px; background:#dc2626; color:white; border-radius:50%; font-size:12px; line-height:18px; text-align:center; cursor:pointer; display:none; z-index:5; }
         .edit-mode .delete-city-btn { display:block; }
         .edit-mode .hot-city-btn { padding-right:18px; }
@@ -126,8 +126,8 @@
         .year-month-display { cursor:pointer; font-weight:600; font-size:clamp(0.8rem, 3.5cqw, 1.1rem); color:#2c5a2e; white-space:nowrap; padding:4px 8px; border-radius:20px; background:rgba(255,255,250,0.5); border:1px solid rgba(180,150,100,0.35); transition:background 0.2s, transform 0.1s; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; display:inline-flex; align-items:center; gap:2px; }
         .year-month-display:hover { background:rgba(255,255,250,0.85); transform:scale(1.03); }
         .year-month-display:active { transform:scale(0.96); }
-        .year-month-dropdown { position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%) scaleY(0.8); transform-origin:top center; z-index:100; background:#fffef9; border-radius:1.2rem; padding:1rem; box-shadow:0 12px 32px rgba(0,0,0,0.2),0 2px 8px rgba(0,0,0,0.1); border:1px solid rgba(180,150,100,0.5); min-width:220px; text-align:center; visibility:hidden; opacity:0; pointer-events:none; transition: transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration); }
-        .year-month-dropdown.open { visibility:visible; opacity:1; pointer-events:auto; transform:translateX(-50%) scaleY(1); transition: transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
+        .year-month-dropdown { position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%) scaleY(0.8); transform-origin:top center; z-index:100; background:#fffef9; border-radius:1.2rem; padding:1rem; box-shadow:0 12px 32px rgba(0,0,0,0.2),0 2px 8px rgba(0,0,0,0.1); border:1px solid rgba(180,150,100,0.5); min-width:220px; text-align:center; visibility:hidden; opacity:0; pointer-events:none; transition:transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration); }
+        .year-month-dropdown.open { visibility:visible; opacity:1; pointer-events:auto; transform:translateX(-50%) scaleY(1); transition:transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
         .ym-year-row { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:12px; font-weight:700; font-size:1rem; color:#2c5a2e; }
         .ym-year-btn { background:none; border:none; cursor:pointer; font-size:1.2rem; color:#6b8c5c; padding:4px 8px; border-radius:50%; transition:background 0.15s, transform 0.1s; line-height:1; -webkit-tap-highlight-color:transparent; user-select:none; }
         .ym-year-btn:hover { background:rgba(107,140,92,0.15); }
@@ -208,21 +208,21 @@
         .surface-temp-range { font-size:0.75rem; color:#7c6b4a; }
         .timeline-canvas-wrapper { width:100%; height:18px; margin:2px 0; position:relative; }
         .timeline-canvas { width:100%; height:18px; display:block; border-radius:12px; cursor:default; touch-action:none; }
-        .timeline-tooltip { position:absolute; bottom:calc(100% + 10px); left:0; transform:translateX(-50%) scale(0); transform-origin:bottom center; background:rgba(255,255,245,0.96); color:#2c5a2e; padding:6px 14px; border-radius:10px; font-size:0.9rem; font-weight:500; white-space:nowrap; pointer-events:none; z-index:50; opacity:0; text-align:left; line-height:1.5; box-shadow:0 6px 20px rgba(0,0,0,0.18),0 1px 4px rgba(0,0,0,0.1); border:1px solid rgba(180,150,100,0.5); user-select:none; -webkit-user-select:none; transition: transform var(--animate-duration) ease-out, opacity var(--animate-duration) ease-out; }
-        .timeline-tooltip.visible { transform:translateX(-50%) scale(1); opacity:1; transition: transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic); }
+        .timeline-tooltip { position:absolute; bottom:calc(100% + 10px); left:0; transform:translateX(-50%) scale(0); transform-origin:bottom center; background:rgba(255,255,245,0.96); color:#2c5a2e; padding:6px 14px; border-radius:10px; font-size:0.9rem; font-weight:500; white-space:nowrap; pointer-events:none; z-index:50; opacity:0; text-align:left; line-height:1.5; box-shadow:0 6px 20px rgba(0,0,0,0.18),0 1px 4px rgba(0,0,0,0.1); border:1px solid rgba(180,150,100,0.5); user-select:none; -webkit-user-select:none; transition:transform var(--animate-duration) ease-out, opacity var(--animate-duration) ease-out; }
+        .timeline-tooltip.visible { transform:translateX(-50%) scale(1); opacity:1; transition:transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic); }
         .timeline-tooltip .tooltip-row { display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
         .timeline-tooltip .tooltip-label { font-weight:500; color:inherit; }
         .timeline-tooltip .tooltip-value { font-weight:700; color:#2c5a2e; text-align:right; }
         .timeline-tooltip .tooltip-temp-row .tooltip-value { color:#2f5e3a; }
-        .sticky-header-bar { position:fixed; top:0; left:0; width:100%; background:rgba(255,255,245,0.95); box-shadow:0 4px 12px rgba(0,0,0,0.08); z-index:700; display:flex; align-items:center; justify-content:center; padding:8px 16px; gap:12px; flex-wrap:wrap; border-bottom:1px solid rgba(180,150,100,0.4); box-sizing:border-box; transform:translateY(-100%); pointer-events:none; transition: transform var(--animate-duration) var(--ease-smooth); }
+        .sticky-header-bar { position:fixed; top:0; left:0; width:100%; background:rgba(255,255,245,0.95); box-shadow:0 4px 12px rgba(0,0,0,0.08); z-index:700; display:flex; align-items:center; justify-content:center; padding:8px 16px; gap:12px; flex-wrap:wrap; border-bottom:1px solid rgba(180,150,100,0.4); box-sizing:border-box; transform:translateY(-100%); pointer-events:none; transition:transform var(--animate-duration) var(--ease-smooth); }
         .sticky-header-bar.show { transform:translateY(0); pointer-events:auto; }
         .sticky-date-label { font-weight:700; font-size:1rem; color:#2c5a2e; white-space:nowrap; cursor:pointer; padding:4px 10px; border-radius:20px; background:rgba(255,255,250,0.5); border:1px solid rgba(180,150,100,0.35); transition:background 0.2s, transform 0.1s; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; position:relative; }
         .sticky-date-label:hover { background:rgba(255,255,250,0.85); transform:scale(1.03); }
         .sticky-date-label:active { transform:scale(0.96); }
         .sticky-header-bar .sticky-time-select { padding:4px 8px; border-radius:20px; border:1px solid rgba(180,150,100,0.35); background:rgba(255,255,250,0.95); font-family:inherit; font-size:0.9rem; font-weight:600; color:#2c5a2e; appearance:auto; cursor:pointer; }
 
-        .sticky-date-dropdown { position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%) scaleY(0.8); transform-origin:top center; z-index:710; background:#fffef9; border-radius:1.2rem; padding:0.8rem; box-shadow:0 12px 32px rgba(0,0,0,0.2),0 2px 8px rgba(0,0,0,0.1); border:1px solid rgba(180,150,100,0.5); min-width:240px; text-align:center; visibility:hidden; opacity:0; pointer-events:none; transition: transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration); }
-        .sticky-date-dropdown.open { visibility:visible; opacity:1; pointer-events:auto; transform:translateX(-50%) scaleY(1); transition: transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
+        .sticky-date-dropdown { position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%) scaleY(0.8); transform-origin:top center; z-index:710; background:#fffef9; border-radius:1.2rem; padding:0.8rem; box-shadow:0 12px 32px rgba(0,0,0,0.2),0 2px 8px rgba(0,0,0,0.1); border:1px solid rgba(180,150,100,0.5); min-width:240px; text-align:center; visibility:hidden; opacity:0; pointer-events:none; transition:transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration); }
+        .sticky-date-dropdown.open { visibility:visible; opacity:1; pointer-events:auto; transform:translateX(-50%) scaleY(1); transition:transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
         .sdd-year-row { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:8px; font-weight:700; font-size:0.9rem; color:#2c5a2e; }
         .sdd-year-btn { background:none; border:none; cursor:pointer; font-size:1.1rem; color:#6b8c5c; padding:2px 6px; border-radius:50%; transition:background 0.15s, transform 0.1s; line-height:1; -webkit-tap-highlight-color:transparent; user-select:none; }
         .sdd-year-btn:hover { background:rgba(107,140,92,0.15); }
@@ -495,6 +495,59 @@
             function saveHotCities() {
                 localStorage.setItem(HOT_CITIES_KEY, JSON.stringify(hotCities));
             }
+
+            // 拖动排序相关状态
+            let dragIndex = null;
+            let dragTarget = null;
+            let lastSwapTime = 0;
+
+            function onPointerDown(e) {
+                if (!cityEditMode) return;
+                if (e.target.closest('.delete-city-btn')) return;
+                e.preventDefault();
+                dragIndex = parseInt(e.currentTarget.dataset.index);
+                dragTarget = e.currentTarget;
+                dragTarget.style.opacity = '0.5';
+                document.addEventListener('pointermove', onPointerMove);
+                document.addEventListener('pointerup', onPointerUp);
+            }
+
+            function onPointerMove(e) {
+                e.preventDefault();
+                const now = Date.now();
+                if (now - lastSwapTime < 150) return;
+                const elem = document.elementFromPoint(e.clientX, e.clientY);
+                const btn = elem?.closest('.hot-city-btn');
+                if (btn && btn !== dragTarget && btn.dataset.index !== undefined) {
+                    const targetIndex = parseInt(btn.dataset.index);
+                    if (targetIndex !== undefined && targetIndex !== dragIndex) {
+                        const moved = hotCities.splice(dragIndex, 1)[0];
+                        hotCities.splice(targetIndex, 0, moved);
+                        saveHotCities();
+                        renderHotCities();
+                        dragIndex = targetIndex;
+                        lastSwapTime = now;
+                        const newBtns = hotCitiesContainer.querySelectorAll('.hot-city-btn');
+                        for (let b of newBtns) {
+                            if (parseInt(b.dataset.index) === dragIndex) {
+                                dragTarget = b;
+                                dragTarget.style.opacity = '0.5';
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            function onPointerUp(e) {
+                document.removeEventListener('pointermove', onPointerMove);
+                document.removeEventListener('pointerup', onPointerUp);
+                if (dragTarget) dragTarget.style.opacity = '';
+                dragIndex = null;
+                dragTarget = null;
+                lastSwapTime = 0;
+            }
+
             function renderHotCities() {
                 hotCitiesContainer.innerHTML = '';
                 hotCitiesContainer.classList.toggle('edit-mode', cityEditMode);
@@ -509,7 +562,7 @@
                         citySelectorOverlay.classList.remove('active');
                     });
                     if (cityEditMode) {
-                        btn.draggable = true;
+                        btn.addEventListener('pointerdown', onPointerDown);
                         const delBtn = document.createElement('span');
                         delBtn.className = 'delete-city-btn';
                         delBtn.innerHTML = '×';
@@ -520,9 +573,6 @@
                             renderHotCities();
                         });
                         btn.appendChild(delBtn);
-                        btn.addEventListener('dragstart', handleDragStart);
-                        btn.addEventListener('dragover', (e) => e.preventDefault());
-                        btn.addEventListener('drop', handleDrop);
                     }
                     hotCitiesContainer.appendChild(btn);
                 });
@@ -534,26 +584,6 @@
                     showAddCityModal();
                 });
                 hotCitiesContainer.appendChild(addBtn);
-            }
-
-            let dragSrcIndex = null;
-            function handleDragStart(e) {
-                dragSrcIndex = parseInt(e.target.closest('.hot-city-btn')?.dataset.index);
-                e.dataTransfer.effectAllowed = 'move';
-                e.target.classList.add('dragging');
-            }
-            function handleDrop(e) {
-                e.preventDefault();
-                const targetBtn = e.target.closest('.hot-city-btn');
-                if (!targetBtn) return;
-                const targetIndex = parseInt(targetBtn.dataset.index);
-                if (dragSrcIndex !== null && targetIndex !== null && dragSrcIndex !== targetIndex) {
-                    const movedItem = hotCities.splice(dragSrcIndex, 1)[0];
-                    hotCities.splice(targetIndex, 0, movedItem);
-                    saveHotCities();
-                    renderHotCities();
-                }
-                dragSrcIndex = null;
             }
 
             function toggleEditMode() {
@@ -617,9 +647,7 @@
 
             citySelectorOverlay.addEventListener('click', (e) => {
                 if (e.target === citySelectorOverlay) {
-                    if (cityEditMode) {
-                        toggleEditMode();
-                    }
+                    if (cityEditMode) toggleEditMode();
                     citySelectorOverlay.classList.remove('active');
                 }
             });
@@ -629,7 +657,7 @@
                 citySelectorOverlay.classList.remove('active');
             });
 
-            // 其他代码保持不变，后续嵌入...
+            // 其他功能代码保持不变...
             const MATERIALS = [
                 { name: '🌱 草地', baseOffset: 0, absorptivity: 0.65, thermalInertia: 0.7, nightCooling: 0.5 },
                 { name: '🟫 土地', baseOffset: 2, absorptivity: 0.75, thermalInertia: 0.6, nightCooling: 0.6 },
