@@ -25,1470 +25,260 @@
         }
 
         .color-scheme-toggle {
-            width:44px;
-            height:44px;
-            border-radius:50%;
+            width:44px; height:44px; border-radius:50%;
             border:1.5px solid rgba(180,150,100,0.5);
-            background:rgba(255,255,245,0.75);
-            backdrop-filter:blur(10px);
-            -webkit-backdrop-filter:blur(10px);
-            cursor:pointer;
-            font-size:1.4rem;
-            display:flex;
-            align-items:center;
-            justify-content:center;
+            background:rgba(255,255,245,0.75); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+            cursor:pointer; font-size:1.4rem; display:flex; align-items:center; justify-content:center;
             box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 4px rgba(0,0,0,0.08);
-            transition:transform var(--animate-duration) ease, box-shadow var(--animate-duration) ease, background var(--animate-duration) ease;
-            user-select:none;
-            -webkit-user-select:none;
-            -webkit-tap-highlight-color:transparent;
-            outline:none;
-            line-height:1;
-            padding:0;
-            position:static;
-            margin:0;
+            transition: transform var(--animate-duration) ease, box-shadow var(--animate-duration) ease, background var(--animate-duration) ease;
+            user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; outline:none; line-height:1; padding:0; position:static; margin:0;
         }
-        .color-scheme-toggle:hover {
-            transform:scale(1.08);
-            box-shadow:0 6px 22px rgba(0,0,0,0.18),0 2px 6px rgba(0,0,0,0.1);
-            background:rgba(255,255,250,0.9);
-        }
-        .color-scheme-toggle:active {
-            transform:scale(0.94);
-            box-shadow:0 2px 8px rgba(0,0,0,0.15);
-            transition:transform 0.08s ease, box-shadow 0.08s ease;
-        }
+        .color-scheme-toggle:hover { transform:scale(1.08); box-shadow:0 6px 22px rgba(0,0,0,0.18),0 2px 6px rgba(0,0,0,0.1); background:rgba(255,255,250,0.9); }
+        .color-scheme-toggle:active { transform:scale(0.94); box-shadow:0 2px 8px rgba(0,0,0,0.15); transition:transform 0.08s ease, box-shadow 0.08s ease; }
 
-        .quick-nav-buttons {
-            position:fixed;
-            top:120px;
-            right:16px;
-            display:flex;
-            flex-direction:column;
-            gap:8px;
-            z-index:599;
-        }
+        .quick-nav-buttons { position:fixed; top:120px; right:16px; display:flex; flex-direction:column; gap:8px; z-index:599; }
         .quick-nav-btn {
-            width:44px;
-            height:44px;
-            border-radius:50%;
-            border:1.5px solid rgba(180,150,100,0.5);
-            background:rgba(255,255,245,0.75);
-            backdrop-filter:blur(10px);
-            -webkit-backdrop-filter:blur(10px);
-            cursor:pointer;
-            font-size:1.1rem;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            box-shadow:0 4px 12px rgba(0,0,0,0.1);
-            transition:transform var(--animate-duration) ease, background var(--animate-duration) ease;
-            outline:none;
-            -webkit-tap-highlight-color:transparent;
-            user-select:none;
+            width:44px; height:44px; border-radius:50%; border:1.5px solid rgba(180,150,100,0.5);
+            background:rgba(255,255,245,0.75); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+            cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1); transition:transform var(--animate-duration) ease, background var(--animate-duration) ease;
+            outline:none; -webkit-tap-highlight-color:transparent; user-select:none;
         }
-        .quick-nav-btn:hover {
-            transform:scale(1.1);
-            background:rgba(255,255,250,0.92);
-        }
-        .quick-nav-btn:active {
-            transform:scale(0.92);
-        }
+        .quick-nav-btn:hover { transform:scale(1.1); background:rgba(255,255,250,0.92); }
+        .quick-nav-btn:active { transform:scale(0.92); }
 
         .risk-modal {
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:rgba(0,0,0,0);
-            backdrop-filter:blur(0px);
-            -webkit-backdrop-filter:blur(0px);
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            z-index:2000;
-            visibility:hidden;
-            opacity:0;
-            pointer-events:none;
+            position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0);
+            backdrop-filter:blur(0px); -webkit-backdrop-filter:blur(0px); display:flex; justify-content:center; align-items:center;
+            z-index:2000; visibility:hidden; opacity:0; pointer-events:none;
             transition:opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
         .risk-modal.active {
-            visibility:visible;
-            opacity:1;
-            pointer-events:auto;
-            background:rgba(0,0,0,0.5);
-            backdrop-filter:blur(4px);
-            -webkit-backdrop-filter:blur(4px);
+            visibility:visible; opacity:1; pointer-events:auto; background:rgba(0,0,0,0.5);
+            backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
             transition:opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
         .risk-content {
-            max-width:480px;
-            width:85%;
-            background:rgba(255,255,245,0.98);
-            backdrop-filter:blur(20px);
-            border-radius:2rem;
-            padding:2rem 1.8rem;
-            box-shadow:0 25px 40px rgba(0,0,0,0.2);
-            text-align:left;
-            border:1px solid rgba(255,240,180,0.8);
-            font-family:inherit;
-            transform:scale(0.5);
-            transition:transform var(--animate-duration) ease-out;
+            max-width:480px; width:85%; background:rgba(255,255,245,0.98); backdrop-filter:blur(20px); border-radius:2rem;
+            padding:2rem 1.8rem; box-shadow:0 25px 40px rgba(0,0,0,0.2); text-align:left;
+            border:1px solid rgba(255,240,180,0.8); font-family:inherit; transform:scale(0.5); transition:transform var(--animate-duration) ease-out;
         }
-        .risk-modal.active .risk-content {
-            transform:scale(1);
-            transition:transform var(--animate-duration) var(--ease-elastic);
-        }
-        .risk-content h3 {
-            font-size:1.8rem;
-            margin-bottom:1rem;
-            background:linear-gradient(135deg,#2c5a2e,#c7a252);
-            background-clip:text;
-            -webkit-background-clip:text;
-            color:transparent;
-            text-align:center;
-        }
-        .risk-warning-icon {
-            background:none;
-            -webkit-background-clip:unset;
-            background-clip:unset;
-            color:#f4a261;
-            display:inline-block;
-            margin-right:4px;
-        }
-        .risk-content p {
-            font-size:1rem;
-            line-height:1.5;
-            color:#3a2e22;
-            margin-bottom:1rem;
-            text-align:left;
-        }
-        .risk-content .risk-list {
-            text-align:left;
-            margin:1rem 0;
-            padding-left:1.5rem;
-        }
-        .risk-content .risk-list li {
-            margin-bottom:0.5rem;
-            color:#6b4c2c;
-        }
-        .risk-button {
-            background:#6b8c5c;
-            border:none;
-            color:white;
-            padding:12px 28px;
-            border-radius:40px;
-            font-size:1rem;
-            font-weight:600;
-            cursor:pointer;
-            margin-top:1rem;
-            transition:transform 0.1s, background 0.2s;
-            display:block;
-            margin-left:auto;
-            margin-right:auto;
-        }
-        .risk-button:hover {
-            background:#5a7a4a;
-            transform:scale(1.02);
-        }
-        .risk-button:active {
-            transform:scale(0.98);
-        }
+        .risk-modal.active .risk-content { transform:scale(1); transition:transform var(--animate-duration) var(--ease-elastic); }
+        .risk-content h3 { font-size:1.8rem; margin-bottom:1rem; background:linear-gradient(135deg,#2c5a2e,#c7a252); background-clip:text; -webkit-background-clip:text; color:transparent; text-align:center; }
+        .risk-warning-icon { background:none; -webkit-background-clip:unset; background-clip:unset; color:#f4a261; display:inline-block; margin-right:4px; }
+        .risk-content p { font-size:1rem; line-height:1.5; color:#3a2e22; margin-bottom:1rem; text-align:left; }
+        .risk-content .risk-list { text-align:left; margin:1rem 0; padding-left:1.5rem; }
+        .risk-content .risk-list li { margin-bottom:0.5rem; color:#6b4c2c; }
+        .risk-button { background:#6b8c5c; border:none; color:white; padding:12px 28px; border-radius:40px; font-size:1rem; font-weight:600; cursor:pointer; margin-top:1rem; transition:transform 0.1s, background 0.2s; display:block; margin-left:auto; margin-right:auto; }
+        .risk-button:hover { background:#5a7a4a; transform:scale(1.02); }
+        .risk-button:active { transform:scale(0.98); }
 
-        .loading-toast {
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:rgba(0,0,0,0);
-            backdrop-filter:blur(0px);
-            -webkit-backdrop-filter:blur(0px);
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            z-index:1100;
-            visibility:hidden;
-            opacity:0;
-            pointer-events:none;
-            transition:opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
-        }
-        .loading-toast.show {
-            visibility:visible;
-            opacity:1;
-            pointer-events:auto;
-            background:rgba(0,0,0,0.4);
-            backdrop-filter:blur(4px);
-            -webkit-backdrop-filter:blur(4px);
-            transition:opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
-        }
-        .toast-content {
-            background:rgba(30,40,30,0.95);
-            backdrop-filter:blur(20px);
-            -webkit-backdrop-filter:blur(20px);
-            color:#f9f2e0;
-            padding:24px 32px;
-            border-radius:40px;
-            font-size:1rem;
-            text-align:center;
-            min-width:200px;
-            transform:scale(0.5);
-            transition:transform var(--animate-duration) ease-out;
-        }
-        .loading-toast.show .toast-content {
-            transform:scale(1);
-            transition:transform var(--animate-duration) var(--ease-elastic);
-        }
+        .loading-toast { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0); backdrop-filter:blur(0px); -webkit-backdrop-filter:blur(0px); display:flex; justify-content:center; align-items:center; z-index:1100; visibility:hidden; opacity:0; pointer-events:none; transition:opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration); }
+        .loading-toast.show { visibility:visible; opacity:1; pointer-events:auto; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); transition:opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
+        .toast-content { background:rgba(30,40,30,0.95); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); color:#f9f2e0; padding:24px 32px; border-radius:40px; font-size:1rem; text-align:center; min-width:200px; transform:scale(0.5); transition:transform var(--animate-duration) ease-out; }
+        .loading-toast.show .toast-content { transform:scale(1); transition:transform var(--animate-duration) var(--ease-elastic); }
 
-        .locate-toast {
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:rgba(0,0,0,0);
-            backdrop-filter:blur(0px);
-            -webkit-backdrop-filter:blur(0px);
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            z-index:1200;
-            visibility:hidden;
-            opacity:0;
-            pointer-events:none;
-            transition:opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
-        }
-        .locate-toast.show {
-            visibility:visible;
-            opacity:1;
-            pointer-events:auto;
-            background:rgba(0,0,0,0.4);
-            backdrop-filter:blur(4px);
-            -webkit-backdrop-filter:blur(4px);
-            transition:opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
-        }
-        .locate-card {
-            background:rgba(30,40,30,0.96);
-            backdrop-filter:blur(20px);
-            -webkit-backdrop-filter:blur(20px);
-            color:#f9f2e0;
-            padding:24px 32px;
-            border-radius:40px;
-            text-align:center;
-            min-width:280px;
-            box-shadow:0 20px 35px rgba(0,0,0,0.3);
-            border:1px solid rgba(255,220,150,0.3);
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            gap:20px;
-            transform:scale(0.5);
-            transition:transform var(--animate-duration) ease-out;
-        }
-        .locate-toast.show .locate-card {
-            transform:scale(1);
-            transition:transform var(--animate-duration) var(--ease-elastic);
-        }
-        .locate-message {
-            font-size:1rem;
-            line-height:1.4;
-            display:flex;
-            align-items:center;
-            gap:12px;
-        }
-        .locate-buttons {
-            display:flex;
-            gap:16px;
-            flex-wrap:wrap;
-            justify-content:center;
-        }
-        .locate-btn {
-            background:rgba(255,255,220,0.2);
-            border:1px solid rgba(255,255,200,0.6);
-            color:white;
-            padding:8px 20px;
-            border-radius:40px;
-            font-size:0.9rem;
-            cursor:pointer;
-            transition:0.1s;
-            font-weight:500;
-        }
-        .locate-btn:hover {
-            background:rgba(255,255,220,0.4);
-            transform:scale(1.02);
-        }
-        .locate-btn.primary {
-            background:#e67e22;
-            border-color:#ffb347;
-        }
+        .locate-toast { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0); backdrop-filter:blur(0px); -webkit-backdrop-filter:blur(0px); display:flex; justify-content:center; align-items:center; z-index:1200; visibility:hidden; opacity:0; pointer-events:none; transition:opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration); }
+        .locate-toast.show { visibility:visible; opacity:1; pointer-events:auto; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); transition:opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
+        .locate-card { background:rgba(30,40,30,0.96); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); color:#f9f2e0; padding:24px 32px; border-radius:40px; text-align:center; min-width:280px; box-shadow:0 20px 35px rgba(0,0,0,0.3); border:1px solid rgba(255,220,150,0.3); display:flex; flex-direction:column; align-items:center; gap:20px; transform:scale(0.5); transition:transform var(--animate-duration) ease-out; }
+        .locate-toast.show .locate-card { transform:scale(1); transition:transform var(--animate-duration) var(--ease-elastic); }
+        .locate-message { font-size:1rem; line-height:1.4; display:flex; align-items:center; gap:12px; }
+        .locate-buttons { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+        .locate-btn { background:rgba(255,255,220,0.2); border:1px solid rgba(255,255,200,0.6); color:white; padding:8px 20px; border-radius:40px; font-size:0.9rem; cursor:pointer; transition:0.1s; font-weight:500; }
+        .locate-btn:hover { background:rgba(255,255,220,0.4); transform:scale(1.02); }
+        .locate-btn.primary { background:#e67e22; border-color:#ffb347; }
 
         .city-selector-overlay {
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:rgba(0,0,0,0);
-            backdrop-filter:blur(0px);
-            -webkit-backdrop-filter:blur(0px);
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            z-index:1000;
-            visibility:hidden;
-            opacity:0;
-            pointer-events:none;
+            position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0);
+            backdrop-filter:blur(0px); -webkit-backdrop-filter:blur(0px); display:flex; justify-content:center; align-items:center;
+            z-index:1000; visibility:hidden; opacity:0; pointer-events:none;
             transition:opacity var(--animate-duration) ease-out, backdrop-filter var(--animate-duration) ease-out, -webkit-backdrop-filter var(--animate-duration) ease-out, background var(--animate-duration) ease-out, visibility 0s var(--animate-duration);
         }
         .city-selector-overlay.active {
-            visibility:visible;
-            opacity:1;
-            pointer-events:auto;
-            background:rgba(0,0,0,0.4);
-            backdrop-filter:blur(4px);
-            -webkit-backdrop-filter:blur(4px);
+            visibility:visible; opacity:1; pointer-events:auto; background:rgba(0,0,0,0.4);
+            backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
             transition:opacity var(--animate-duration) var(--ease-elastic), backdrop-filter var(--animate-duration) var(--ease-elastic), -webkit-backdrop-filter var(--animate-duration) var(--ease-elastic), background var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
         }
         .city-selector-panel {
-            background:rgba(255,255,245,0.97);
-            backdrop-filter:blur(20px);
-            width:auto;
-            min-width:360px;
-            max-width:90vw;
-            border-radius:1.8rem;
-            padding:1.2rem;
-            overflow-y:auto;
-            border:1px solid rgba(255,240,180,0.8);
-            transform:scale(0.5);
-            transition:transform var(--animate-duration) ease-out;
+            background:rgba(255,255,245,0.97); backdrop-filter:blur(20px); width:auto; min-width:360px; max-width:90vw;
+            border-radius:1.8rem; padding:1.2rem; overflow-y:auto; border:1px solid rgba(255,240,180,0.8);
+            transform:scale(0.5); transition:transform var(--animate-duration) ease-out;
         }
-        .city-selector-overlay.active .city-selector-panel {
-            transform:scale(1);
-            transition:transform var(--animate-duration) var(--ease-elastic);
-        }
-        .city-search input {
-            width:100%;
-            padding:10px 15px;
-            border-radius:40px;
-            border:1px solid #ddcca8;
-            background:#fffef7;
-            font-size:1rem;
-            outline:none;
-            box-sizing:border-box;
-        }
-        .city-results {
-            display:flex;
-            flex-direction:column;
-            gap:8px;
-            max-height:50vh;
-            overflow-y:auto;
-        }
-        .city-result-item {
-            background:#f5efdf;
-            padding:8px 12px;
-            border-radius:40px;
-            cursor:pointer;
-            transition:0.1s;
-            font-size:0.9rem;
-        }
-        .city-result-item:hover {
-            background:#e2d2af;
-        }
-        .hot-cities {
-            display:flex;
-            flex-wrap:wrap;
-            gap:8px;
-            margin:12px 0;
-            justify-content:center;
-            align-items:center;
-        }
-        .hot-city-btn {
-            position:relative;
-            background:#e8e0c8;
-            border:none;
-            padding:5px 12px;
-            border-radius:30px;
-            font-size:0.8rem;
-            cursor:pointer;
-            transition:0.1s;
-            color:#3a5a2a;
-            white-space:nowrap;
-            user-select:none;
-            -webkit-user-select:none;
-            -webkit-touch-callout:none;
-        }
-        .hot-city-btn:hover {
-            background:#cfc49e;
-            transform:scale(1.02);
-        }
-        .edit-mode .hot-city-btn {
-            touch-action:none;
-        }
-        .delete-city-btn {
-            position:absolute;
-            top:-6px;
-            right:-6px;
-            width:18px;
-            height:18px;
-            background:#dc2626;
-            color:white;
-            border-radius:50%;
-            font-size:12px;
-            line-height:18px;
-            text-align:center;
-            cursor:pointer;
-            display:none;
-            z-index:5;
-        }
-        .edit-mode .delete-city-btn {
-            display:block;
-        }
-        .edit-mode .hot-city-btn {
-            padding-right:18px;
-        }
-        .add-city-btn {
-            background:#bbaa7a;
-            font-weight:bold;
-            font-size:1.2rem;
-        }
-        .add-city-modal {
-            position:fixed;
-            top:50%;
-            left:50%;
-            transform:translate(-50%,-50%);
-            background:#fffef7;
-            border-radius:1.5rem;
-            padding:1.5rem;
-            box-shadow:0 20px 40px rgba(0,0,0,0.3);
-            z-index:1100;
-            min-width:300px;
-            display:flex;
-            flex-direction:column;
-            gap:12px;
-        }
-        .add-city-modal input {
-            padding:8px 12px;
-            border-radius:20px;
-            border:1px solid #ccc;
-            font-size:0.9rem;
-        }
-        .add-city-modal button {
-            padding:8px 16px;
-            border-radius:20px;
-            border:none;
-            cursor:pointer;
-            font-weight:600;
-        }
-        .loading-tip {
-            text-align:center;
-            padding:20px;
-            color:#6b5a3a;
-        }
+        .city-selector-overlay.active .city-selector-panel { transform:scale(1); transition:transform var(--animate-duration) var(--ease-elastic); }
+        .city-search input { width:100%; padding:10px 15px; border-radius:40px; border:1px solid #ddcca8; background:#fffef7; font-size:1rem; outline:none; box-sizing:border-box; }
+        .city-results { display:flex; flex-direction:column; gap:8px; max-height:50vh; overflow-y:auto; }
+        .city-result-item { background:#f5efdf; padding:8px 12px; border-radius:40px; cursor:pointer; transition:0.1s; font-size:0.9rem; }
+        .city-result-item:hover { background:#e2d2af; }
+        .hot-cities { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; justify-content:center; align-items:center; }
+        .hot-city-btn { position:relative; background:#e8e0c8; border:none; padding:5px 12px; border-radius:30px; font-size:0.8rem; cursor:pointer; transition:0.1s; color:#3a5a2a; white-space:nowrap; user-select:none; -webkit-user-select:none; }
+        .hot-city-btn:hover { background:#cfc49e; transform:scale(1.02); }
+        .edit-mode .hot-city-btn { touch-action:none; }
+        .delete-city-btn { position:absolute; top:-6px; right:-6px; width:18px; height:18px; background:#dc2626; color:white; border-radius:50%; font-size:12px; line-height:18px; text-align:center; cursor:pointer; display:none; z-index:5; }
+        .edit-mode .delete-city-btn { display:block; }
+        .edit-mode .hot-city-btn { padding-right:18px; }
+        .add-city-btn { background:#bbaa7a; color:white; font-weight:bold; font-size:1.2rem; }
+        .add-city-modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fffef7; border-radius:1.5rem; padding:1.5rem; box-shadow:0 20px 40px rgba(0,0,0,0.3); z-index:1100; min-width:300px; display:flex; flex-direction:column; gap:12px; }
+        .add-city-modal input { padding:8px 12px; border-radius:20px; border:1px solid #ccc; font-size:0.9rem; }
+        .add-city-modal button { padding:8px 16px; border-radius:20px; border:none; cursor:pointer; font-weight:600; }
+        .loading-tip { text-align:center; padding:20px; color:#6b5a3a; }
 
-        .year-month-picker-wrapper {
-            position:relative;
-            display:inline-block;
-        }
-        .year-month-display {
-            cursor:pointer;
-            font-weight:600;
-            font-size:clamp(0.8rem, 3.5cqw, 1.1rem);
-            color:#2c5a2e;
-            white-space:nowrap;
-            padding:4px 8px;
-            border-radius:20px;
-            background:rgba(255,255,250,0.5);
-            border:1px solid rgba(180,150,100,0.35);
-            transition:background 0.2s, transform 0.1s;
-            user-select:none;
-            -webkit-user-select:none;
-            -webkit-tap-highlight-color:transparent;
-            display:inline-flex;
-            align-items:center;
-            gap:2px;
-        }
-        .year-month-display:hover {
-            background:rgba(255,255,250,0.85);
-            transform:scale(1.03);
-        }
-        .year-month-display:active {
-            transform:scale(0.96);
-        }
-        .year-month-dropdown {
-            position:absolute;
-            top:calc(100% + 8px);
-            left:50%;
-            transform:translateX(-50%) scaleY(0.8);
-            transform-origin:top center;
-            z-index:100;
-            background:#fffef9;
-            border-radius:1.2rem;
-            padding:1rem;
-            box-shadow:0 12px 32px rgba(0,0,0,0.2),0 2px 8px rgba(0,0,0,0.1);
-            border:1px solid rgba(180,150,100,0.5);
-            min-width:220px;
-            text-align:center;
-            visibility:hidden;
-            opacity:0;
-            pointer-events:none;
-            transition:transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration);
-        }
-        .year-month-dropdown.open {
-            visibility:visible;
-            opacity:1;
-            pointer-events:auto;
-            transform:translateX(-50%) scaleY(1);
-            transition:transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
-        }
-        .ym-year-row {
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            gap:12px;
-            margin-bottom:12px;
-            font-weight:700;
-            font-size:1rem;
-            color:#2c5a2e;
-        }
-        .ym-year-btn {
-            background:none;
-            border:none;
-            cursor:pointer;
-            font-size:1.2rem;
-            color:#6b8c5c;
-            padding:4px 8px;
-            border-radius:50%;
-            transition:background 0.15s, transform 0.1s;
-            line-height:1;
-            -webkit-tap-highlight-color:transparent;
-            user-select:none;
-        }
-        .ym-year-btn:hover {
-            background:rgba(107,140,92,0.15);
-        }
-        .ym-year-btn:active {
-            transform:scale(0.9);
-        }
-        .ym-month-grid {
-            display:grid;
-            grid-template-columns:repeat(4,1fr);
-            gap:6px;
-        }
-        .ym-month-cell {
-            padding:6px 4px;
-            border-radius:20px;
-            cursor:pointer;
-            font-weight:500;
-            font-size:0.8rem;
-            transition:background 0.15s, transform 0.1s, color 0.15s;
-            color:#3a5a2a;
-            background:#f5efdf;
-            border:1px solid transparent;
-            user-select:none;
-            -webkit-user-select:none;
-            -webkit-tap-highlight-color:transparent;
-        }
-        .ym-month-cell:hover {
-            background:#e2d2af;
-            transform:scale(1.04);
-        }
-        .ym-month-cell:active {
-            transform:scale(0.94);
-        }
-        .ym-month-cell.active-month {
-            background:#6b8c5c;
-            color:white;
-            border-color:#4a6b3e;
-            font-weight:700;
-        }
+        .year-month-picker-wrapper { position:relative; display:inline-block; }
+        .year-month-display { cursor:pointer; font-weight:600; font-size:clamp(0.8rem, 3.5cqw, 1.1rem); color:#2c5a2e; white-space:nowrap; padding:4px 8px; border-radius:20px; background:rgba(255,255,250,0.5); border:1px solid rgba(180,150,100,0.35); transition:background 0.2s, transform 0.1s; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; display:inline-flex; align-items:center; gap:2px; }
+        .year-month-display:hover { background:rgba(255,255,250,0.85); transform:scale(1.03); }
+        .year-month-display:active { transform:scale(0.96); }
+        .year-month-dropdown { position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%) scaleY(0.8); transform-origin:top center; z-index:100; background:#fffef9; border-radius:1.2rem; padding:1rem; box-shadow:0 12px 32px rgba(0,0,0,0.2),0 2px 8px rgba(0,0,0,0.1); border:1px solid rgba(180,150,100,0.5); min-width:220px; text-align:center; visibility:hidden; opacity:0; pointer-events:none; transition:transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration); }
+        .year-month-dropdown.open { visibility:visible; opacity:1; pointer-events:auto; transform:translateX(-50%) scaleY(1); transition:transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
+        .ym-year-row { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:12px; font-weight:700; font-size:1rem; color:#2c5a2e; }
+        .ym-year-btn { background:none; border:none; cursor:pointer; font-size:1.2rem; color:#6b8c5c; padding:4px 8px; border-radius:50%; transition:background 0.15s, transform 0.1s; line-height:1; -webkit-tap-highlight-color:transparent; user-select:none; }
+        .ym-year-btn:hover { background:rgba(107,140,92,0.15); }
+        .ym-year-btn:active { transform:scale(0.9); }
+        .ym-month-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+        .ym-month-cell { padding:6px 4px; border-radius:20px; cursor:pointer; font-weight:500; font-size:0.8rem; transition:background 0.15s, transform 0.1s, color 0.15s; color:#3a5a2a; background:#f5efdf; border:1px solid transparent; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; }
+        .ym-month-cell:hover { background:#e2d2af; transform:scale(1.04); }
+        .ym-month-cell:active { transform:scale(0.94); }
+        .ym-month-cell.active-month { background:#6b8c5c; color:white; border-color:#4a6b3e; font-weight:700; }
 
-        html {
-            height:100%;
-            background:linear-gradient(135deg, #fce5c4 0%, #c8e0f0 50%, #e8d4f0 100%);
-            background-attachment:fixed;
-        }
-        body {
-            margin:0;
-            padding:1rem;
-            min-height:100%;
-            background:transparent;
-            font-family:'Segoe UI','Roboto','Noto Sans',system-ui,-apple-system,'Helvetica Neue',sans-serif;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-        }
-        .nature-container {
-            max-width:1600px;
-            width:100%;
-            background:rgba(255,255,255,0.28);
-            backdrop-filter:blur(4px);
-            border-radius:2rem;
-            padding:1.5rem;
-            box-shadow:0 20px 40px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.05);
-        }
-        .main-title {
-            text-align:center;
-            font-size:clamp(1.8rem,8vw,3rem);
-            font-weight:700;
-            background:linear-gradient(135deg,#2c5a2e,#5b8c5a,#c7a252);
-            background-clip:text;
-            -webkit-background-clip:text;
-            color:transparent;
-            margin-bottom:1.5rem;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            gap:8px;
-            flex-wrap:wrap;
-        }
-        .main-title::after {
-            content:'👣';
-            font-size:clamp(1.5rem,6vw,2.5rem);
-            background-clip:text;
-            color:transparent;
-            display:inline-block;
-        }
-        .main-title::before {
-            content:'🌿';
-            font-size:clamp(1.5rem,6vw,2.5rem);
-            background-clip:text;
-            color:transparent;
-            display:inline-block;
-        }
-        .dashboard {
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            grid-template-rows:auto auto;
-            grid-template-areas:"calendar info" "current  info";
-            gap:1.5rem;
-            align-items:start;
-        }
-        @media (max-width:880px) {
-            .dashboard {
-                grid-template-columns:1fr;
-                grid-template-rows:auto auto auto;
-                grid-template-areas:"calendar" "current" "info";
-            }
-        }
-        .date-card {
-            grid-area:calendar;
-            background:rgba(255,255,255,0.6);
-            backdrop-filter:blur(14px);
-            border-radius:1.8rem;
-            padding:1rem 1.2rem;
-            box-shadow:0 12px 28px rgba(0,0,0,0.1);
-            border:1px solid rgba(255,255,240,0.7);
-            position:relative;
-            container-type:inline-size;
-            scroll-margin-top:60px;
-        }
-        .current-card {
-            grid-area:current;
-            background:rgba(255,255,255,0.6);
-            backdrop-filter:blur(14px);
-            border-radius:1.8rem;
-            padding:1rem 1.5rem;
-            box-shadow:0 12px 28px rgba(0,0,0,0.1);
-            border:1px solid rgba(255,255,240,0.7);
-            scroll-margin-top:60px;
-        }
-        .info-card {
-            grid-area:info;
-            background:rgba(255,255,255,0.6);
-            backdrop-filter:blur(14px);
-            border-radius:1.8rem;
-            padding:1.2rem 1.5rem;
-            box-shadow:0 12px 28px rgba(0,0,0,0.1);
-            border:1px solid rgba(255,255,240,0.7);
-            scroll-margin-top:60px;
-        }
-        .calendar-header {
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            gap:4px;
-            flex-wrap:nowrap;
-            margin-bottom:0.5rem;
-            position:relative;
-            z-index:1;
-        }
-        .calendar-nav {
-            display:flex;
-            align-items:center;
-            gap:4px;
-            font-weight:600;
-            font-size:clamp(0.7rem,3cqw,1rem);
-            color:#2c5a2e;
-            white-space:nowrap;
-            position:relative;
-            z-index:2;
-            flex-shrink:1;
-            min-width:0;
-        }
-        .calendar-nav button {
-            background:none;
-            border:none;
-            font-size:clamp(0.9rem,3.5cqw,1.2rem);
-            cursor:pointer;
-            color:#6b8c5c;
-            line-height:1;
-            padding:0 2px;
-            transition:transform 0.1s;
-            -webkit-tap-highlight-color:transparent;
-            flex-shrink:0;
-        }
-        .calendar-nav button:active {
-            transform:scale(0.9);
-        }
-        .calendar-time-actions {
-            display:flex;
-            align-items:center;
-            gap:6px;
-            white-space:nowrap;
-            position:relative;
-            z-index:2;
-            flex-shrink:1;
-            min-width:0;
-        }
-        .calendar-time-select {
-            padding:4px 8px;
-            border-radius:20px;
-            border:1px solid rgba(180,150,100,0.35);
-            background:rgba(255,255,250,0.95);
-            font-family:inherit;
-            font-size:clamp(0.8rem,3.5cqw,1.1rem);
-            font-weight:600;
-            color:#2c5a2e;
-            width:auto;
-            min-width:75px;
-            max-width:100px;
-            flex-shrink:1;
-            height:auto;
-            line-height:1.3;
-            appearance:auto;
-            cursor:pointer;
-        }
-        .calendar-today-btn {
-            background:#6b8c5c;
-            border:none;
-            color:white;
-            padding:4px 10px;
-            border-radius:20px;
-            cursor:pointer;
-            font-weight:600;
-            font-size:clamp(0.8rem,3.5cqw,1.1rem);
-            transition:0.1s;
-            white-space:nowrap;
-            -webkit-tap-highlight-color:transparent;
-            flex-shrink:1;
-            line-height:1.3;
-        }
-        .calendar-today-btn:active {
-            transform:scale(0.96);
-        }
-        .calendar-grid {
-            display:grid;
-            grid-template-columns:repeat(7,1fr);
-            gap:4px;
-            text-align:center;
-            position:relative;
-            z-index:0;
-        }
-        .calendar-day-name {
-            font-weight:600;
-            font-size:clamp(0.6rem,2.2cqw,0.8rem);
-            color:#7c6b4a;
-            padding:4px 0;
-        }
-        .calendar-day {
-            aspect-ratio:1/1;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-            border-radius:12px;
-            cursor:pointer;
-            transition:background 0.2s, transform 0.1s;
-            font-size:clamp(0.7rem,4.2cqw,1.1rem);
-            position:relative;
-            color:#3a2e22;
-            background:rgba(255,255,250,0.7);
-            line-height:1.15;
-            padding:2px;
-            box-sizing:border-box;
-            overflow:hidden;
-            z-index:1;
-        }
-        .calendar-day:hover {
-            background:rgba(200,180,120,0.25);
-            transform:scale(1.02);
-            z-index:3;
-        }
-        .calendar-day.today:not(.selected) {
-            border:2px solid #e67e22;
-        }
-        .calendar-day .lunar {
-            font-size:0.68em;
-            opacity:0.85;
-            line-height:1;
-            margin-top:1px;
-            position:relative;
-            z-index:0;
-            pointer-events:none;
-            max-width:100%;
-            overflow:hidden;
-            text-overflow:ellipsis;
-            white-space:nowrap;
-        }
-        .holiday-badge {
-            position:absolute;
-            top:1px;
-            right:1px;
-            font-size:0.65em;
-            font-weight:800;
-            line-height:1;
-            padding:1px 2px;
-            border-radius:0;
-            color:inherit;
-            background:none!important;
-            pointer-events:none;
-            z-index:15;
-            letter-spacing:0.5px;
-            text-shadow:0 1px 2px rgba(0,0,0,0.15);
-        }
-        .holiday-rest {
-            color:#dc2626;
-        }
-        .holiday-work {
-            color:#1e3a8a;
-        }
-        .calendar-day.weekend {
-            background-color:rgba(255,165,0,0.1);
-        }
-        .calendar-day.other-month {
-            opacity:0.5;
-        }
-        .calendar-day.selected {
-            background:#6b8c5c;
-            color:white;
-            font-weight:700;
-            box-shadow:0 4px 10px rgba(0,0,0,0.2);
-            z-index:2;
-        }
-        .calendar-day.selected.weekend {
-            background:#6b8c5c;
-        }
-        .calendar-day.selected .lunar {
-            color:rgba(255,255,255,0.9);
-        }
-        .calendar-day.selected .holiday-badge {
-            z-index:20;
-        }
-        .current-temp-row {
-            display:flex;
-            justify-content:space-between;
-            align-items:baseline;
-            flex-wrap:nowrap;
-            margin-bottom:1rem;
-            font-size:clamp(0.9rem,4vw,1.2rem);
-            font-weight:600;
-            color:#2c5a2e;
-            border-bottom:1px dashed rgba(100,80,40,0.2);
-            padding-bottom:8px;
-            gap:8px;
-            min-width:0;
-        }
-        .current-temp-row > span:first-child {
-            flex-shrink:0;
-        }
-        .current-weather-badge {
-            display:flex;
-            align-items:center;
-            gap:8px;
-            background:rgba(235,225,195,0.5);
-            border-radius:60px;
-            padding:4px 14px;
-            white-space:nowrap;
-            flex-shrink:1;
-            min-width:0;
-            overflow:hidden;
-        }
-        .current-weather-badge span {
-            flex-shrink:1;
-            min-width:0;
-        }
-        #currentAirTempVal {
-            flex-shrink:0;
-        }
-        #currentWeatherDesc {
-            overflow:hidden;
-            text-overflow:ellipsis;
-            white-space:nowrap;
-            max-width:100%;
-        }
-        .material-grid {
-            display:flex;
-            flex-direction:column;
-            gap:10px;
-            margin-top:8px;
-        }
-        .material-row {
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            flex-wrap:wrap;
-            gap:8px;
-            font-size:0.9rem;
-        }
-        .material-name {
-            width:70px;
-            font-weight:600;
-            color:#4a5b44;
-        }
-        .material-temp {
-            width:70px;
-            text-align:right;
-            font-weight:700;
-            color:#2f5e3a;
-        }
-        .material-status {
-            width:70px;
-            text-align:center;
-        }
-        .status-badge {
-            display:inline-block;
-            padding:4px 12px;
-            border-radius:40px;
-            font-size:0.7rem;
-            font-weight:600;
-            color:white;
-            background:#aaa;
-        }
-        .status-danger {
-            background:#1e3a8a;
-        }
-        .status-too-cold {
-            background:#3b82f6;
-        }
-        .status-cool {
-            background:#60a5fa;
-        }
-        .status-good {
-            background:#22c55e;
-        }
-        .status-warm {
-            background:#f97316;
-        }
-        .status-hot {
-            background:#ea580c;
-        }
-        .status-danger-hot {
-            background:#dc2626;
-        }
-        .status-na {
-            background:#9ca3af;
-        }
+        html { height:100%; background:linear-gradient(135deg, #fce5c4 0%, #c8e0f0 50%, #e8d4f0 100%); background-attachment:fixed; }
+        body { margin:0; padding:1rem; min-height:100%; background:transparent; font-family:'Segoe UI','Roboto','Noto Sans',system-ui,-apple-system,'Helvetica Neue',sans-serif; display:flex; justify-content:center; align-items:center; }
+        .nature-container { max-width:1600px; width:100%; background:rgba(255,255,255,0.28); backdrop-filter:blur(4px); border-radius:2rem; padding:1.5rem; box-shadow:0 20px 40px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.05); }
+        .main-title { text-align:center; font-size:clamp(1.8rem,8vw,3rem); font-weight:700; background:linear-gradient(135deg,#2c5a2e,#5b8c5a,#c7a252); background-clip:text; -webkit-background-clip:text; color:transparent; margin-bottom:1.5rem; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+        .main-title::after { content:'👣'; font-size:clamp(1.5rem,6vw,2.5rem); background-clip:text; color:transparent; display:inline-block; }
+        .main-title::before { content:'🌿'; font-size:clamp(1.5rem,6vw,2.5rem); background-clip:text; color:transparent; display:inline-block; }
+        .dashboard { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto auto; grid-template-areas:"calendar info" "current  info"; gap:1.5rem; align-items:start; }
+        @media (max-width:880px) { .dashboard { grid-template-columns:1fr; grid-template-rows:auto auto auto; grid-template-areas:"calendar" "current" "info"; } }
+        .date-card { grid-area:calendar; background:rgba(255,255,255,0.6); backdrop-filter:blur(14px); border-radius:1.8rem; padding:1rem 1.2rem; box-shadow:0 12px 28px rgba(0,0,0,0.1); border:1px solid rgba(255,255,240,0.7); position:relative; container-type:inline-size; scroll-margin-top:60px; }
+        .current-card { grid-area:current; background:rgba(255,255,255,0.6); backdrop-filter:blur(14px); border-radius:1.8rem; padding:1rem 1.5rem; box-shadow:0 12px 28px rgba(0,0,0,0.1); border:1px solid rgba(255,255,240,0.7); scroll-margin-top:60px; }
+        .info-card { grid-area:info; background:rgba(255,255,255,0.6); backdrop-filter:blur(14px); border-radius:1.8rem; padding:1.2rem 1.5rem; box-shadow:0 12px 28px rgba(0,0,0,0.1); border:1px solid rgba(255,255,240,0.7); scroll-margin-top:60px; }
+        .calendar-header { display:flex; justify-content:space-between; align-items:center; gap:4px; flex-wrap:nowrap; margin-bottom:0.5rem; position:relative; z-index:1; }
+        .calendar-nav { display:flex; align-items:center; gap:4px; font-weight:600; font-size:clamp(0.7rem,3cqw,1rem); color:#2c5a2e; white-space:nowrap; position:relative; z-index:2; flex-shrink:1; min-width:0; }
+        .calendar-nav button { background:none; border:none; font-size:clamp(0.9rem,3.5cqw,1.2rem); cursor:pointer; color:#6b8c5c; line-height:1; padding:0 2px; transition:transform 0.1s; -webkit-tap-highlight-color:transparent; flex-shrink:0; }
+        .calendar-nav button:active { transform:scale(0.9); }
+        .calendar-time-actions { display:flex; align-items:center; gap:6px; white-space:nowrap; position:relative; z-index:2; flex-shrink:1; min-width:0; }
+        .calendar-time-select { padding:4px 8px; border-radius:20px; border:1px solid rgba(180,150,100,0.35); background:rgba(255,255,250,0.95); font-family:inherit; font-size:clamp(0.8rem,3.5cqw,1.1rem); font-weight:600; color:#2c5a2e; width:auto; min-width:75px; max-width:100px; flex-shrink:1; height:auto; line-height:1.3; appearance:auto; cursor:pointer; }
+        .calendar-today-btn { background:#6b8c5c; border:none; color:white; padding:4px 10px; border-radius:20px; cursor:pointer; font-weight:600; font-size:clamp(0.8rem,3.5cqw,1.1rem); transition:0.1s; white-space:nowrap; -webkit-tap-highlight-color:transparent; flex-shrink:1; line-height:1.3; }
+        .calendar-today-btn:active { transform:scale(0.96); }
+        .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center; position:relative; z-index:0; }
+        .calendar-day-name { font-weight:600; font-size:clamp(0.6rem,2.2cqw,0.8rem); color:#7c6b4a; padding:4px 0; }
+        .calendar-day { aspect-ratio:1/1; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:12px; cursor:pointer; transition:background 0.2s, transform 0.1s; font-size:clamp(0.7rem,4.2cqw,1.1rem); position:relative; color:#3a2e22; background:rgba(255,255,250,0.7); line-height:1.15; padding:2px; box-sizing:border-box; overflow:hidden; z-index:1; }
+        .calendar-day:hover { background:rgba(200,180,120,0.25); transform:scale(1.02); z-index:3; }
+        .calendar-day.today:not(.selected) { border:2px solid #e67e22; }
+        .calendar-day .lunar { font-size:0.68em; opacity:0.85; line-height:1; margin-top:1px; position:relative; z-index:0; pointer-events:none; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .holiday-badge { position:absolute; top:1px; right:1px; font-size:0.65em; font-weight:800; line-height:1; padding:1px 2px; border-radius:0; color:inherit; background:none!important; pointer-events:none; z-index:15; letter-spacing:0.5px; text-shadow:0 1px 2px rgba(0,0,0,0.15); }
+        .holiday-rest { color:#dc2626; }
+        .holiday-work { color:#1e3a8a; }
+        .calendar-day.weekend { background-color:rgba(255,165,0,0.1); }
+        .calendar-day.other-month { opacity:0.5; }
+        .calendar-day.selected { background:#6b8c5c; color:white; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,0.2); z-index:2; }
+        .calendar-day.selected.weekend { background:#6b8c5c; }
+        .calendar-day.selected .lunar { color:rgba(255,255,255,0.9); }
+        .calendar-day.selected .holiday-badge { z-index:20; }
+        .current-temp-row { display:flex; justify-content:space-between; align-items:baseline; flex-wrap:nowrap; margin-bottom:1rem; font-size:clamp(0.9rem,4vw,1.2rem); font-weight:600; color:#2c5a2e; border-bottom:1px dashed rgba(100,80,40,0.2); padding-bottom:8px; gap:8px; min-width:0; }
+        .current-temp-row > span:first-child { flex-shrink:0; }
+        .current-weather-badge { display:flex; align-items:center; gap:8px; background:rgba(235,225,195,0.5); border-radius:60px; padding:4px 14px; white-space:nowrap; flex-shrink:1; min-width:0; overflow:hidden; }
+        .current-weather-badge span { flex-shrink:1; min-width:0; }
+        #currentAirTempVal { flex-shrink:0; }
+        #currentWeatherDesc { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%; }
+        .material-grid { display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+        .material-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:0.9rem; }
+        .material-name { width:70px; font-weight:600; color:#4a5b44; }
+        .material-temp { width:70px; text-align:right; font-weight:700; color:#2f5e3a; }
+        .material-status { width:70px; text-align:center; }
+        .status-badge { display:inline-block; padding:4px 12px; border-radius:40px; font-size:0.7rem; font-weight:600; color:white; background:#aaa; }
+        .status-danger { background:#1e3a8a; }
+        .status-too-cold { background:#3b82f6; }
+        .status-cool { background:#60a5fa; }
+        .status-good { background:#22c55e; }
+        .status-warm { background:#f97316; }
+        .status-hot { background:#ea580c; }
+        .status-danger-hot { background:#dc2626; }
+        .status-na { background:#9ca3af; }
 
-        .card-header {
-            display:flex;
-            flex-wrap:wrap;
-            gap:12px;
-            margin-bottom:1rem;
-            align-items:flex-start;
-        }
-        .card-header h3 {
-            font-size:clamp(1.3rem,5vw,1.7rem);
-            font-weight:600;
-            color:#2c3e2f;
-            border-left:5px solid #ffb347;
-            padding-left:0.8rem;
-            margin:0;
-            display:inline-flex;
-            align-items:center;
-            flex-wrap:wrap;
-            gap:8px;
-        }
-        .location-actions {
-            display:flex;
-            gap:8px;
-            width:100%;
-            margin-top:4px;
-        }
-        .city-picker-btn,
-        .auto-locate-btn {
-            background:#6b8c5c;
-            border:none;
-            color:white;
-            padding:5px 12px;
-            border-radius:30px;
-            cursor:pointer;
-            font-weight:500;
-            -webkit-tap-highlight-color:transparent;
-        }
-        .auto-locate-btn {
-            background:#b48c48;
-        }
-        .temp-block {
-            background:rgba(245,245,235,0.5);
-            border-radius:1.2rem;
-            padding:0.6rem 1rem;
-            margin-bottom:1rem;
-        }
-        .temp-item {
-            display:flex;
-            justify-content:space-between;
-            font-size:1rem;
-            font-weight:500;
-            padding:0.4rem 0;
-            border-bottom:1px dashed rgba(0,0,0,0.1);
-        }
-        .data-tag {
-            background:#e67e22;
-            color:white;
-            font-size:0.7rem;
-            padding:2px 8px;
-            border-radius:20px;
-            white-space:nowrap;
-            display:inline-block;
-            margin-right:8px;
-        }
-        .surface-list {
-            margin-top:0.5rem;
-        }
-        .surface-row {
-            margin-bottom:1rem;
-            padding-bottom:0.2rem;
-            position:relative;
-        }
-        .surface-header {
-            display:flex;
-            justify-content:space-between;
-            align-items:baseline;
-            margin-bottom:4px;
-            font-size:0.85rem;
-        }
-        .surface-name {
-            font-weight:700;
-            color:#4a5b44;
-        }
-        .surface-temp-range {
-            font-size:0.75rem;
-            color:#7c6b4a;
-        }
-        .timeline-canvas-wrapper {
-            width:100%;
-            height:18px;
-            margin:2px 0;
-            position:relative;
-        }
-        .timeline-canvas {
-            width:100%;
-            height:18px;
-            display:block;
-            border-radius:12px;
-            cursor:default;
-            touch-action:none;
-        }
-        .timeline-tooltip {
-            position:absolute;
-            bottom:calc(100% + 10px);
-            left:0;
-            transform:translateX(-50%) scale(0);
-            transform-origin:bottom center;
-            background:rgba(255,255,245,0.96);
-            color:#2c5a2e;
-            padding:6px 14px;
-            border-radius:10px;
-            font-size:0.9rem;
-            font-weight:500;
-            white-space:nowrap;
-            pointer-events:none;
-            z-index:50;
-            opacity:0;
-            text-align:left;
-            line-height:1.5;
-            box-shadow:0 6px 20px rgba(0,0,0,0.18),0 1px 4px rgba(0,0,0,0.1);
-            border:1px solid rgba(180,150,100,0.5);
-            user-select:none;
-            -webkit-user-select:none;
-            transition:transform var(--animate-duration) ease-out, opacity var(--animate-duration) ease-out;
-        }
-        .timeline-tooltip.visible {
-            transform:translateX(-50%) scale(1);
-            opacity:1;
-            transition:transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic);
-        }
-        .timeline-tooltip .tooltip-row {
-            display:flex;
-            justify-content:space-between;
-            gap:12px;
-            align-items:baseline;
-        }
-        .timeline-tooltip .tooltip-label {
-            font-weight:500;
-            color:inherit;
-        }
-        .timeline-tooltip .tooltip-value {
-            font-weight:700;
-            color:#2c5a2e;
-            text-align:right;
-        }
-        .timeline-tooltip .tooltip-temp-row .tooltip-value {
-            color:#2f5e3a;
-        }
-        .sticky-header-bar {
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-            background:rgba(255,255,245,0.95);
-            box-shadow:0 4px 12px rgba(0,0,0,0.08);
-            z-index:700;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:8px 16px;
-            gap:12px;
-            flex-wrap:wrap;
-            border-bottom:1px solid rgba(180,150,100,0.4);
-            box-sizing:border-box;
-            transform:translateY(-100%);
-            pointer-events:none;
-            transition:transform var(--animate-duration) var(--ease-smooth);
-        }
-        .sticky-header-bar.show {
-            transform:translateY(0);
-            pointer-events:auto;
-        }
-        .sticky-date-label {
-            font-weight:700;
-            font-size:1rem;
-            color:#2c5a2e;
-            white-space:nowrap;
-            cursor:pointer;
-            padding:4px 10px;
-            border-radius:20px;
-            background:rgba(255,255,250,0.5);
-            border:1px solid rgba(180,150,100,0.35);
-            transition:background 0.2s, transform 0.1s;
-            user-select:none;
-            -webkit-user-select:none;
-            -webkit-tap-highlight-color:transparent;
-            position:relative;
-        }
-        .sticky-date-label:hover {
-            background:rgba(255,255,250,0.85);
-            transform:scale(1.03);
-        }
-        .sticky-date-label:active {
-            transform:scale(0.96);
-        }
-        .sticky-header-bar .sticky-time-select {
-            padding:4px 8px;
-            border-radius:20px;
-            border:1px solid rgba(180,150,100,0.35);
-            background:rgba(255,255,250,0.95);
-            font-family:inherit;
-            font-size:0.9rem;
-            font-weight:600;
-            color:#2c5a2e;
-            appearance:auto;
-            cursor:pointer;
-        }
+        .card-header { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:1rem; align-items:flex-start; }
+        .card-header h3 { font-size:clamp(1.3rem,5vw,1.7rem); font-weight:600; color:#2c3e2f; border-left:5px solid #ffb347; padding-left:0.8rem; margin:0; display:inline-flex; align-items:center; flex-wrap:wrap; gap:8px; }
+        .location-actions { display:flex; gap:8px; width:100%; margin-top:4px; }
+        .city-picker-btn, .auto-locate-btn { background:#6b8c5c; border:none; color:white; padding:5px 12px; border-radius:30px; cursor:pointer; font-weight:500; -webkit-tap-highlight-color:transparent; }
+        .auto-locate-btn { background:#b48c48; }
+        .temp-block { background:rgba(245,245,235,0.5); border-radius:1.2rem; padding:0.6rem 1rem; margin-bottom:1rem; }
+        .temp-item { display:flex; justify-content:space-between; font-size:1rem; font-weight:500; padding:0.4rem 0; border-bottom:1px dashed rgba(0,0,0,0.1); }
+        .data-tag { background:#e67e22; color:white; font-size:0.7rem; padding:2px 8px; border-radius:20px; white-space:nowrap; display:inline-block; margin-right:8px; }
+        .surface-list { margin-top:0.5rem; }
+        .surface-row { margin-bottom:1rem; padding-bottom:0.2rem; position:relative; }
+        .surface-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; font-size:0.85rem; }
+        .surface-name { font-weight:700; color:#4a5b44; }
+        .surface-temp-range { font-size:0.75rem; color:#7c6b4a; }
+        .timeline-canvas-wrapper { width:100%; height:18px; margin:2px 0; position:relative; }
+        .timeline-canvas { width:100%; height:18px; display:block; border-radius:12px; cursor:default; touch-action:none; }
+        .timeline-ticks { display:flex; width:100%; margin-top:2px; justify-content:space-between; font-size:0.6rem; color:#4a4a4a; }
+        .timeline-ticks span { flex:1; text-align:center; white-space:nowrap; user-select:none; }
+        .tick-comfort { color:#22c55e !important; font-weight:600; }
+        .timeline-tooltip { position:absolute; bottom:calc(100% + 10px); left:0; transform:translateX(-50%) scale(0); transform-origin:bottom center; background:rgba(255,255,245,0.96); color:#2c5a2e; padding:6px 14px; border-radius:10px; font-size:0.9rem; font-weight:500; white-space:nowrap; pointer-events:none; z-index:50; opacity:0; text-align:left; line-height:1.5; box-shadow:0 6px 20px rgba(0,0,0,0.18),0 1px 4px rgba(0,0,0,0.1); border:1px solid rgba(180,150,100,0.5); user-select:none; -webkit-user-select:none; transition:transform var(--animate-duration) ease-out, opacity var(--animate-duration) ease-out; }
+        .timeline-tooltip.visible { transform:translateX(-50%) scale(1); opacity:1; transition:transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic); }
+        .timeline-tooltip .tooltip-row { display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
+        .timeline-tooltip .tooltip-label { font-weight:500; color:inherit; }
+        .timeline-tooltip .tooltip-value { font-weight:700; color:#2c5a2e; text-align:right; }
+        .timeline-tooltip .tooltip-temp-row .tooltip-value { color:#2f5e3a; }
+        .sticky-header-bar { position:fixed; top:0; left:0; width:100%; background:rgba(255,255,245,0.95); box-shadow:0 4px 12px rgba(0,0,0,0.08); z-index:700; display:flex; align-items:center; justify-content:center; padding:8px 16px; gap:12px; flex-wrap:wrap; border-bottom:1px solid rgba(180,150,100,0.4); box-sizing:border-box; transform:translateY(-100%); pointer-events:none; transition:transform var(--animate-duration) var(--ease-smooth); }
+        .sticky-header-bar.show { transform:translateY(0); pointer-events:auto; }
+        .sticky-date-label { font-weight:700; font-size:1rem; color:#2c5a2e; white-space:nowrap; cursor:pointer; padding:4px 10px; border-radius:20px; background:rgba(255,255,250,0.5); border:1px solid rgba(180,150,100,0.35); transition:background 0.2s, transform 0.1s; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; position:relative; }
+        .sticky-date-label:hover { background:rgba(255,255,250,0.85); transform:scale(1.03); }
+        .sticky-date-label:active { transform:scale(0.96); }
+        .sticky-header-bar .sticky-time-select { padding:4px 8px; border-radius:20px; border:1px solid rgba(180,150,100,0.35); background:rgba(255,255,250,0.95); font-family:inherit; font-size:0.9rem; font-weight:600; color:#2c5a2e; appearance:auto; cursor:pointer; }
 
-        .sticky-date-dropdown {
-            position:absolute;
-            top:calc(100% + 8px);
-            left:50%;
-            transform:translateX(-50%) scaleY(0.8);
-            transform-origin:top center;
-            z-index:710;
-            background:#fffef9;
-            border-radius:1.2rem;
-            padding:0.8rem;
-            box-shadow:0 12px 32px rgba(0,0,0,0.2),0 2px 8px rgba(0,0,0,0.1);
-            border:1px solid rgba(180,150,100,0.5);
-            min-width:240px;
-            text-align:center;
-            visibility:hidden;
-            opacity:0;
-            pointer-events:none;
-            transition:transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration);
-        }
-        .sticky-date-dropdown.open {
-            visibility:visible;
-            opacity:1;
-            pointer-events:auto;
-            transform:translateX(-50%) scaleY(1);
-            transition:transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s;
-        }
-        .sdd-year-row {
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            gap:12px;
-            margin-bottom:8px;
-            font-weight:700;
-            font-size:0.9rem;
-            color:#2c5a2e;
-        }
-        .sdd-year-btn {
-            background:none;
-            border:none;
-            cursor:pointer;
-            font-size:1.1rem;
-            color:#6b8c5c;
-            padding:2px 6px;
-            border-radius:50%;
-            transition:background 0.15s, transform 0.1s;
-            line-height:1;
-            -webkit-tap-highlight-color:transparent;
-            user-select:none;
-        }
-        .sdd-year-btn:hover {
-            background:rgba(107,140,92,0.15);
-        }
-        .sdd-year-btn:active {
-            transform:scale(0.9);
-        }
-        .sdd-month-grid {
-            display:grid;
-            grid-template-columns:repeat(4,1fr);
-            gap:4px;
-            margin-bottom:8px;
-        }
-        .sdd-month-cell {
-            padding:5px 3px;
-            border-radius:16px;
-            cursor:pointer;
-            font-weight:500;
-            font-size:0.7rem;
-            transition:background 0.15s, transform 0.1s, color 0.15s;
-            color:#3a5a2a;
-            background:#f5efdf;
-            border:1px solid transparent;
-            user-select:none;
-            -webkit-user-select:none;
-            -webkit-tap-highlight-color:transparent;
-        }
-        .sdd-month-cell:hover {
-            background:#e2d2af;
-            transform:scale(1.04);
-        }
-        .sdd-month-cell:active {
-            transform:scale(0.94);
-        }
-        .sdd-month-cell.active-month {
-            background:#6b8c5c;
-            color:white;
-            border-color:#4a6b3e;
-            font-weight:700;
-        }
-        .sdd-day-grid {
-            display:grid;
-            grid-template-columns:repeat(7,1fr);
-            gap:3px;
-            text-align:center;
-        }
-        .sdd-day-name {
-            font-size:0.6rem;
-            font-weight:600;
-            color:#7c6b4a;
-            padding:2px 0;
-        }
-        .sdd-day-cell {
-            aspect-ratio:1/1;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-            border-radius:10px;
-            cursor:pointer;
-            font-size:0.7rem;
-            transition:background 0.15s, transform 0.1s;
-            color:#3a2e22;
-            background:rgba(255,255,250,0.7);
-            -webkit-tap-highlight-color:transparent;
-            user-select:none;
-            position:relative;
-            line-height:1.1;
-            padding:1px;
-        }
-        .sdd-day-cell:hover {
-            background:rgba(200,180,120,0.25);
-            transform:scale(1.05);
-        }
-        .sdd-day-cell:active {
-            transform:scale(0.9);
-        }
-        .sdd-day-cell.today {
-            border:2px solid #e67e22;
-        }
-        .sdd-day-cell.selected {
-            background:#6b8c5c;
-            color:white;
-            font-weight:700;
-        }
-        .sdd-day-cell.other-month {
-            opacity:0.4;
-        }
-        .sdd-day-cell.weekend {
-            background-color:rgba(255,165,0,0.1);
-        }
-        .sdd-day-cell.selected.weekend {
-            background:#6b8c5c;
-        }
-        .sdd-day-cell .sdd-festival {
-            font-size:0.55em;
-            line-height:1;
-            margin-top:1px;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
-            max-width:100%;
-        }
-        .sdd-day-cell .holiday-badge {
-            position:absolute;
-            top:0;
-            right:0;
-            font-size:0.5em;
-            font-weight:800;
-            line-height:1;
-            padding:0 1px;
-            pointer-events:none;
-            z-index:15;
-        }
-        .sdd-day-cell.selected .holiday-badge {
-            z-index:20;
-        }
+        .sticky-date-dropdown { position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%) scaleY(0.8); transform-origin:top center; z-index:710; background:#fffef9; border-radius:1.2rem; padding:0.8rem; box-shadow:0 12px 32px rgba(0,0,0,0.2),0 2px 8px rgba(0,0,0,0.1); border:1px solid rgba(180,150,100,0.5); min-width:240px; text-align:center; visibility:hidden; opacity:0; pointer-events:none; transition:transform var(--animate-duration) var(--ease-smooth), opacity var(--animate-duration) var(--ease-smooth), visibility 0s var(--animate-duration); }
+        .sticky-date-dropdown.open { visibility:visible; opacity:1; pointer-events:auto; transform:translateX(-50%) scaleY(1); transition:transform var(--animate-duration) var(--ease-elastic), opacity var(--animate-duration) var(--ease-elastic), visibility 0s 0s; }
+        .sdd-year-row { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:8px; font-weight:700; font-size:0.9rem; color:#2c5a2e; }
+        .sdd-year-btn { background:none; border:none; cursor:pointer; font-size:1.1rem; color:#6b8c5c; padding:2px 6px; border-radius:50%; transition:background 0.15s, transform 0.1s; line-height:1; -webkit-tap-highlight-color:transparent; user-select:none; }
+        .sdd-year-btn:hover { background:rgba(107,140,92,0.15); }
+        .sdd-year-btn:active { transform:scale(0.9); }
+        .sdd-month-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-bottom:8px; }
+        .sdd-month-cell { padding:5px 3px; border-radius:16px; cursor:pointer; font-weight:500; font-size:0.7rem; transition:background 0.15s, transform 0.1s, color 0.15s; color:#3a5a2a; background:#f5efdf; border:1px solid transparent; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; }
+        .sdd-month-cell:hover { background:#e2d2af; transform:scale(1.04); }
+        .sdd-month-cell:active { transform:scale(0.94); }
+        .sdd-month-cell.active-month { background:#6b8c5c; color:white; border-color:#4a6b3e; font-weight:700; }
+        .sdd-day-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; text-align:center; }
+        .sdd-day-name { font-size:0.6rem; font-weight:600; color:#7c6b4a; padding:2px 0; }
+        .sdd-day-cell { aspect-ratio:1/1; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:10px; cursor:pointer; font-size:0.7rem; transition:background 0.15s, transform 0.1s; color:#3a2e22; background:rgba(255,255,250,0.7); -webkit-tap-highlight-color:transparent; user-select:none; position:relative; line-height:1.1; padding:1px; }
+        .sdd-day-cell:hover { background:rgba(200,180,120,0.25); transform:scale(1.05); }
+        .sdd-day-cell:active { transform:scale(0.9); }
+        .sdd-day-cell.today { border:2px solid #e67e22; }
+        .sdd-day-cell.selected { background:#6b8c5c; color:white; font-weight:700; }
+        .sdd-day-cell.other-month { opacity:0.4; }
+        .sdd-day-cell.weekend { background-color:rgba(255,165,0,0.1); }
+        .sdd-day-cell.selected.weekend { background:#6b8c5c; }
+        .sdd-day-cell .sdd-festival { font-size:0.55em; line-height:1; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+        .sdd-day-cell .holiday-badge { position:absolute; top:0; right:0; font-size:0.5em; font-weight:800; line-height:1; padding:0 1px; pointer-events:none; z-index:15; }
+        .sdd-day-cell.selected .holiday-badge { z-index:20; }
 
-        .footer-info {
-            margin-top:2rem;
-            padding:1.5rem;
-            background:rgba(250,245,235,0.85);
-            backdrop-filter:blur(8px);
-            border-radius:1.5rem;
-            border:1px solid rgba(180,150,100,0.3);
-            color:#4a3b28;
-            font-size:0.8rem;
-            line-height:1.6;
-            width:100%;
-            box-sizing:border-box;
-            scroll-margin-top:60px;
-        }
-        .footer-info-inner {
-            max-width:750px;
-            margin:0 auto;
-            text-align:left;
-        }
-        .footer-info h4 {
-            font-size:0.95rem;
-            margin:1rem 0 0.3rem;
-            color:#2c5a2e;
-            font-weight:600;
-        }
-        .footer-info ul,
-        .footer-info p {
-            margin:0.4rem 0;
-            padding-left:1.2rem;
-            text-align:left;
-            word-break:break-word;
-            max-width:100%;
-        }
-        .footer-info li {
-            margin-bottom:0.25rem;
-        }
-        .footer-info a {
-            color:#5a7a4a;
-            text-decoration:underline;
-            font-weight:500;
-        }
-        .footer-info a:hover {
-            color:#2c5a2e;
-        }
+        .footer-info { margin-top:2rem; padding:1.5rem; background:rgba(250,245,235,0.85); backdrop-filter:blur(8px); border-radius:1.5rem; border:1px solid rgba(180,150,100,0.3); color:#4a3b28; font-size:0.8rem; line-height:1.6; width:100%; box-sizing:border-box; scroll-margin-top:60px; }
+        .footer-info-inner { max-width:750px; margin:0 auto; text-align:left; }
+        .footer-info h4 { font-size:0.95rem; margin:1rem 0 0.3rem; color:#2c5a2e; font-weight:600; }
+        .footer-info ul, .footer-info p { margin:0.4rem 0; padding-left:1.2rem; text-align:left; word-break:break-word; max-width:100%; }
+        .footer-info li { margin-bottom:0.25rem; }
+        .footer-info a { color:#5a7a4a; text-decoration:underline; font-weight:500; }
+        .footer-info a:hover { color:#2c5a2e; }
 
         @media (max-width:480px) {
-            .quick-nav-buttons {
-                top:100px;
-                right:10px;
-                gap:6px;
-            }
-            .quick-nav-btn {
-                width:38px;
-                height:38px;
-                font-size:1rem;
-            }
-            .color-scheme-toggle {
-                width:38px;
-                height:38px;
-                font-size:1.2rem;
-            }
-            .nature-container {
-                padding:1rem;
-            }
-            .material-row {
-                font-size:0.75rem;
-            }
-            .calendar-day {
-                font-size:clamp(0.6rem,5.5cqw,0.85rem);
-            }
-            .calendar-day .lunar {
-                font-size:0.7em;
-            }
-            .city-selector-panel {
-                min-width:280px;
-            }
-            .toast-content {
-                padding:20px 24px;
-            }
-            .locate-card {
-                padding:20px 24px;
-                min-width:240px;
-            }
-            .year-month-dropdown {
-                min-width:180px;
-                padding:0.8rem;
-            }
-            .ym-month-grid {
-                gap:4px;
-            }
-            .ym-month-cell {
-                padding:5px 3px;
-                font-size:0.7rem;
-                border-radius:16px;
-            }
-            .calendar-time-actions .calendar-time-select {
-                font-size:clamp(0.7rem,3cqw,0.9rem);
-                min-width:60px;
-                max-width:80px;
-                padding:3px 6px;
-            }
-            .calendar-today-btn {
-                font-size:clamp(0.7rem,3cqw,0.9rem);
-                padding:3px 8px;
-            }
-            .timeline-tooltip {
-                font-size:0.75rem;
-                padding:4px 10px;
-            }
-            .sticky-header-bar {
-                padding:6px 12px;
-                gap:8px;
-            }
-            .sticky-date-dropdown {
-                min-width:200px;
-                padding:0.6rem;
-            }
-            .sdd-day-cell {
-                font-size:0.6rem;
-                border-radius:8px;
-            }
-            .sdd-month-cell {
-                font-size:0.6rem;
-                padding:4px 2px;
-                border-radius:14px;
-            }
+            .quick-nav-buttons { top:100px; right:10px; gap:6px; }
+            .quick-nav-btn { width:38px; height:38px; font-size:1rem; }
+            .color-scheme-toggle { width:38px; height:38px; font-size:1.2rem; }
+            .nature-container { padding:1rem; }
+            .material-row { font-size:0.75rem; }
+            .calendar-day { font-size:clamp(0.6rem,5.5cqw,0.85rem); }
+            .calendar-day .lunar { font-size:0.7em; }
+            .city-selector-panel { min-width:280px; }
+            .toast-content { padding:20px 24px; }
+            .locate-card { padding:20px 24px; min-width:240px; }
+            .year-month-dropdown { min-width:180px; padding:0.8rem; }
+            .ym-month-grid { gap:4px; }
+            .ym-month-cell { padding:5px 3px; font-size:0.7rem; border-radius:16px; }
+            .calendar-time-actions .calendar-time-select { font-size:clamp(0.7rem,3cqw,0.9rem); min-width:60px; max-width:80px; padding:3px 6px; }
+            .calendar-today-btn { font-size:clamp(0.7rem,3cqw,0.9rem); padding:3px 8px; }
+            .timeline-tooltip { font-size:0.75rem; padding:4px 10px; }
+            .sticky-header-bar { padding:6px 12px; gap:8px; }
+            .sticky-date-dropdown { min-width:200px; padding:0.6rem; }
+            .sdd-day-cell { font-size:0.6rem; border-radius:8px; }
+            .sdd-month-cell { font-size:0.6rem; padding:4px 2px; border-radius:14px; }
+            .timeline-ticks { font-size:0.5rem; }
         }
     </style>
 </head>
@@ -1618,8 +408,8 @@
             <div class="hot-cities" id="hotCitiesContainer"></div>
             <div id="cityResultsList" class="city-results"></div>
             <div style="text-align:right;margin-top:1rem;display:flex;justify-content:flex-end;gap:8px;">
-                <button id="editCitiesBtn" style="background:#bbaa7a;border:none;padding:5px 16px;border-radius:40px;cursor:pointer;">编辑</button>
-                <button id="closeCityPicker" style="background:#bbaa7a;border:none;padding:5px 16px;border-radius:40px;cursor:pointer;">关闭</button>
+                <button id="editCitiesBtn" style="background:#bbaa7a;border:none;padding:5px 16px;border-radius:40px;cursor:pointer;color:white;">编辑</button>
+                <button id="closeCityPicker" style="background:#bbaa7a;border:none;padding:5px 16px;border-radius:40px;cursor:pointer;color:white;">关闭</button>
             </div>
         </div>
     </div>
@@ -1693,7 +483,6 @@
 
             let hotCities = [];
             let cityEditMode = false;
-            let savedScrollY = 0;
 
             function loadHotCities() {
                 try {
@@ -1708,20 +497,7 @@
                 } catch(e) {}
                 hotCities = DEFAULT_HOT_CITIES.map(c => ({...c}));
             }
-            function saveHotCities() {
-                localStorage.setItem(HOT_CITIES_KEY, JSON.stringify(hotCities));
-            }
-
-            function openCityPicker() {
-                savedScrollY = window.scrollY;
-                citySelectorOverlay.classList.add('active');
-            }
-            function closeCityPicker() {
-                citySelectorOverlay.classList.remove('active');
-                requestAnimationFrame(() => {
-                    window.scrollTo({top: savedScrollY, behavior: 'instant'});
-                });
-            }
+            function saveHotCities() { localStorage.setItem(HOT_CITIES_KEY, JSON.stringify(hotCities)); }
 
             let dragIndex = null;
             let dragTarget = null;
@@ -1802,13 +578,13 @@
                     }
                     hotCitiesContainer.appendChild(btn);
                 });
-                const addBtn = document.createElement('button');
-                addBtn.className = 'hot-city-btn add-city-btn';
-                addBtn.innerHTML = '+';
-                addBtn.addEventListener('click', () => {
-                    showAddCityModal();
-                });
-                hotCitiesContainer.appendChild(addBtn);
+                if (cityEditMode) {
+                    const addBtn = document.createElement('button');
+                    addBtn.className = 'hot-city-btn add-city-btn';
+                    addBtn.innerHTML = '+';
+                    addBtn.addEventListener('click', () => { showAddCityModal(); });
+                    hotCitiesContainer.appendChild(addBtn);
+                }
             }
 
             function toggleEditMode() {
@@ -1816,6 +592,136 @@
                 editCitiesBtn.textContent = cityEditMode ? '保存' : '编辑';
                 renderHotCities();
             }
+
+            function closeCityPicker() {
+                if (cityEditMode) toggleEditMode();
+                citySelectorOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            function openCityPicker() {
+                citySelectorOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            citySelectorOverlay.addEventListener('click', (e) => {
+                if (e.target === citySelectorOverlay) {
+                    closeCityPicker();
+                }
+            });
+            editCitiesBtn.addEventListener('click', toggleEditMode);
+            closeCityPickerBtn.addEventListener('click', closeCityPicker);
+
+            const MATERIALS = [
+                { name: '🌱 草地', baseOffset: 0, absorptivity: 0.65, thermalInertia: 0.7, nightCooling: 0.5 },
+                { name: '🟫 土地', baseOffset: 2, absorptivity: 0.75, thermalInertia: 0.6, nightCooling: 0.6 },
+                { name: '🏖️ 沙滩', baseOffset: 3.5, absorptivity: 0.80, thermalInertia: 0.4, nightCooling: 0.8 },
+                { name: '🧱 地砖', baseOffset: 4.5, absorptivity: 0.85, thermalInertia: 0.55, nightCooling: 0.5 },
+                { name: '🛣️ 马路', baseOffset: 7.5, absorptivity: 0.90, thermalInertia: 0.45, nightCooling: 0.4 }
+            ];
+            const STATUS_CLASSES = { danger:'status-danger', tooCold:'status-too-cold', cool:'status-cool', good:'status-good', warm:'status-warm', hot:'status-hot', dangerHot:'status-danger-hot', na:'status-na' };
+            const STATUS_TEXTS = { danger:'危险', tooCold:'过冷', cool:'较冷', good:'适宜', warm:'较热', hot:'过热', dangerHot:'危险', na:'--' };
+            const SOLAR_FESTIVALS = { '01-01':'元旦','02-14':'情人节','03-08':'妇女节','03-12':'植树节','04-01':'愚人节','05-01':'劳动节','05-04':'青年节','06-01':'儿童节','07-01':'建党节','08-01':'建军节','09-10':'教师节','10-01':'国庆节','10-31':'万圣节','12-25':'圣诞节' };
+
+            function getEasterDate(year) { const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1; return {month,day}; }
+            function getMothersDay(year) { const d=new Date(year,4,1).getDay(); return {month:5, day:8+(d===0?0:7-d)}; }
+            function getFathersDay(year) { const d=new Date(year,5,1).getDay(); return {month:6, day:15+(d===0?0:7-d)}; }
+            function getThanksgiving(year) { const d=new Date(year,10,1).getDay(); return {month:11, day:22+((4-d+7)%7)}; }
+            function getDynamicSolarFestivals(year) { const f={}; const e=getEasterDate(year); f[`${String(e.month).padStart(2,'0')}-${String(e.day).padStart(2,'0')}`]='复活节'; const m=getMothersDay(year); f[`${String(m.month).padStart(2,'0')}-${String(m.day).padStart(2,'0')}`]='母亲节'; const fa=getFathersDay(year); f[`${String(fa.month).padStart(2,'0')}-${String(fa.day).padStart(2,'0')}`]='父亲节'; const t=getThanksgiving(year); f[`${String(t.month).padStart(2,'0')}-${String(t.day).padStart(2,'0')}`]='感恩节'; return f; }
+
+            function getTempStatus(temp) { if(temp<15)return {text:STATUS_TEXTS.danger,class:STATUS_CLASSES.danger}; if(temp<20)return {text:STATUS_TEXTS.tooCold,class:STATUS_CLASSES.tooCold}; if(temp<28)return {text:STATUS_TEXTS.cool,class:STATUS_CLASSES.cool}; if(temp<=35)return {text:STATUS_TEXTS.good,class:STATUS_CLASSES.good}; if(temp<=40)return {text:STATUS_TEXTS.warm,class:STATUS_CLASSES.warm}; if(temp<=45)return {text:STATUS_TEXTS.hot,class:STATUS_CLASSES.hot}; return {text:STATUS_TEXTS.dangerHot,class:STATUS_CLASSES.dangerHot}; }
+            function getColorForTemp(temp) { if(temp<15)return'#1e3a8a'; if(temp<20)return'#3b82f6'; if(temp<28)return'#60a5fa'; if(temp<=35)return'#22c55e'; if(temp<=40)return'#f97316'; if(temp<=45)return'#ea580c'; return'#dc2626'; }
+            function getCloudAttenuation(code) { if(code==null)return 0.7; if([0,1].includes(code))return 1.0; if(code===2)return 0.85; if(code===3)return 0.65; if(code===45||code===48)return 0.55; if(code>=51&&code<=67)return 0.3; if(code>=71&&code<=77)return 0.2; if(code>=80)return 0.4; return 0.65; }
+            const WEATHER_MAP = {
+                0:['☀️','晴'],1:['🌤️','晴间多云'],2:['⛅','部分多云'],3:['☁️','多云'],45:['🌫️','雾'],48:['🌫️','冻雾'],
+                51:['🌦️','细雨'],53:['🌦️','细雨'],55:['🌦️','细雨'],56:['🌨️','雨夹雪'],57:['🌨️','雨夹雪'],
+                61:['🌧️','小雨'],63:['🌧️','中雨'],65:['🌧️','大雨'],66:['🌨️','冻雨'],67:['🌨️','冻雨'],
+                71:['❄️','小雪'],73:['❄️','中雪'],75:['❄️','大雪'],77:['❄️','雪粒'],
+                80:['🌦️','小阵雨'],81:['🌦️','阵雨'],82:['🌧️','大阵雨'],85:['🌨️','小阵雪'],86:['🌨️','阵雪'],
+                95:['⛈️','雷暴'],96:['⛈️','雷暴伴冰雹'],99:['⛈️','雷暴伴大冰雹']
+            };
+            function getWeatherEmojiAndDesc(code) { return WEATHER_MAP[code]||['🌥️','多云']; }
+
+            let currentLocation = { name:"北京", lat:39.9042, lng:116.4074 };
+            let currentYear = new Date().getFullYear();
+            let monthDays = [];
+            let totalDays = 365;
+            let dailyTempCache = [];
+            let currentRealWeather = { isReal:false, dateStr:null, isHistory:false, weatherCode:null };
+            let currentDayIndex = 0;
+            let currentAbortController = null;
+            let currentCalendarMonth = new Date().getMonth()+1;
+            let currentCalendarYear = new Date().getFullYear();
+            let selectedCalendarDay = new Date().getDate();
+            let holidayMaps = {};
+            const holidayFetching = {};
+            let ymPickerYear = currentCalendarYear;
+            let dynamicSolarFestivalsCache = {};
+            let sddPickerYear = currentCalendarYear;
+            let sddPickerMonth = currentCalendarMonth;
+            let sddPickerDay = selectedCalendarDay;
+
+            function generateTimeOptions() { const o=[]; for(let h=0;h<24;h++){ o.push(`${String(h).padStart(2,'0')}:00`); o.push(`${String(h).padStart(2,'0')}:30`); } return o; }
+            function populateTimeSelects() { const t=generateTimeOptions(); const f=document.createDocumentFragment(); t.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; f.appendChild(o); }); timePickerEl.innerHTML=''; timePickerEl.appendChild(f.cloneNode(true)); stickyTimePicker.innerHTML=''; stickyTimePicker.appendChild(f.cloneNode(true)); }
+
+            function getDynamicFestivalsForYear(year) { if(!dynamicSolarFestivalsCache[year]) dynamicSolarFestivalsCache[year]=getDynamicSolarFestivals(year); return dynamicSolarFestivalsCache[year]; }
+            function updateCalendar() { let leap=(currentYear%4===0&&currentYear%100!==0)||(currentYear%400===0); monthDays=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31]; totalDays=monthDays.reduce((a,b)=>a+b,0); dynamicSolarFestivalsCache={}; }
+            function getDayIndex(month,day) { let idx=0; for(let i=1;i<month;i++) idx+=monthDays[i-1]; return idx+day-1; }
+            function getDateFromIndex(idx) { let r=idx; for(let m=0;m<12;m++){ if(r<monthDays[m])return {year:currentYear,month:m+1,day:r+1}; r-=monthDays[m]; } return {year:currentYear,month:12,day:31}; }
+            function getDateStrFromIdx(idx) { let d=getDateFromIndex(idx); return `${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`; }
+            function getDayOfYearFromIndex(dayIdx) { const d=getDateFromIndex(dayIdx); return Math.floor((new Date(d.year,d.month-1,d.day)-new Date(d.year,0,0))/86400000); }
+            function estimateDailyTemp(idx) { let rad=(idx/totalDays)*2*Math.PI; let latFactor=Math.abs(currentLocation.lat); let avg=15,amp=18; if(latFactor>35){avg=11;amp=20;}else if(latFactor<25){avg=22;amp=12;} let mean=avg+amp*Math.sin(rad-Math.PI/2); return {min:mean-3.5,max:mean+3.5}; }
+            function calcSolarGain(lat,dayOfYear,hour,weatherCode) { const declination=23.45*Math.sin((2*Math.PI/365)*(dayOfYear-81)); const latRad=lat*Math.PI/180,declRad=declination*Math.PI/180; const hourAngle=(hour-12)*15*Math.PI/180; const sinElevation=Math.sin(latRad)*Math.sin(declRad)+Math.cos(latRad)*Math.cos(declRad)*Math.cos(hourAngle); const solarElevation=Math.asin(Math.max(-0.2,Math.min(0.99,sinElevation))); if(solarElevation<=0)return 0; const airMass=1/(Math.sin(solarElevation)+0.15*Math.pow(solarElevation*180/Math.PI+3.885,-1.253)); const clearSkyTrans=0.75; const cloudFactor=getCloudAttenuation(weatherCode); const maxRadiation=1367*clearSkyTrans*cloudFactor*Math.pow(0.9,airMass); return 18.0*(maxRadiation/(1367*0.75))*Math.sin(solarElevation); }
+            function computeMaterialTempForHour(materialIdx,airTemp,hour,dayOfYear,lat,weatherCode,prevTemp=null) { const mat=MATERIALS[materialIdx]; const solarGain=calcSolarGain(lat,dayOfYear,hour,weatherCode); let radHeating=solarGain*mat.absorptivity; let nightCool=0; if(solarGain===0)nightCool=-(1.5+2.0*(1-getCloudAttenuation(weatherCode)))*mat.nightCooling; const steadyTemp=airTemp+radHeating+nightCool; if(prevTemp!==null){ const alpha=0.3+0.5*(1-mat.thermalInertia); return alpha*steadyTemp+(1-alpha)*prevTemp; } return steadyTemp; }
+            function generateMaterialTempProfile(materialIdx,airMin,airMax,dayOfYear,lat,weatherCode,hourlyAirTemps=null) { const hours=24; const profile=new Array(hours+1).fill(0); let airTemps=new Array(hours+1); if(hourlyAirTemps&&hourlyAirTemps.length===24){ for(let h=0;h<=hours;h++) airTemps[h]=(h<24)?hourlyAirTemps[h]:hourlyAirTemps[0]; } else { const airMid=(airMin+airMax)/2,airAmp=(airMax-airMin)/2; for(let h=0;h<=hours;h++) airTemps[h]=airMid+airAmp*Math.cos((h-14)*Math.PI/12); } let prev=airTemps[0]; for(let h=0;h<=hours;h++){ profile[h]=computeMaterialTempForHour(materialIdx,airTemps[h],h,dayOfYear,lat,weatherCode,prev); prev=profile[h]; } return profile; }
+
+            async function fetchHourlyWeather(lat,lng,targetDate,hour) { const targetDateObj=new Date(targetDate); const nowObj=new Date(); const diffDays=Math.floor((targetDateObj-nowObj)/(1000*3600*24)); const isHistory=diffDays<0; const isForecastFuture=diffDays>=0&&diffDays<=7; const isWithin3MonthsHistory=isHistory&&Math.abs(diffDays)<=90; let url=''; if(isForecastFuture) url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=temperature_2m,weathercode&timezone=auto&forecast_days=7`; else if(isWithin3MonthsHistory) url=`https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${targetDate}&end_date=${targetDate}&hourly=temperature_2m,weathercode&timezone=auto`; else return null; try{ const resp=await fetch(url); if(!resp.ok)return null; const data=await resp.json(); const times=data.hourly.time; const temps=data.hourly.temperature_2m; const codes=data.hourly.weathercode; for(let i=0;i<times.length;i++){ if(times[i].startsWith(targetDate)&&new Date(times[i]).getHours()===hour){ return {temp:temps[i],weatherCode:codes?.[i]||0,isHistory}; } } return null; }catch(e){return null;} }
+
+            async function refreshWeatherForCurrentDate(showToast=true) { if(currentAbortController) currentAbortController.abort(); if(showToast) loadingToastEl.classList.add('show'); const targetDate=getDateStrFromIdx(currentDayIndex); const todayStr=new Date().toISOString().slice(0,10); const diffDays=Math.floor((new Date(targetDate)-new Date(todayStr))/86400000); let isHistory=diffDays<0; try{ let url=''; if(diffDays>=0&&diffDays<=7) url=`https://api.open-meteo.com/v1/forecast?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm,weathercode&timezone=auto&forecast_days=7`; else if(isHistory&&Math.abs(diffDays)<=90) url=`https://archive-api.open-meteo.com/v1/archive?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&start_date=${targetDate}&end_date=${targetDate}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm,weathercode&timezone=auto`; else throw new Error('out of range'); const resp=await fetch(url); if(!resp.ok) throw new Error('api fail'); const data=await resp.json(); const times=data.hourly.time; const airs=data.hourly.temperature_2m; const feels=data.hourly.apparent_temperature; const grounds=data.hourly.soil_temperature_0cm; const codes=data.hourly.weathercode; let indices=[]; for(let i=0;i<times.length;i++) if(times[i].startsWith(targetDate)) indices.push(i); if(indices.length){ let airVals=[],feelsVals=[],groundVals=[],codeCount={}; let hourlyAir=new Array(24).fill(null); let hourlyCodes=new Array(24).fill(null); indices.forEach(i=>{ let h=new Date(times[i]).getHours(); if(h>=0&&h<24){ hourlyAir[h]=airs[i]; if(codes) hourlyCodes[h]=codes[i]; } airVals.push(airs[i]); if(feels) feelsVals.push(feels[i]); if(grounds) groundVals.push(grounds[i]); if(codes){ let c=codes[i]; codeCount[c]=(codeCount[c]||0)+1; } }); let domCode=codes?parseInt(Object.keys(codeCount).reduce((a,b)=>codeCount[a]>codeCount[b]?a:b)):3; for(let h=0;h<24;h++){ if(hourlyAir[h]===null){ let left=h-1,right=h+1; while(left>=0&&hourlyAir[left]===null) left--; while(right<24&&hourlyAir[right]===null) right++; if(left>=0&&right<24) hourlyAir[h]=(hourlyAir[left]+hourlyAir[right])/2; else if(left>=0) hourlyAir[h]=hourlyAir[left]; else if(right<24) hourlyAir[h]=hourlyAir[right]; else hourlyAir[h]=airVals[0]||15; } if(hourlyCodes[h]===null){ let left=h-1,right=h+1; while(left>=0&&hourlyCodes[left]===null) left--; while(right<24&&hourlyCodes[right]===null) right++; if(left>=0&&right<24) hourlyCodes[h]=hourlyCodes[left]; else if(left>=0) hourlyCodes[h]=hourlyCodes[left]; else if(right<24) hourlyCodes[h]=hourlyCodes[right]; else hourlyCodes[h]=domCode; } } currentRealWeather={ airMin:Math.min(...airVals), airMax:Math.max(...airVals), feelsMin:feelsVals.length?Math.min(...feelsVals):null, feelsMax:feelsVals.length?Math.max(...feelsVals):null, groundMin:groundVals.length?Math.min(...groundVals):null, groundMax:groundVals.length?Math.max(...groundVals):null, isReal:true, dateStr:targetDate, isHistory, weatherCode:domCode }; dailyTempCache[currentDayIndex]={ min:currentRealWeather.airMin, max:currentRealWeather.airMax, real:true, isHistory, weatherCode:domCode, hourlyTemps:hourlyAir, hourlyCodes:hourlyCodes }; } else throw new Error('no indices'); } catch(e){ let est=estimateDailyTemp(currentDayIndex); dailyTempCache[currentDayIndex]={ min:est.min, max:est.max, real:false, isHistory:false, weatherCode:3, hourlyTemps:null, hourlyCodes:null }; currentRealWeather={ isReal:false, isHistory:false, weatherCode:3 }; } updateLeftPanelAndTimeline(currentDayIndex); if(showToast) loadingToastEl.classList.remove('show'); }
+
+            async function updateCurrentCardByDateTime(dateTimeStr) { if(!dateTimeStr) return; const dt=new Date(dateTimeStr); if(isNaN(dt)) return; const year=dt.getFullYear(), month=dt.getMonth()+1, day=dt.getDate(), hour=dt.getHours(); const targetDateStr=`${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`; let airTemp=null, weatherCode=null, isEstimated=false; let usedCache=false; let targetDayIdx=(year===currentYear)?getDayIndex(month,day):null; if(year===currentYear&&targetDayIdx!==null){ const cached=dailyTempCache[targetDayIdx]; if(cached&&cached.real&&cached.hourlyTemps&&cached.hourlyTemps.length===24){ airTemp=cached.hourlyTemps[Math.min(hour,23)]; weatherCode=(cached.hourlyCodes&&cached.hourlyCodes.length===24)?cached.hourlyCodes[Math.min(hour,23)]:cached.weatherCode; isEstimated=false; usedCache=true; } else if(cached&&cached.real){ const airMid=(cached.min+cached.max)/2; const airAmp=(cached.max-cached.min)/2; airTemp=airMid+airAmp*Math.cos((hour-14)*Math.PI/12); weatherCode=cached.weatherCode; isEstimated=false; usedCache=true; } } if(!usedCache){ if(year===currentYear&&targetDayIdx!==null){ await refreshWeatherForCurrentDate(false); const newCached=dailyTempCache[targetDayIdx]; if(newCached&&newCached.real&&newCached.hourlyTemps&&newCached.hourlyTemps.length===24){ airTemp=newCached.hourlyTemps[Math.min(hour,23)]; weatherCode=(newCached.hourlyCodes&&newCached.hourlyCodes.length===24)?newCached.hourlyCodes[Math.min(hour,23)]:newCached.weatherCode; isEstimated=false; usedCache=true; } } if(!usedCache){ const hourlyData=await fetchHourlyWeather(currentLocation.lat,currentLocation.lng,targetDateStr,hour); if(hourlyData){ airTemp=hourlyData.temp; weatherCode=hourlyData.weatherCode; } else { const today=new Date(); today.setHours(0,0,0,0); const diffDays=Math.floor((new Date(targetDateStr)-today)/86400000); if(diffDays>7||diffDays<-90) isEstimated=true; if(year===currentYear&&targetDayIdx!==null){ const est=dailyTempCache[targetDayIdx]||estimateDailyTemp(targetDayIdx); airTemp=(est.min+est.max)/2; weatherCode=est.weatherCode||3; } else { airTemp=20; weatherCode=3; isEstimated=true; } } } } const [emoji,desc]=getWeatherEmojiAndDesc(weatherCode); currentAirTempEl.innerHTML=(airTemp!==null&&!isEstimated)?`${airTemp.toFixed(1)}°C`:'--'; currentWeatherIconEl.innerHTML=emoji; currentWeatherDescEl.innerHTML=(isEstimated&&!usedCache&&!airTemp)?'估算数据':desc; const dayOfYear=Math.floor((dt-new Date(dt.getFullYear(),0,0))/86400000); let gridHtml='',prevTemp=airTemp; for(let idx=0;idx<MATERIALS.length;idx++){ let tempVal=(airTemp!==null&&!isEstimated)?computeMaterialTempForHour(idx,airTemp,hour,dayOfYear,currentLocation.lat,weatherCode,prevTemp):null; const status=(tempVal!==null)?getTempStatus(tempVal):{text:STATUS_TEXTS.na,class:STATUS_CLASSES.na}; gridHtml+=`<div class="material-row"><span class="material-name">${MATERIALS[idx].name}</span><span class="material-temp">${tempVal!==null?tempVal.toFixed(1)+'℃':'--'}</span><span class="material-status"><span class="status-badge ${status.class}">${status.text}</span></span></div>`; prevTemp=tempVal; } currentMaterialGridEl.innerHTML=gridHtml; }
+
+            function formatHourFloat(hourFloat) { const h=Math.floor(hourFloat); const m=Math.round((hourFloat-h)*60); if(m>=60) return `${String(h+1).padStart(2,'0')}:00`; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`; }
+            function interpolateProfile(profile,hourFloat) { const h=Math.max(0,Math.min(24,hourFloat)); const lo=Math.floor(h); const hi=Math.min(24,lo+1); const frac=h-lo; if(lo===24) return profile[24]; return profile[lo]*(1-frac)+profile[hi]*frac; }
+
+            function setupTooltipEvents(canvas,tempProfile,materialName,tooltipEl) { function updateTooltipVisibility(){ const dark=isDarkMode(); if(dark){ tooltipEl.style.background='rgba(30,38,30,0.96)'; tooltipEl.style.color='#e8e4d8'; tooltipEl.style.borderColor='rgba(180,150,100,0.35)'; tooltipEl.querySelectorAll('.tooltip-value').forEach(el=>el.style.color='#e8e4d8'); } else { tooltipEl.style.background='rgba(255,255,245,0.96)'; tooltipEl.style.color='#2c5a2e'; tooltipEl.style.borderColor='rgba(180,150,100,0.5)'; tooltipEl.querySelectorAll('.tooltip-value').forEach(el=>el.style.color='#2f5e3a'); } } let hideTimeout=null; function updateFromClientX(clientX){ const rect=canvas.getBoundingClientRect(); const x=clientX-rect.left; const ratio=canvas.width/rect.width; const canvasX=x*ratio; const hourFloat=Math.max(0,Math.min(24,(canvasX/canvas.width)*24)); const tempAtPoint=interpolateProfile(tempProfile,hourFloat); const timeStr=formatHourFloat(hourFloat); const tempStr=tempAtPoint.toFixed(1)+'℃'; tooltipEl.querySelector('.time-value').textContent=timeStr; tooltipEl.querySelector('.temp-label').textContent=materialName; tooltipEl.querySelector('.temp-value').textContent=tempStr; const percentX=(hourFloat/24)*100; tooltipEl.style.left=percentX+'%'; updateTooltipVisibility(); if(hideTimeout) clearTimeout(hideTimeout); if(!tooltipEl.classList.contains('visible')) tooltipEl.classList.add('visible'); } function showTooltip(){ if(!tooltipEl.classList.contains('visible')) tooltipEl.classList.add('visible'); } function hideTooltip(){ hideTimeout=setTimeout(()=>{ tooltipEl.classList.remove('visible'); tooltipEl.style.transform=''; },50); } canvas.addEventListener('mousemove',function(e){ updateFromClientX(e.clientX); }); canvas.addEventListener('mouseleave',hideTooltip); canvas.addEventListener('mouseenter',function(){ if(hideTimeout) clearTimeout(hideTimeout); updateTooltipVisibility(); }); tooltipEl.addEventListener('mouseenter',function(){ if(hideTimeout) clearTimeout(hideTimeout); }); tooltipEl.addEventListener('mouseleave',hideTooltip); canvas.addEventListener('touchstart',function(e){ e.preventDefault(); const touch=e.touches[0]; if(touch){ updateFromClientX(touch.clientX); showTooltip(); } },{passive:false}); canvas.addEventListener('touchmove',function(e){ e.preventDefault(); const touch=e.touches[0]; if(touch) updateFromClientX(touch.clientX); },{passive:false}); canvas.addEventListener('touchend',function(e){ e.preventDefault(); hideTooltip(); },{passive:false}); canvas.addEventListener('touchcancel',function(e){ hideTooltip(); }); }
+
+            function drawMaterialTimelineWithProfile(canvasId,tempProfile,materialName) { const canvas=document.getElementById(canvasId); if(!canvas) return; const container=canvas.parentElement; const tooltipEl=container.querySelector('.timeline-tooltip'); const width=container.clientWidth; canvas.width=width; canvas.height=18; const ctxCanvas=canvas.getContext('2d'); const dark=isDarkMode(); ctxCanvas.save(); ctxCanvas.globalAlpha=0.2; for(let i=0;i<24;i++){ const x1=(i/24)*width,x2=((i+1)/24)*width; const grad=ctxCanvas.createLinearGradient(x1,0,x2,0); grad.addColorStop(0,getColorForTemp(tempProfile[i])); grad.addColorStop(1,getColorForTemp(tempProfile[i+1])); ctxCanvas.fillStyle=grad; ctxCanvas.fillRect(x1,0,x2-x1,18); } ctxCanvas.restore(); const minT=Math.min(...tempProfile),maxT=Math.max(...tempProfile); if(maxT>=28&&minT<=35){ let periods=[],inPeriod=false,startH=0; for(let h=0;h<=24;h++){ let suitable=(tempProfile[h]>=28&&tempProfile[h]<=35); if(suitable&&!inPeriod){ inPeriod=true; startH=h; } if(!suitable&&inPeriod){ periods.push({start:startH,end:h}); inPeriod=false; } } if(inPeriod) periods.push({start:startH,end:24}); const hlColor=dark?"#15803d":"#22c55e"; for(let p of periods){ let sx=(p.start/24)*width,ex=(p.end/24)*width,bw=ex-sx; if(bw<=0) continue; ctxCanvas.fillStyle=hlColor; ctxCanvas.beginPath(); if(ctxCanvas.roundRect) ctxCanvas.roundRect(sx,0,bw,18,9); else ctxCanvas.fillRect(sx,0,bw,18); ctxCanvas.fill(); } } if(tooltipEl){ if(!canvas._tooltipEventsSetup){ setupTooltipEvents(canvas,tempProfile,materialName,tooltipEl); canvas._tooltipEventsSetup=true; } } }
+
+            function updateLeftPanelAndTimeline(dayIdx) { let air=dailyTempCache[dayIdx]||{min:15,max:25,real:false,isHistory:false,weatherCode:3,hourlyTemps:null,hourlyCodes:null}; let airMin=air.min,airMax=air.max; let targetDate=getDateStrFromIdx(dayIdx); let useReal=(currentRealWeather.isReal&&currentRealWeather.dateStr===targetDate); let dataType=useReal?(new Date(targetDate)<new Date(new Date().toISOString().slice(0,10))?"历史数据":"预报数据"):"估算数据"; let weatherCode=useReal?currentRealWeather.weatherCode:(air.weatherCode||3); cityTitleEl.innerHTML=`📍 ${currentLocation.name} · 自然足感 <span class="data-tag">${dataType}</span>`; airTempRangeEl.innerHTML=`${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃`; feelsLikeTempEl.innerHTML=(useReal&&currentRealWeather.feelsMin)?`${currentRealWeather.feelsMin.toFixed(1)}~${currentRealWeather.feelsMax.toFixed(1)}℃`:`${(airMin+0.5).toFixed(1)}~${(airMax+2).toFixed(1)}℃`; const dayOfYear=getDayOfYearFromIndex(dayIdx); let html=''; const profilesForDraw=[]; MATERIALS.forEach((mat,idx)=>{ let hourlyTemps=(air.hourlyTemps&&air.hourlyTemps.length===24)?air.hourlyTemps:null; let hourlyCodes=(air.hourlyCodes&&air.hourlyCodes.length===24)?air.hourlyCodes:null; let profile; if(hourlyTemps&&hourlyCodes){ profile=new Array(25); let prev=hourlyTemps[0]; for(let h=0;h<=24;h++){ const hIdx=Math.min(h,23); profile[h]=computeMaterialTempForHour(idx,hourlyTemps[hIdx],hIdx,dayOfYear,currentLocation.lat,hourlyCodes[hIdx],prev); prev=profile[h]; } } else if(hourlyTemps){ profile=new Array(25); let prev=hourlyTemps[0]; for(let h=0;h<=24;h++){ const hIdx=Math.min(h,23); profile[h]=computeMaterialTempForHour(idx,hourlyTemps[hIdx],hIdx,dayOfYear,currentLocation.lat,weatherCode,prev); prev=profile[h]; } } else { profile=generateMaterialTempProfile(idx,airMin,airMax,dayOfYear,currentLocation.lat,weatherCode,null); } profilesForDraw.push(profile); const comfortPeriods = []; let inPeriod=false,startH=0; for(let h=0;h<=24;h++){ let suitable=(profile[h]>=28&&profile[h]<=35); if(suitable&&!inPeriod){ inPeriod=true; startH=h; } if(!suitable&&inPeriod){ comfortPeriods.push({start:startH,end:h}); inPeriod=false; } } if(inPeriod) comfortPeriods.push({start:startH,end:24}); let ticksHtml = ''; for(let h=0;h<=24;h++){ let isComfort = comfortPeriods.some(p=>h>=p.start&&h<=p.end); if(h===24){ ticksHtml += `<span class="${isComfort?'tick-comfort':''}">24</span>`; } else { ticksHtml += `<span class="${isComfort?'tick-comfort':''}">${h}</span>`; } } html+=`<div class="surface-row"><div class="surface-header"><span class="surface-name">${mat.name}</span><span class="surface-temp-range">${Math.min(...profile).toFixed(1)}~${Math.max(...profile).toFixed(1)}℃</span></div><div class="timeline-canvas-wrapper"><canvas id="timelineCanvas_${idx}" class="timeline-canvas" width="600" height="18"></canvas><div class="timeline-ticks">${ticksHtml}</div><div class="timeline-tooltip" id="tooltip_${idx}"><div class="tooltip-row"><span class="tooltip-label">⌚️ 时间</span><span class="tooltip-value time-value">00:00</span></div><div class="tooltip-row tooltip-temp-row"><span class="tooltip-label temp-label">${mat.name}</span><span class="tooltip-value temp-value">--℃</span></div></div></div></div>`; }); surfaceListEl.innerHTML=html; setTimeout(()=>{ MATERIALS.forEach((mat,idx)=>{ const canvas=document.getElementById(`timelineCanvas_${idx}`); if(canvas){ canvas._tooltipEventsSetup=false; } drawMaterialTimelineWithProfile(`timelineCanvas_${idx}`,profilesForDraw[idx],MATERIALS[idx].name); }); },10); }
+
+            function syncDateTimePickerFromDayIndex() { const d=getDateFromIndex(currentDayIndex); const timePart=timePickerEl.value||'12:00'; datetimePickerEl.value=`${d.year}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}T${timePart}`; }
+            function updateStickyHeader() { const d=getDateFromIndex(currentDayIndex); stickyDateLabel.textContent=`${d.year}年${d.month}月${d.day}日`; stickyTimePicker.value=timePickerEl.value; sddPickerYear=currentCalendarYear; sddPickerMonth=currentCalendarMonth; sddPickerDay=selectedCalendarDay; updateSddDropdownState(); }
+
+            function getCellFestivalInfo(year,month,day) { const mmdd=`${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`; const holidayInfo=(holidayMaps[year]||{})[mmdd]; let festivalName=''; let holidayBadge=''; const dynamicFestivals=getDynamicFestivalsForYear(year); const solarFestivalName=SOLAR_FESTIVALS[mmdd]||dynamicFestivals[mmdd]||null; let SolarClass=null; if(typeof Lunar!=='undefined'&&Lunar.Solar) SolarClass=Lunar.Solar; else if(typeof Solar!=='undefined') SolarClass=Solar; if(SolarClass){ try{ const d=SolarClass.fromYmd(year,month,day); const lunar=d.getLunar(); const lunarFestivals=lunar.getFestivals(); const jieQi=lunar.getJieQi(); if(lunarFestivals&&lunarFestivals.length>0){ festivalName=lunarFestivals[0]; } else if(jieQi){ festivalName=jieQi; } else if(solarFestivalName){ festivalName=solarFestivalName; } } catch(e){ festivalName=solarFestivalName||''; } } else if(solarFestivalName){ festivalName=solarFestivalName; } if(holidayInfo){ if(holidayInfo.isHoliday){ holidayBadge='<span class="holiday-badge holiday-rest">休</span>'; } else if(holidayInfo.isWorkday){ holidayBadge='<span class="holiday-badge holiday-work">班</span>'; } } return {festivalName,holidayBadge}; }
+
+            function updateSddDropdownState() { sddYearLabel.textContent=sddPickerYear; const monthCells=sddMonthGrid.querySelectorAll('.sdd-month-cell'); monthCells.forEach(cell=>{ const cellMonth=parseInt(cell.dataset.month); if(cellMonth===sddPickerMonth&&sddPickerYear===currentCalendarYear&&sddPickerMonth===currentCalendarMonth){ cell.classList.add('active-month'); } else { cell.classList.remove('active-month'); } }); renderSddDayGrid(); }
+            function renderSddDayGrid() { const year=sddPickerYear; const month=sddPickerMonth; const firstDayOfMonth=new Date(year,month-1,1).getDay(); const daysInMonth=new Date(year,month,0).getDate(); const prevMonthLastDay=new Date(year,month-1,0).getDate(); sddDayGrid.innerHTML=''; ['日','一','二','三','四','五','六'].forEach(d=>{ const dn=document.createElement('div'); dn.className='sdd-day-name'; dn.textContent=d; sddDayGrid.appendChild(dn); }); for(let i=firstDayOfMonth-1;i>=0;i--){ const day=prevMonthLastDay-i; const prevMonth=month-1||12; const prevYear=month-1===0?year-1:year; sddDayGrid.appendChild(createSddDayCell(day,prevYear,prevMonth,true)); } for(let day=1;day<=daysInMonth;day++){ sddDayGrid.appendChild(createSddDayCell(day,year,month,false)); } const remaining=(7-(sddDayGrid.children.length%7))%7; const nextMonth=month+1>12?1:month+1; const nextYear=month+1>12?year+1:year; for(let day=1;day<=remaining;day++){ sddDayGrid.appendChild(createSddDayCell(day,nextYear,nextMonth,true)); } }
+            function createSddDayCell(day,actualYear,actualMonth,isOtherMonth) { const cell=document.createElement('div'); cell.className='sdd-day-cell'; const dateObj=new Date(actualYear,actualMonth-1,day); const dayOfWeek=dateObj.getDay(); if(dayOfWeek===0||dayOfWeek===6) cell.classList.add('weekend'); const today=new Date(); const isToday=(actualYear===today.getFullYear()&&actualMonth===today.getMonth()+1&&day===today.getDate()); const isSelected=(actualYear===currentCalendarYear&&actualMonth===currentCalendarMonth&&day===selectedCalendarDay); if(isToday) cell.classList.add('today'); if(isSelected) cell.classList.add('selected'); if(isOtherMonth) cell.classList.add('other-month'); const {festivalName,holidayBadge}=getCellFestivalInfo(actualYear,actualMonth,day); cell.innerHTML=`${day}${festivalName?`<span class="sdd-festival">${festivalName}</span>`:''}${holidayBadge}`; cell.addEventListener('click',()=>{ selectDateFromSticky(actualYear,actualMonth,day); }); return cell; }
+
+            async function selectDateFromSticky(year,month,day) { const yearChanged=(year!==currentYear); if(yearChanged){ currentYear=year; updateCalendar(); for(let i=0;i<totalDays;i++){ let e=estimateDailyTemp(i); dailyTempCache[i]={min:e.min,max:e.max,real:false,weatherCode:3,hourlyTemps:null,hourlyCodes:null}; } loadHolidaysForYear(currentYear).then(()=>{ if(currentYear===currentCalendarYear) updateCalendarUI(); }); } currentCalendarYear=year; currentCalendarMonth=month; selectedCalendarDay=day; currentDayIndex=getDayIndex(month,day); syncDateTimePickerFromDayIndex(); updateCalendarUI(); await refreshWeatherForCurrentDate(true); updateCurrentCardByDateTime(datetimePickerEl.value); closeSddDropdown(); updateStickyHeader(); }
+
+            function closeSddDropdown() { stickyDateDropdown.classList.remove('open'); }
+            function toggleSddDropdown(e) { e.stopPropagation(); if(stickyDateDropdown.classList.contains('open')){ closeSddDropdown(); } else { sddPickerYear=currentCalendarYear; sddPickerMonth=currentCalendarMonth; sddPickerDay=selectedCalendarDay; updateSddDropdownState(); stickyDateDropdown.classList.add('open'); } }
+            stickyDateLabel.addEventListener('click',toggleSddDropdown); stickyDateDropdown.addEventListener('click',(e)=>{ e.stopPropagation(); }); document.addEventListener('click',(e)=>{ if(!stickyDateLabel.contains(e.target)&&!stickyDateDropdown.contains(e.target)){ closeSddDropdown(); } });
+            sddYearPrev.addEventListener('click',(e)=>{ e.stopPropagation(); sddPickerYear--; updateSddDropdownState(); }); sddYearNext.addEventListener('click',(e)=>{ e.stopPropagation(); sddPickerYear++; updateSddDropdownState(); }); sddMonthGrid.addEventListener('click',(e)=>{ const cell=e.target.closest('.sdd-month-cell'); if(!cell) return; const month=parseInt(cell.dataset.month); sddPickerMonth=month; if(sddPickerYear===currentCalendarYear&&sddPickerMonth===currentCalendarMonth){ sddPickerDay=selectedCalendarDay; } else { sddPickerDay=Math.min(selectedCalendarDay,new Date(sddPickerYear,month,0).getDate()); } updateSddDropdownState(); });
+
+            function updateCalendarUI() { const year=currentCalendarYear,month=currentCalendarMonth; yearMonthDisplay.textContent=`${year}年${month}月`; ymYearLabel.textContent=year; ymPickerYear=year; updateYmMonthGridHighlight(); const firstDayOfMonth=new Date(year,month-1,1).getDay(); const daysInMonth=new Date(year,month,0).getDate(); const prevMonthLastDay=new Date(year,month-1,0).getDate(); calendarGridEl.innerHTML=''; ['日','一','二','三','四','五','六'].forEach(d=>{ const dn=document.createElement('div'); dn.className='calendar-day-name'; dn.textContent=d; calendarGridEl.appendChild(dn); }); for(let i=firstDayOfMonth-1;i>=0;i--){ const day=prevMonthLastDay-i; calendarGridEl.appendChild(createDayCell(day,year,month-1||12,month-1===0?year-1:year,true)); } for(let day=1;day<=daysInMonth;day++){ calendarGridEl.appendChild(createDayCell(day,year,month,year,false)); } const remaining=(7-(calendarGridEl.children.length%7))%7; for(let day=1;day<=remaining;day++){ const nextMonth=month+1>12?1:month+1; const nextYear=month+1>12?year+1:year; calendarGridEl.appendChild(createDayCell(day,nextYear,nextMonth,nextYear,true)); } updateStickyHeader(); }
+            function createDayCell(day,month,actualMonth,actualYear,isOtherMonth) { const cell=document.createElement('div'); cell.className='calendar-day'; const dateObj=new Date(actualYear,actualMonth-1,day); const dayOfWeek=dateObj.getDay(); if(dayOfWeek===0||dayOfWeek===6) cell.classList.add('weekend'); const mmdd=`${String(actualMonth).padStart(2,'0')}-${String(day).padStart(2,'0')}`; const today=new Date(); const isToday=(actualYear===today.getFullYear()&&actualMonth===today.getMonth()+1&&day===today.getDate()); const isSelected=(actualYear===currentCalendarYear&&actualMonth===currentCalendarMonth&&day===selectedCalendarDay); if(isToday) cell.classList.add('today'); if(isSelected) cell.classList.add('selected'); if(isOtherMonth) cell.classList.add('other-month'); let lunarStr=''; let holidayBadge=''; const holidayInfo=(holidayMaps[actualYear]||{})[mmdd]; let SolarClass=null; if(typeof Lunar!=='undefined'&&Lunar.Solar) SolarClass=Lunar.Solar; else if(typeof Solar!=='undefined') SolarClass=Solar; const dynamicFestivals=getDynamicFestivalsForYear(actualYear); const solarFestivalName=SOLAR_FESTIVALS[mmdd]||dynamicFestivals[mmdd]||null; if(SolarClass){ try{ const d=SolarClass.fromYmd(actualYear,actualMonth,day); const lunar=d.getLunar(); const lunarFestivals=lunar.getFestivals(); const jieQi=lunar.getJieQi(); if(lunarFestivals&&lunarFestivals.length>0){ lunarStr=lunarFestivals[0]; } else if(jieQi){ lunarStr=jieQi; } else if(solarFestivalName){ lunarStr=solarFestivalName; } else { const dayCn=lunar.getDayInChinese(); if(dayCn){ lunarStr=dayCn; } else { const monthCn=lunar.getMonthInChinese()||''; const dayNum=lunar.getDay()||day; lunarStr=monthCn?monthCn+'月'+dayNum:dayNum+'日'; } } } catch(e){ lunarStr=solarFestivalName||(actualMonth+'/'+day); } } else if(solarFestivalName){ lunarStr=solarFestivalName; } else { lunarStr=actualMonth+'/'+day; } if(holidayInfo){ if(holidayInfo.isHoliday){ holidayBadge='<span class="holiday-badge holiday-rest">休</span>'; } else if(holidayInfo.isWorkday){ holidayBadge='<span class="holiday-badge holiday-work">班</span>'; } } cell.innerHTML=`${day}<span class="lunar">${lunarStr}</span>${holidayBadge}`; cell.addEventListener('click',async ()=>{ if(actualYear!==currentYear){ currentYear=actualYear; updateCalendar(); } currentCalendarYear=actualYear; currentCalendarMonth=actualMonth; selectedCalendarDay=day; currentDayIndex=getDayIndex(actualMonth,day); syncDateTimePickerFromDayIndex(); updateCalendarUI(); await refreshWeatherForCurrentDate(true); updateCurrentCardByDateTime(datetimePickerEl.value); }); return cell; }
+
+            async function setCalendarToToday() { const now=new Date(); currentCalendarYear=now.getFullYear(); currentCalendarMonth=now.getMonth()+1; selectedCalendarDay=now.getDate(); updateCalendarUI(); await setNowDateTime(); }
+            async function setNowDateTime() { const now=new Date(); const year=now.getFullYear(),month=String(now.getMonth()+1).padStart(2,'0'),day=String(now.getDate()).padStart(2,'0'); const hour=String(now.getHours()).padStart(2,'0'),minute=String(now.getMinutes()).padStart(2,'0'); let roundedMinute=minute<30?'00':'30'; const timeValue=`${hour}:${roundedMinute}`; timePickerEl.value=timeValue; stickyTimePicker.value=timeValue; datetimePickerEl.value=`${year}-${month}-${day}T${timeValue}`; if(year!==currentYear){ currentYear=year; updateCalendar(); } currentDayIndex=getDayIndex(now.getMonth()+1,now.getDate()); selectedCalendarDay=now.getDate(); currentCalendarYear=year; currentCalendarMonth=now.getMonth()+1; updateCalendarUI(); await refreshWeatherForCurrentDate(true); updateCurrentCardByDateTime(datetimePickerEl.value); }
+
+            async function setCity(city) { currentLocation={name:city.city||city.name,lat:city.lat,lng:city.lng}; cityTitleEl.innerHTML=`📍 ${currentLocation.name} · 自然足感`; updateCalendar(); for(let i=0;i<totalDays;i++){ let e=estimateDailyTemp(i); dailyTempCache[i]={min:e.min,max:e.max,real:false,weatherCode:3,hourlyTemps:null,hourlyCodes:null}; } await refreshWeatherForCurrentDate(true); const dtVal=datetimePickerEl.value; if(dtVal) updateCurrentCardByDateTime(dtVal); else await setNowDateTime(); }
+
+            async function reverseGeocode(lat,lng) { try{ const res=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`); const data=await res.json(); let city=data.city||data.locality||data.principalSubdivision||'当前位置'; if(city.endsWith('市')) city=city.slice(0,-1); return city; }catch(e){return null;} }
+            async function tryBrowserLocation() { if(!navigator.geolocation) return null; return new Promise(resolve=>{ navigator.geolocation.getCurrentPosition(async pos=>{ const lat=pos.coords.latitude,lng=pos.coords.longitude; const name=await reverseGeocode(lat,lng); resolve(name?{city:name,lat,lng}:{city:'当前位置',lat,lng}); },()=>resolve(null),{timeout:10000,enableHighAccuracy:false}); }); }
+            async function performLocation() { if(locateToastEl.classList.contains('show')) return; locateToastEl.classList.add('show'); locateButtonsEl.innerHTML=''; locateMessageEl.innerHTML='<span>📍 正在获取位置信息...</span>'; let location=await tryBrowserLocation(); if(!location||!location.lat){ locateMessageEl.innerHTML='<span>🌏 通过IP定位中...</span>'; location=await tryMultiIpLocation(); } if(location&&location.lat&&location.lng){ locateToastEl.classList.remove('show'); await setCity(location); window._autoLocated=true; } else { locateMessageEl.innerHTML='<span>⚠️ 定位失败，请重试或手动选择城市</span>'; locateButtonsEl.innerHTML=`<button class="locate-btn" id="locateRetryBtn">🔄 重试</button><button class="locate-btn primary" id="locateSelectCityBtn">📌 选择城市</button>`; document.getElementById('locateRetryBtn').addEventListener('click',()=>{ locateToastEl.classList.remove('show'); performLocation(); }); document.getElementById('locateSelectCityBtn').addEventListener('click',()=>{ locateToastEl.classList.remove('show'); openCityPicker(); }); } }
+            async function tryMultiIpLocation() { const timeoutMs=5000; const fetchWithTimeout=(url)=>{ const ctrl=new AbortController(); setTimeout(()=>ctrl.abort(),timeoutMs); return fetch(url,{signal:ctrl.signal}).finally(()=>{}); }; const services=[ async()=>{ try{ const r=await fetchWithTimeout('https://ip-api.com/json/?fields=status,lat,lon,city&lang=zh-CN'); const d=await r.json(); if(d.status==='success'&&d.lat&&d.lon&&d.city){ let city=d.city; if(city.endsWith('市')) city=city.slice(0,-1); return {city,lat:d.lat,lng:d.lon}; } }catch(e){} return null; }, async()=>{ try{ const r=await fetchWithTimeout('https://ipapi.co/json/'); const d=await r.json(); if(d&&d.latitude&&d.longitude){ let city=d.city||d.region||''; const cnName=await reverseGeocode(d.latitude,d.longitude); if(cnName) city=cnName; else if(city.endsWith('市')) city=city.slice(0,-1); return {city:city||'未知位置',lat:d.latitude,lng:d.longitude}; } }catch(e){} return null; } ]; const results=await Promise.allSettled(services.map(fn=>fn())); for(const r of results) if(r.status==='fulfilled'&&r.value&&r.value.lat) return r.value; return null; }
+
+            async function searchCitiesOpenMeteo(keyword) { if(!keyword.trim()||keyword.length<2) return []; try{ const url=`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(keyword)}&count=12&language=zh&format=json`; const resp=await fetch(url); const data=await resp.json(); if(data.results&&data.results.length){ return data.results.map(r=>({name:r.name||r.admin1||'',lat:r.latitude,lng:r.longitude,display:`${r.name}${r.admin1?' · '+r.admin1:''}${r.country?' · '+r.country:''}`})); } return []; }catch(e){return[];} }
+            let searchDebounce;
+            function renderCitySelector(filterText='') { if(filterText.length<2){ cityResultsList.innerHTML='<div class="loading-tip">请输入至少2个字符搜索</div>'; return; } cityResultsList.innerHTML='<div class="loading-tip">⏳ 检索中...</div>'; searchCitiesOpenMeteo(filterText).then(cities=>{ if(cities.length===0){ cityResultsList.innerHTML='<div class="loading-tip">未找到城市，试试其他名称</div>'; return; } cityResultsList.innerHTML=cities.map(c=>`<div class="city-result-item" data-name="${c.name}" data-lat="${c.lat}" data-lng="${c.lng}">${c.display}</div>`).join(''); document.querySelectorAll('.city-result-item').forEach(el=>el.addEventListener('click',()=>{ setCity({city:el.dataset.name,lat:parseFloat(el.dataset.lat),lng:parseFloat(el.dataset.lng)}); closeCityPicker(); })); }); }
 
             function showAddCityModal() {
                 const modal = document.createElement('div');
@@ -1869,122 +775,6 @@
                     document.body.removeChild(modal);
                 });
             }
-
-            citySelectorOverlay.addEventListener('click', (e) => {
-                if (e.target === citySelectorOverlay) {
-                    if (cityEditMode) toggleEditMode();
-                    closeCityPicker();
-                }
-            });
-            editCitiesBtn.addEventListener('click', toggleEditMode);
-            closeCityPickerBtn.addEventListener('click', () => {
-                if (cityEditMode) toggleEditMode();
-                closeCityPicker();
-            });
-
-            const MATERIALS = [
-                { name: '🌱 草地', baseOffset: 0, absorptivity: 0.65, thermalInertia: 0.7, nightCooling: 0.5 },
-                { name: '🟫 土地', baseOffset: 2, absorptivity: 0.75, thermalInertia: 0.6, nightCooling: 0.6 },
-                { name: '🏖️ 沙滩', baseOffset: 3.5, absorptivity: 0.80, thermalInertia: 0.4, nightCooling: 0.8 },
-                { name: '🧱 地砖', baseOffset: 4.5, absorptivity: 0.85, thermalInertia: 0.55, nightCooling: 0.5 },
-                { name: '🛣️ 马路', baseOffset: 7.5, absorptivity: 0.90, thermalInertia: 0.45, nightCooling: 0.4 }
-            ];
-            const STATUS_CLASSES = { danger:'status-danger', tooCold:'status-too-cold', cool:'status-cool', good:'status-good', warm:'status-warm', hot:'status-hot', dangerHot:'status-danger-hot', na:'status-na' };
-            const STATUS_TEXTS = { danger:'危险', tooCold:'过冷', cool:'较冷', good:'适宜', warm:'较热', hot:'过热', dangerHot:'危险', na:'--' };
-            const SOLAR_FESTIVALS = { '01-01':'元旦','02-14':'情人节','03-08':'妇女节','03-12':'植树节','04-01':'愚人节','05-01':'劳动节','05-04':'青年节','06-01':'儿童节','07-01':'建党节','08-01':'建军节','09-10':'教师节','10-01':'国庆节','10-31':'万圣节','12-25':'圣诞节' };
-
-            function getEasterDate(year) { const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1; return {month,day}; }
-            function getMothersDay(year) { const d=new Date(year,4,1).getDay(); return {month:5, day:8+(d===0?0:7-d)}; }
-            function getFathersDay(year) { const d=new Date(year,5,1).getDay(); return {month:6, day:15+(d===0?0:7-d)}; }
-            function getThanksgiving(year) { const d=new Date(year,10,1).getDay(); return {month:11, day:22+((4-d+7)%7)}; }
-            function getDynamicSolarFestivals(year) { const f={}; const e=getEasterDate(year); f[`${String(e.month).padStart(2,'0')}-${String(e.day).padStart(2,'0')}`]='复活节'; const m=getMothersDay(year); f[`${String(m.month).padStart(2,'0')}-${String(m.day).padStart(2,'0')}`]='母亲节'; const fa=getFathersDay(year); f[`${String(fa.month).padStart(2,'0')}-${String(fa.day).padStart(2,'0')}`]='父亲节'; const t=getThanksgiving(year); f[`${String(t.month).padStart(2,'0')}-${String(t.day).padStart(2,'0')}`]='感恩节'; return f; }
-
-            function getTempStatus(temp) { if(temp<15)return {text:STATUS_TEXTS.danger,class:STATUS_CLASSES.danger}; if(temp<20)return {text:STATUS_TEXTS.tooCold,class:STATUS_CLASSES.tooCold}; if(temp<28)return {text:STATUS_TEXTS.cool,class:STATUS_CLASSES.cool}; if(temp<=35)return {text:STATUS_TEXTS.good,class:STATUS_CLASSES.good}; if(temp<=40)return {text:STATUS_TEXTS.warm,class:STATUS_CLASSES.warm}; if(temp<=45)return {text:STATUS_TEXTS.hot,class:STATUS_CLASSES.hot}; return {text:STATUS_TEXTS.dangerHot,class:STATUS_CLASSES.dangerHot}; }
-            function getColorForTemp(temp) { if(temp<15)return'#1e3a8a'; if(temp<20)return'#3b82f6'; if(temp<28)return'#60a5fa'; if(temp<=35)return'#22c55e'; if(temp<=40)return'#f97316'; if(temp<=45)return'#ea580c'; return'#dc2626'; }
-            function getCloudAttenuation(code) { if(code==null)return 0.7; if([0,1].includes(code))return 1.0; if(code===2)return 0.85; if(code===3)return 0.65; if(code===45||code===48)return 0.55; if(code>=51&&code<=67)return 0.3; if(code>=71&&code<=77)return 0.2; if(code>=80)return 0.4; return 0.65; }
-            const WEATHER_MAP = { 0:['☀️','晴'],1:['🌤️','晴间多云'],2:['⛅','部分多云'],3:['☁️','多云'],45:['🌫️','雾'],48:['🌫️','冻雾'],51:['🌦️','小细雨'],53:['🌦️','细雨'],55:['🌦️','大细雨'],56:['🌨️','雨夹雪'],57:['🌨️','雨夹雪'],61:['🌧️','小雨'],63:['🌧️','中雨'],65:['🌧️','大雨'],66:['🌨️','冻雨'],67:['🌨️','冻雨'],71:['❄️','小雪'],73:['❄️','中雪'],75:['❄️','大雪'],77:['❄️','雪粒'],80:['🌦️','小阵雨'],81:['🌦️','阵雨'],82:['🌧️','大阵雨'],85:['🌨️','小阵雪'],86:['🌨️','阵雪'],95:['⛈️','雷暴'],96:['⛈️','雷暴伴冰雹'],99:['⛈️','雷暴伴大冰雹'] };
-            function getWeatherEmojiAndDesc(code) { return WEATHER_MAP[code]||['🌥️','多云']; }
-
-            let currentLocation = { name:"北京", lat:39.9042, lng:116.4074 };
-            let currentYear = new Date().getFullYear();
-            let monthDays = [];
-            let totalDays = 365;
-            let dailyTempCache = [];
-            let currentRealWeather = { isReal:false, dateStr:null, isHistory:false, weatherCode:null };
-            let currentDayIndex = 0;
-            let currentAbortController = null;
-            let currentCalendarMonth = new Date().getMonth()+1;
-            let currentCalendarYear = new Date().getFullYear();
-            let selectedCalendarDay = new Date().getDate();
-            let holidayMaps = {};
-            const holidayFetching = {};
-            let ymPickerYear = currentCalendarYear;
-            let dynamicSolarFestivalsCache = {};
-            let sddPickerYear = currentCalendarYear;
-            let sddPickerMonth = currentCalendarMonth;
-            let sddPickerDay = selectedCalendarDay;
-
-            function generateTimeOptions() { const o=[]; for(let h=0;h<24;h++){ o.push(`${String(h).padStart(2,'0')}:00`); o.push(`${String(h).padStart(2,'0')}:30`); } return o; }
-            function populateTimeSelects() { const t=generateTimeOptions(); const f=document.createDocumentFragment(); t.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; f.appendChild(o); }); timePickerEl.innerHTML=''; timePickerEl.appendChild(f.cloneNode(true)); stickyTimePicker.innerHTML=''; stickyTimePicker.appendChild(f.cloneNode(true)); }
-
-            function getDynamicFestivalsForYear(year) { if(!dynamicSolarFestivalsCache[year]) dynamicSolarFestivalsCache[year]=getDynamicSolarFestivals(year); return dynamicSolarFestivalsCache[year]; }
-            function updateCalendar() { let leap=(currentYear%4===0&&currentYear%100!==0)||(currentYear%400===0); monthDays=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31]; totalDays=monthDays.reduce((a,b)=>a+b,0); dynamicSolarFestivalsCache={}; }
-            function getDayIndex(month,day) { let idx=0; for(let i=1;i<month;i++) idx+=monthDays[i-1]; return idx+day-1; }
-            function getDateFromIndex(idx) { let r=idx; for(let m=0;m<12;m++){ if(r<monthDays[m])return {year:currentYear,month:m+1,day:r+1}; r-=monthDays[m]; } return {year:currentYear,month:12,day:31}; }
-            function getDateStrFromIdx(idx) { let d=getDateFromIndex(idx); return `${currentYear}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`; }
-            function getDayOfYearFromIndex(dayIdx) { const d=getDateFromIndex(dayIdx); return Math.floor((new Date(d.year,d.month-1,d.day)-new Date(d.year,0,0))/86400000); }
-            function estimateDailyTemp(idx) { let rad=(idx/totalDays)*2*Math.PI; let latFactor=Math.abs(currentLocation.lat); let avg=15,amp=18; if(latFactor>35){avg=11;amp=20;}else if(latFactor<25){avg=22;amp=12;} let mean=avg+amp*Math.sin(rad-Math.PI/2); return {min:mean-3.5,max:mean+3.5}; }
-            function calcSolarGain(lat,dayOfYear,hour,weatherCode) { const declination=23.45*Math.sin((2*Math.PI/365)*(dayOfYear-81)); const latRad=lat*Math.PI/180,declRad=declination*Math.PI/180; const hourAngle=(hour-12)*15*Math.PI/180; const sinElevation=Math.sin(latRad)*Math.sin(declRad)+Math.cos(latRad)*Math.cos(declRad)*Math.cos(hourAngle); const solarElevation=Math.asin(Math.max(-0.2,Math.min(0.99,sinElevation))); if(solarElevation<=0)return 0; const airMass=1/(Math.sin(solarElevation)+0.15*Math.pow(solarElevation*180/Math.PI+3.885,-1.253)); const clearSkyTrans=0.75; const cloudFactor=getCloudAttenuation(weatherCode); const maxRadiation=1367*clearSkyTrans*cloudFactor*Math.pow(0.9,airMass); return 18.0*(maxRadiation/(1367*0.75))*Math.sin(solarElevation); }
-            function computeMaterialTempForHour(materialIdx,airTemp,hour,dayOfYear,lat,weatherCode,prevTemp=null) { const mat=MATERIALS[materialIdx]; const solarGain=calcSolarGain(lat,dayOfYear,hour,weatherCode); let radHeating=solarGain*mat.absorptivity; let nightCool=0; if(solarGain===0)nightCool=-(1.5+2.0*(1-getCloudAttenuation(weatherCode)))*mat.nightCooling; const steadyTemp=airTemp+radHeating+nightCool; if(prevTemp!==null){ const alpha=0.3+0.5*(1-mat.thermalInertia); return alpha*steadyTemp+(1-alpha)*prevTemp; } return steadyTemp; }
-            function generateMaterialTempProfile(materialIdx,airMin,airMax,dayOfYear,lat,weatherCode,hourlyAirTemps=null) { const hours=24; const profile=new Array(hours+1).fill(0); let airTemps=new Array(hours+1); if(hourlyAirTemps&&hourlyAirTemps.length===24){ for(let h=0;h<=hours;h++) airTemps[h]=(h<24)?hourlyAirTemps[h]:hourlyAirTemps[0]; } else { const airMid=(airMin+airMax)/2,airAmp=(airMax-airMin)/2; for(let h=0;h<=hours;h++) airTemps[h]=airMid+airAmp*Math.cos((h-14)*Math.PI/12); } let prev=airTemps[0]; for(let h=0;h<=hours;h++){ profile[h]=computeMaterialTempForHour(materialIdx,airTemps[h],h,dayOfYear,lat,weatherCode,prev); prev=profile[h]; } return profile; }
-
-            async function fetchHourlyWeather(lat,lng,targetDate,hour) { const targetDateObj=new Date(targetDate); const nowObj=new Date(); const diffDays=Math.floor((targetDateObj-nowObj)/(1000*3600*24)); const isHistory=diffDays<0; const isForecastFuture=diffDays>=0&&diffDays<=7; const isWithin3MonthsHistory=isHistory&&Math.abs(diffDays)<=90; let url=''; if(isForecastFuture) url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=temperature_2m,weathercode&timezone=auto&forecast_days=7`; else if(isWithin3MonthsHistory) url=`https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${targetDate}&end_date=${targetDate}&hourly=temperature_2m,weathercode&timezone=auto`; else return null; try{ const resp=await fetch(url); if(!resp.ok)return null; const data=await resp.json(); const times=data.hourly.time; const temps=data.hourly.temperature_2m; const codes=data.hourly.weathercode; for(let i=0;i<times.length;i++){ if(times[i].startsWith(targetDate)&&new Date(times[i]).getHours()===hour){ return {temp:temps[i],weatherCode:codes?.[i]||0,isHistory}; } } return null; }catch(e){return null;} }
-
-            async function refreshWeatherForCurrentDate(showToast=true) { if(currentAbortController) currentAbortController.abort(); if(showToast) loadingToastEl.classList.add('show'); const targetDate=getDateStrFromIdx(currentDayIndex); const todayStr=new Date().toISOString().slice(0,10); const diffDays=Math.floor((new Date(targetDate)-new Date(todayStr))/86400000); let isHistory=diffDays<0; try{ let url=''; if(diffDays>=0&&diffDays<=7) url=`https://api.open-meteo.com/v1/forecast?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm,weathercode&timezone=auto&forecast_days=7`; else if(isHistory&&Math.abs(diffDays)<=90) url=`https://archive-api.open-meteo.com/v1/archive?latitude=${currentLocation.lat}&longitude=${currentLocation.lng}&start_date=${targetDate}&end_date=${targetDate}&hourly=temperature_2m,apparent_temperature,soil_temperature_0cm,weathercode&timezone=auto`; else throw new Error('out of range'); const resp=await fetch(url); if(!resp.ok) throw new Error('api fail'); const data=await resp.json(); const times=data.hourly.time; const airs=data.hourly.temperature_2m; const feels=data.hourly.apparent_temperature; const grounds=data.hourly.soil_temperature_0cm; const codes=data.hourly.weathercode; let indices=[]; for(let i=0;i<times.length;i++) if(times[i].startsWith(targetDate)) indices.push(i); if(indices.length){ let airVals=[],feelsVals=[],groundVals=[],codeCount={}; let hourlyAir=new Array(24).fill(null); let hourlyCodes=new Array(24).fill(null); indices.forEach(i=>{ let h=new Date(times[i]).getHours(); if(h>=0&&h<24){ hourlyAir[h]=airs[i]; if(codes) hourlyCodes[h]=codes[i]; } airVals.push(airs[i]); if(feels) feelsVals.push(feels[i]); if(grounds) groundVals.push(grounds[i]); if(codes){ let c=codes[i]; codeCount[c]=(codeCount[c]||0)+1; } }); let domCode=codes?parseInt(Object.keys(codeCount).reduce((a,b)=>codeCount[a]>codeCount[b]?a:b)):3; for(let h=0;h<24;h++){ if(hourlyAir[h]===null){ let left=h-1,right=h+1; while(left>=0&&hourlyAir[left]===null) left--; while(right<24&&hourlyAir[right]===null) right++; if(left>=0&&right<24) hourlyAir[h]=(hourlyAir[left]+hourlyAir[right])/2; else if(left>=0) hourlyAir[h]=hourlyAir[left]; else if(right<24) hourlyAir[h]=hourlyAir[right]; else hourlyAir[h]=airVals[0]||15; } if(hourlyCodes[h]===null){ let left=h-1,right=h+1; while(left>=0&&hourlyCodes[left]===null) left--; while(right<24&&hourlyCodes[right]===null) right++; if(left>=0&&right<24) hourlyCodes[h]=hourlyCodes[left]; else if(left>=0) hourlyCodes[h]=hourlyCodes[left]; else if(right<24) hourlyCodes[h]=hourlyCodes[right]; else hourlyCodes[h]=domCode; } } currentRealWeather={ airMin:Math.min(...airVals), airMax:Math.max(...airVals), feelsMin:feelsVals.length?Math.min(...feelsVals):null, feelsMax:feelsVals.length?Math.max(...feelsVals):null, groundMin:groundVals.length?Math.min(...groundVals):null, groundMax:groundVals.length?Math.max(...groundVals):null, isReal:true, dateStr:targetDate, isHistory, weatherCode:domCode }; dailyTempCache[currentDayIndex]={ min:currentRealWeather.airMin, max:currentRealWeather.airMax, real:true, isHistory, weatherCode:domCode, hourlyTemps:hourlyAir, hourlyCodes:hourlyCodes }; } else throw new Error('no indices'); } catch(e){ let est=estimateDailyTemp(currentDayIndex); dailyTempCache[currentDayIndex]={ min:est.min, max:est.max, real:false, isHistory:false, weatherCode:3, hourlyTemps:null, hourlyCodes:null }; currentRealWeather={ isReal:false, isHistory:false, weatherCode:3 }; } updateLeftPanelAndTimeline(currentDayIndex); if(showToast) loadingToastEl.classList.remove('show'); }
-
-            async function updateCurrentCardByDateTime(dateTimeStr) { if(!dateTimeStr) return; const dt=new Date(dateTimeStr); if(isNaN(dt)) return; const year=dt.getFullYear(), month=dt.getMonth()+1, day=dt.getDate(), hour=dt.getHours(); const targetDateStr=`${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`; let airTemp=null, weatherCode=null, isEstimated=false; let usedCache=false; let targetDayIdx=(year===currentYear)?getDayIndex(month,day):null; if(year===currentYear&&targetDayIdx!==null){ const cached=dailyTempCache[targetDayIdx]; if(cached&&cached.real&&cached.hourlyTemps&&cached.hourlyTemps.length===24){ airTemp=cached.hourlyTemps[Math.min(hour,23)]; weatherCode=(cached.hourlyCodes&&cached.hourlyCodes.length===24)?cached.hourlyCodes[Math.min(hour,23)]:cached.weatherCode; isEstimated=false; usedCache=true; } else if(cached&&cached.real){ const airMid=(cached.min+cached.max)/2; const airAmp=(cached.max-cached.min)/2; airTemp=airMid+airAmp*Math.cos((hour-14)*Math.PI/12); weatherCode=cached.weatherCode; isEstimated=false; usedCache=true; } } if(!usedCache){ if(year===currentYear&&targetDayIdx!==null){ await refreshWeatherForCurrentDate(false); const newCached=dailyTempCache[targetDayIdx]; if(newCached&&newCached.real&&newCached.hourlyTemps&&newCached.hourlyTemps.length===24){ airTemp=newCached.hourlyTemps[Math.min(hour,23)]; weatherCode=(newCached.hourlyCodes&&newCached.hourlyCodes.length===24)?newCached.hourlyCodes[Math.min(hour,23)]:newCached.weatherCode; isEstimated=false; usedCache=true; } } if(!usedCache){ const hourlyData=await fetchHourlyWeather(currentLocation.lat,currentLocation.lng,targetDateStr,hour); if(hourlyData){ airTemp=hourlyData.temp; weatherCode=hourlyData.weatherCode; } else { const today=new Date(); today.setHours(0,0,0,0); const diffDays=Math.floor((new Date(targetDateStr)-today)/86400000); if(diffDays>7||diffDays<-90) isEstimated=true; if(year===currentYear&&targetDayIdx!==null){ const est=dailyTempCache[targetDayIdx]||estimateDailyTemp(targetDayIdx); airTemp=(est.min+est.max)/2; weatherCode=est.weatherCode||3; } else { airTemp=20; weatherCode=3; isEstimated=true; } } } } const [emoji,desc]=getWeatherEmojiAndDesc(weatherCode); currentAirTempEl.innerHTML=(airTemp!==null&&!isEstimated)?`${airTemp.toFixed(1)}°C`:'--'; currentWeatherIconEl.innerHTML=emoji; currentWeatherDescEl.innerHTML=(isEstimated&&!usedCache&&!airTemp)?'估算数据':desc; const dayOfYear=Math.floor((dt-new Date(dt.getFullYear(),0,0))/86400000); let gridHtml='',prevTemp=airTemp; for(let idx=0;idx<MATERIALS.length;idx++){ let tempVal=(airTemp!==null&&!isEstimated)?computeMaterialTempForHour(idx,airTemp,hour,dayOfYear,currentLocation.lat,weatherCode,prevTemp):null; const status=(tempVal!==null)?getTempStatus(tempVal):{text:STATUS_TEXTS.na,class:STATUS_CLASSES.na}; gridHtml+=`<div class="material-row"><span class="material-name">${MATERIALS[idx].name}</span><span class="material-temp">${tempVal!==null?tempVal.toFixed(1)+'℃':'--'}</span><span class="material-status"><span class="status-badge ${status.class}">${status.text}</span></span></div>`; prevTemp=tempVal; } currentMaterialGridEl.innerHTML=gridHtml; }
-
-            function formatHourFloat(hourFloat) { const h=Math.floor(hourFloat); const m=Math.round((hourFloat-h)*60); if(m>=60) return `${String(h+1).padStart(2,'0')}:00`; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`; }
-            function interpolateProfile(profile,hourFloat) { const h=Math.max(0,Math.min(24,hourFloat)); const lo=Math.floor(h); const hi=Math.min(24,lo+1); const frac=h-lo; if(lo===24) return profile[24]; return profile[lo]*(1-frac)+profile[hi]*frac; }
-
-            function setupTooltipEvents(canvas,tempProfile,materialName,tooltipEl) { function updateTooltipVisibility(){ const dark=isDarkMode(); if(dark){ tooltipEl.style.background='rgba(30,38,30,0.96)'; tooltipEl.style.color='#e8e4d8'; tooltipEl.style.borderColor='rgba(180,150,100,0.35)'; tooltipEl.querySelectorAll('.tooltip-value').forEach(el=>el.style.color='#e8e4d8'); } else { tooltipEl.style.background='rgba(255,255,245,0.96)'; tooltipEl.style.color='#2c5a2e'; tooltipEl.style.borderColor='rgba(180,150,100,0.5)'; tooltipEl.querySelectorAll('.tooltip-value').forEach(el=>el.style.color='#2f5e3a'); } } let hideTimeout=null; function updateFromClientX(clientX){ const rect=canvas.getBoundingClientRect(); const x=clientX-rect.left; const ratio=canvas.width/rect.width; const canvasX=x*ratio; const hourFloat=Math.max(0,Math.min(24,(canvasX/canvas.width)*24)); const tempAtPoint=interpolateProfile(tempProfile,hourFloat); const timeStr=formatHourFloat(hourFloat); const tempStr=tempAtPoint.toFixed(1)+'℃'; tooltipEl.querySelector('.time-value').textContent=timeStr; tooltipEl.querySelector('.temp-label').textContent=materialName; tooltipEl.querySelector('.temp-value').textContent=tempStr; const percentX=(hourFloat/24)*100; tooltipEl.style.left=percentX+'%'; updateTooltipVisibility(); if(hideTimeout) clearTimeout(hideTimeout); if(!tooltipEl.classList.contains('visible')) tooltipEl.classList.add('visible'); } function showTooltip(){ if(!tooltipEl.classList.contains('visible')) tooltipEl.classList.add('visible'); } function hideTooltip(){ hideTimeout=setTimeout(()=>{ tooltipEl.classList.remove('visible'); tooltipEl.style.transform=''; },50); } canvas.addEventListener('mousemove',function(e){ updateFromClientX(e.clientX); }); canvas.addEventListener('mouseleave',hideTooltip); canvas.addEventListener('mouseenter',function(){ if(hideTimeout) clearTimeout(hideTimeout); updateTooltipVisibility(); }); tooltipEl.addEventListener('mouseenter',function(){ if(hideTimeout) clearTimeout(hideTimeout); }); tooltipEl.addEventListener('mouseleave',hideTooltip); canvas.addEventListener('touchstart',function(e){ e.preventDefault(); const touch=e.touches[0]; if(touch){ updateFromClientX(touch.clientX); showTooltip(); } },{passive:false}); canvas.addEventListener('touchmove',function(e){ e.preventDefault(); const touch=e.touches[0]; if(touch) updateFromClientX(touch.clientX); },{passive:false}); canvas.addEventListener('touchend',function(e){ e.preventDefault(); hideTooltip(); },{passive:false}); canvas.addEventListener('touchcancel',function(e){ hideTooltip(); }); }
-
-            function drawMaterialTimelineWithProfile(canvasId,tempProfile,materialName) { const canvas=document.getElementById(canvasId); if(!canvas) return; const container=canvas.parentElement; const tooltipEl=container.querySelector('.timeline-tooltip'); const width=container.clientWidth; canvas.width=width; canvas.height=18; const ctxCanvas=canvas.getContext('2d'); const dark=isDarkMode(); ctxCanvas.save(); ctxCanvas.globalAlpha=0.2; for(let i=0;i<24;i++){ const x1=(i/24)*width,x2=((i+1)/24)*width; const grad=ctxCanvas.createLinearGradient(x1,0,x2,0); grad.addColorStop(0,getColorForTemp(tempProfile[i])); grad.addColorStop(1,getColorForTemp(tempProfile[i+1])); ctxCanvas.fillStyle=grad; ctxCanvas.fillRect(x1,0,x2-x1,18); } ctxCanvas.restore(); const minT=Math.min(...tempProfile),maxT=Math.max(...tempProfile); if(maxT>=28&&minT<=35){ let periods=[],inPeriod=false,startH=0; for(let h=0;h<=24;h++){ let suitable=(tempProfile[h]>=28&&tempProfile[h]<=35); if(suitable&&!inPeriod){ inPeriod=true; startH=h; } if(!suitable&&inPeriod){ periods.push({start:startH,end:h}); inPeriod=false; } } if(inPeriod) periods.push({start:startH,end:24}); const hlColor=dark?"#15803d":"#22c55e"; for(let p of periods){ let sx=(p.start/24)*width,ex=(p.end/24)*width,bw=ex-sx; if(bw<=0) continue; ctxCanvas.fillStyle=hlColor; ctxCanvas.beginPath(); if(ctxCanvas.roundRect) ctxCanvas.roundRect(sx,0,bw,18,9); else ctxCanvas.fillRect(sx,0,bw,18); ctxCanvas.fill(); ctxCanvas.font="bold 9px 'Segoe UI'"; ctxCanvas.textBaseline="middle"; let inside=bw>38*1.5; ctxCanvas.fillStyle=dark?"#e0e0e0":"white"; if(inside){ ctxCanvas.textAlign="left"; ctxCanvas.fillText(`${Math.floor(p.start)}:${p.start%1===0?'00':'30'}`,sx+3,9); ctxCanvas.textAlign="right"; ctxCanvas.fillText(`${Math.floor(p.end)}:00`,ex-3,9); } else { ctxCanvas.fillStyle=dark?"#d1d5db":"#2c5a2e"; ctxCanvas.textAlign="right"; ctxCanvas.fillText(`${Math.floor(p.start)}:${p.start%1===0?'00':'30'}`,sx-3,9); ctxCanvas.textAlign="left"; ctxCanvas.fillText(`${Math.floor(p.end)}:00`,ex+3,9); } } } else { ctxCanvas.font="bold 10px 'Segoe UI'"; ctxCanvas.textAlign="center"; ctxCanvas.textBaseline="middle"; ctxCanvas.fillStyle=dark?"#e0e0e0":"#4a5b44"; if(maxT<28) ctxCanvas.fillText("❄️ 全天偏冷",width/2,9); else if(minT>35) ctxCanvas.fillText("🔥 全天过热",width/2,9); } if(tooltipEl){ if(!canvas._tooltipEventsSetup){ setupTooltipEvents(canvas,tempProfile,materialName,tooltipEl); canvas._tooltipEventsSetup=true; } } }
-
-            function updateLeftPanelAndTimeline(dayIdx) { let air=dailyTempCache[dayIdx]||{min:15,max:25,real:false,isHistory:false,weatherCode:3,hourlyTemps:null,hourlyCodes:null}; let airMin=air.min,airMax=air.max; let targetDate=getDateStrFromIdx(dayIdx); let useReal=(currentRealWeather.isReal&&currentRealWeather.dateStr===targetDate); let dataType=useReal?(new Date(targetDate)<new Date(new Date().toISOString().slice(0,10))?"历史数据":"预报数据"):"估算数据"; let weatherCode=useReal?currentRealWeather.weatherCode:(air.weatherCode||3); cityTitleEl.innerHTML=`📍 ${currentLocation.name} · 自然足感 <span class="data-tag">${dataType}</span>`; airTempRangeEl.innerHTML=`${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃`; feelsLikeTempEl.innerHTML=(useReal&&currentRealWeather.feelsMin)?`${currentRealWeather.feelsMin.toFixed(1)}~${currentRealWeather.feelsMax.toFixed(1)}℃`:`${(airMin+0.5).toFixed(1)}~${(airMax+2).toFixed(1)}℃`; const dayOfYear=getDayOfYearFromIndex(dayIdx); let html=''; const profilesForDraw=[]; MATERIALS.forEach((mat,idx)=>{ let hourlyTemps=(air.hourlyTemps&&air.hourlyTemps.length===24)?air.hourlyTemps:null; let hourlyCodes=(air.hourlyCodes&&air.hourlyCodes.length===24)?air.hourlyCodes:null; let profile; if(hourlyTemps&&hourlyCodes){ profile=new Array(25); let prev=hourlyTemps[0]; for(let h=0;h<=24;h++){ const hIdx=Math.min(h,23); profile[h]=computeMaterialTempForHour(idx,hourlyTemps[hIdx],hIdx,dayOfYear,currentLocation.lat,hourlyCodes[hIdx],prev); prev=profile[h]; } } else if(hourlyTemps){ profile=new Array(25); let prev=hourlyTemps[0]; for(let h=0;h<=24;h++){ const hIdx=Math.min(h,23); profile[h]=computeMaterialTempForHour(idx,hourlyTemps[hIdx],hIdx,dayOfYear,currentLocation.lat,weatherCode,prev); prev=profile[h]; } } else { profile=generateMaterialTempProfile(idx,airMin,airMax,dayOfYear,currentLocation.lat,weatherCode,null); } profilesForDraw.push(profile); const minT=Math.min(...profile),maxT=Math.max(...profile); html+=`<div class="surface-row"><div class="surface-header"><span class="surface-name">${mat.name}</span><span class="surface-temp-range">${minT.toFixed(1)}~${maxT.toFixed(1)}℃</span></div><div class="timeline-canvas-wrapper"><canvas id="timelineCanvas_${idx}" class="timeline-canvas" width="600" height="18"></canvas><div class="timeline-tooltip" id="tooltip_${idx}"><div class="tooltip-row"><span class="tooltip-label">⌚️ 时间</span><span class="tooltip-value time-value">00:00</span></div><div class="tooltip-row tooltip-temp-row"><span class="tooltip-label temp-label">${mat.name}</span><span class="tooltip-value temp-value">--℃</span></div></div></div></div>`; }); surfaceListEl.innerHTML=html; setTimeout(()=>{ MATERIALS.forEach((mat,idx)=>{ const canvas=document.getElementById(`timelineCanvas_${idx}`); if(canvas){ canvas._tooltipEventsSetup=false; } drawMaterialTimelineWithProfile(`timelineCanvas_${idx}`,profilesForDraw[idx],MATERIALS[idx].name); }); },10); }
-
-            function syncDateTimePickerFromDayIndex() { const d=getDateFromIndex(currentDayIndex); const timePart=timePickerEl.value||'12:00'; datetimePickerEl.value=`${d.year}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}T${timePart}`; }
-            function updateStickyHeader() { const d=getDateFromIndex(currentDayIndex); stickyDateLabel.textContent=`${d.year}年${d.month}月${d.day}日`; stickyTimePicker.value=timePickerEl.value; sddPickerYear=currentCalendarYear; sddPickerMonth=currentCalendarMonth; sddPickerDay=selectedCalendarDay; updateSddDropdownState(); }
-
-            function getCellFestivalInfo(year,month,day) { const mmdd=`${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`; const holidayInfo=(holidayMaps[year]||{})[mmdd]; let festivalName=''; let holidayBadge=''; const dynamicFestivals=getDynamicFestivalsForYear(year); const solarFestivalName=SOLAR_FESTIVALS[mmdd]||dynamicFestivals[mmdd]||null; let SolarClass=null; if(typeof Lunar!=='undefined'&&Lunar.Solar) SolarClass=Lunar.Solar; else if(typeof Solar!=='undefined') SolarClass=Solar; if(SolarClass){ try{ const d=SolarClass.fromYmd(year,month,day); const lunar=d.getLunar(); const lunarFestivals=lunar.getFestivals(); const jieQi=lunar.getJieQi(); if(lunarFestivals&&lunarFestivals.length>0){ festivalName=lunarFestivals[0]; } else if(jieQi){ festivalName=jieQi; } else if(solarFestivalName){ festivalName=solarFestivalName; } } catch(e){ festivalName=solarFestivalName||''; } } else if(solarFestivalName){ festivalName=solarFestivalName; } if(holidayInfo){ if(holidayInfo.isHoliday){ holidayBadge='<span class="holiday-badge holiday-rest">休</span>'; } else if(holidayInfo.isWorkday){ holidayBadge='<span class="holiday-badge holiday-work">班</span>'; } } return {festivalName,holidayBadge}; }
-
-            function updateSddDropdownState() { sddYearLabel.textContent=sddPickerYear; const monthCells=sddMonthGrid.querySelectorAll('.sdd-month-cell'); monthCells.forEach(cell=>{ const cellMonth=parseInt(cell.dataset.month); if(cellMonth===sddPickerMonth&&sddPickerYear===currentCalendarYear&&sddPickerMonth===currentCalendarMonth){ cell.classList.add('active-month'); } else { cell.classList.remove('active-month'); } }); renderSddDayGrid(); }
-            function renderSddDayGrid() { const year=sddPickerYear; const month=sddPickerMonth; const firstDayOfMonth=new Date(year,month-1,1).getDay(); const daysInMonth=new Date(year,month,0).getDate(); const prevMonthLastDay=new Date(year,month-1,0).getDate(); sddDayGrid.innerHTML=''; ['日','一','二','三','四','五','六'].forEach(d=>{ const dn=document.createElement('div'); dn.className='sdd-day-name'; dn.textContent=d; sddDayGrid.appendChild(dn); }); for(let i=firstDayOfMonth-1;i>=0;i--){ const day=prevMonthLastDay-i; const prevMonth=month-1||12; const prevYear=month-1===0?year-1:year; sddDayGrid.appendChild(createSddDayCell(day,prevYear,prevMonth,true)); } for(let day=1;day<=daysInMonth;day++){ sddDayGrid.appendChild(createSddDayCell(day,year,month,false)); } const remaining=(7-(sddDayGrid.children.length%7))%7; const nextMonth=month+1>12?1:month+1; const nextYear=month+1>12?year+1:year; for(let day=1;day<=remaining;day++){ sddDayGrid.appendChild(createSddDayCell(day,nextYear,nextMonth,true)); } }
-            function createSddDayCell(day,actualYear,actualMonth,isOtherMonth) { const cell=document.createElement('div'); cell.className='sdd-day-cell'; const dateObj=new Date(actualYear,actualMonth-1,day); const dayOfWeek=dateObj.getDay(); if(dayOfWeek===0||dayOfWeek===6) cell.classList.add('weekend'); const today=new Date(); const isToday=(actualYear===today.getFullYear()&&actualMonth===today.getMonth()+1&&day===today.getDate()); const isSelected=(actualYear===currentCalendarYear&&actualMonth===currentCalendarMonth&&day===selectedCalendarDay); if(isToday) cell.classList.add('today'); if(isSelected) cell.classList.add('selected'); if(isOtherMonth) cell.classList.add('other-month'); const {festivalName,holidayBadge}=getCellFestivalInfo(actualYear,actualMonth,day); cell.innerHTML=`${day}${festivalName?`<span class="sdd-festival">${festivalName}</span>`:''}${holidayBadge}`; cell.addEventListener('click',()=>{ selectDateFromSticky(actualYear,actualMonth,day); }); return cell; }
-
-            async function selectDateFromSticky(year,month,day) { const yearChanged=(year!==currentYear); if(yearChanged){ currentYear=year; updateCalendar(); for(let i=0;i<totalDays;i++){ let e=estimateDailyTemp(i); dailyTempCache[i]={min:e.min,max:e.max,real:false,weatherCode:3,hourlyTemps:null,hourlyCodes:null}; } loadHolidaysForYear(currentYear).then(()=>{ if(currentYear===currentCalendarYear) updateCalendarUI(); }); } currentCalendarYear=year; currentCalendarMonth=month; selectedCalendarDay=day; currentDayIndex=getDayIndex(month,day); syncDateTimePickerFromDayIndex(); updateCalendarUI(); await refreshWeatherForCurrentDate(true); updateCurrentCardByDateTime(datetimePickerEl.value); closeSddDropdown(); updateStickyHeader(); }
-
-            function closeSddDropdown() { stickyDateDropdown.classList.remove('open'); }
-            function toggleSddDropdown(e) { e.stopPropagation(); if(stickyDateDropdown.classList.contains('open')){ closeSddDropdown(); } else { sddPickerYear=currentCalendarYear; sddPickerMonth=currentCalendarMonth; sddPickerDay=selectedCalendarDay; updateSddDropdownState(); stickyDateDropdown.classList.add('open'); } }
-            stickyDateLabel.addEventListener('click',toggleSddDropdown); stickyDateDropdown.addEventListener('click',(e)=>{ e.stopPropagation(); }); document.addEventListener('click',(e)=>{ if(!stickyDateLabel.contains(e.target)&&!stickyDateDropdown.contains(e.target)){ closeSddDropdown(); } });
-            sddYearPrev.addEventListener('click',(e)=>{ e.stopPropagation(); sddPickerYear--; updateSddDropdownState(); }); sddYearNext.addEventListener('click',(e)=>{ e.stopPropagation(); sddPickerYear++; updateSddDropdownState(); }); sddMonthGrid.addEventListener('click',(e)=>{ const cell=e.target.closest('.sdd-month-cell'); if(!cell) return; const month=parseInt(cell.dataset.month); sddPickerMonth=month; if(sddPickerYear===currentCalendarYear&&sddPickerMonth===currentCalendarMonth){ sddPickerDay=selectedCalendarDay; } else { sddPickerDay=Math.min(selectedCalendarDay,new Date(sddPickerYear,month,0).getDate()); } updateSddDropdownState(); });
-
-            function updateCalendarUI() { const year=currentCalendarYear,month=currentCalendarMonth; yearMonthDisplay.textContent=`${year}年${month}月`; ymYearLabel.textContent=year; ymPickerYear=year; updateYmMonthGridHighlight(); const firstDayOfMonth=new Date(year,month-1,1).getDay(); const daysInMonth=new Date(year,month,0).getDate(); const prevMonthLastDay=new Date(year,month-1,0).getDate(); calendarGridEl.innerHTML=''; ['日','一','二','三','四','五','六'].forEach(d=>{ const dn=document.createElement('div'); dn.className='calendar-day-name'; dn.textContent=d; calendarGridEl.appendChild(dn); }); for(let i=firstDayOfMonth-1;i>=0;i--){ const day=prevMonthLastDay-i; calendarGridEl.appendChild(createDayCell(day,year,month-1||12,month-1===0?year-1:year,true)); } for(let day=1;day<=daysInMonth;day++){ calendarGridEl.appendChild(createDayCell(day,year,month,year,false)); } const remaining=(7-(calendarGridEl.children.length%7))%7; for(let day=1;day<=remaining;day++){ const nextMonth=month+1>12?1:month+1; const nextYear=month+1>12?year+1:year; calendarGridEl.appendChild(createDayCell(day,nextYear,nextMonth,nextYear,true)); } updateStickyHeader(); }
-            function createDayCell(day,month,actualMonth,actualYear,isOtherMonth) { const cell=document.createElement('div'); cell.className='calendar-day'; const dateObj=new Date(actualYear,actualMonth-1,day); const dayOfWeek=dateObj.getDay(); if(dayOfWeek===0||dayOfWeek===6) cell.classList.add('weekend'); const mmdd=`${String(actualMonth).padStart(2,'0')}-${String(day).padStart(2,'0')}`; const today=new Date(); const isToday=(actualYear===today.getFullYear()&&actualMonth===today.getMonth()+1&&day===today.getDate()); const isSelected=(actualYear===currentCalendarYear&&actualMonth===currentCalendarMonth&&day===selectedCalendarDay); if(isToday) cell.classList.add('today'); if(isSelected) cell.classList.add('selected'); if(isOtherMonth) cell.classList.add('other-month'); let lunarStr=''; let holidayBadge=''; const holidayInfo=(holidayMaps[actualYear]||{})[mmdd]; let SolarClass=null; if(typeof Lunar!=='undefined'&&Lunar.Solar) SolarClass=Lunar.Solar; else if(typeof Solar!=='undefined') SolarClass=Solar; const dynamicFestivals=getDynamicFestivalsForYear(actualYear); const solarFestivalName=SOLAR_FESTIVALS[mmdd]||dynamicFestivals[mmdd]||null; if(SolarClass){ try{ const d=SolarClass.fromYmd(actualYear,actualMonth,day); const lunar=d.getLunar(); const lunarFestivals=lunar.getFestivals(); const jieQi=lunar.getJieQi(); if(lunarFestivals&&lunarFestivals.length>0){ lunarStr=lunarFestivals[0]; } else if(jieQi){ lunarStr=jieQi; } else if(solarFestivalName){ lunarStr=solarFestivalName; } else { const dayCn=lunar.getDayInChinese(); if(dayCn){ lunarStr=dayCn; } else { const monthCn=lunar.getMonthInChinese()||''; const dayNum=lunar.getDay()||day; lunarStr=monthCn?monthCn+'月'+dayNum:dayNum+'日'; } } } catch(e){ lunarStr=solarFestivalName||(actualMonth+'/'+day); } } else if(solarFestivalName){ lunarStr=solarFestivalName; } else { lunarStr=actualMonth+'/'+day; } if(holidayInfo){ if(holidayInfo.isHoliday){ holidayBadge='<span class="holiday-badge holiday-rest">休</span>'; } else if(holidayInfo.isWorkday){ holidayBadge='<span class="holiday-badge holiday-work">班</span>'; } } cell.innerHTML=`${day}<span class="lunar">${lunarStr}</span>${holidayBadge}`; cell.addEventListener('click',async ()=>{ if(actualYear!==currentYear){ currentYear=actualYear; updateCalendar(); } currentCalendarYear=actualYear; currentCalendarMonth=actualMonth; selectedCalendarDay=day; currentDayIndex=getDayIndex(actualMonth,day); syncDateTimePickerFromDayIndex(); updateCalendarUI(); await refreshWeatherForCurrentDate(true); updateCurrentCardByDateTime(datetimePickerEl.value); }); return cell; }
-
-            async function setCalendarToToday() { const now=new Date(); currentCalendarYear=now.getFullYear(); currentCalendarMonth=now.getMonth()+1; selectedCalendarDay=now.getDate(); updateCalendarUI(); await setNowDateTime(); }
-            async function setNowDateTime() { const now=new Date(); const year=now.getFullYear(),month=String(now.getMonth()+1).padStart(2,'0'),day=String(now.getDate()).padStart(2,'0'); const hour=String(now.getHours()).padStart(2,'0'),minute=String(now.getMinutes()).padStart(2,'0'); let roundedMinute=minute<30?'00':'30'; const timeValue=`${hour}:${roundedMinute}`; timePickerEl.value=timeValue; stickyTimePicker.value=timeValue; datetimePickerEl.value=`${year}-${month}-${day}T${timeValue}`; if(year!==currentYear){ currentYear=year; updateCalendar(); } currentDayIndex=getDayIndex(now.getMonth()+1,now.getDate()); selectedCalendarDay=now.getDate(); currentCalendarYear=year; currentCalendarMonth=now.getMonth()+1; updateCalendarUI(); await refreshWeatherForCurrentDate(true); updateCurrentCardByDateTime(datetimePickerEl.value); }
-
-            async function setCity(city) { currentLocation={name:city.city||city.name,lat:city.lat,lng:city.lng}; cityTitleEl.innerHTML=`📍 ${currentLocation.name} · 自然足感`; updateCalendar(); for(let i=0;i<totalDays;i++){ let e=estimateDailyTemp(i); dailyTempCache[i]={min:e.min,max:e.max,real:false,weatherCode:3,hourlyTemps:null,hourlyCodes:null}; } await refreshWeatherForCurrentDate(true); const dtVal=datetimePickerEl.value; if(dtVal) updateCurrentCardByDateTime(dtVal); else await setNowDateTime(); }
-
-            async function reverseGeocode(lat,lng) { try{ const res=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=zh`); const data=await res.json(); let city=data.city||data.locality||data.principalSubdivision||'当前位置'; if(city.endsWith('市')) city=city.slice(0,-1); return city; }catch(e){return null;} }
-            async function tryBrowserLocation() { if(!navigator.geolocation) return null; return new Promise(resolve=>{ navigator.geolocation.getCurrentPosition(async pos=>{ const lat=pos.coords.latitude,lng=pos.coords.longitude; const name=await reverseGeocode(lat,lng); resolve(name?{city:name,lat,lng}:{city:'当前位置',lat,lng}); },()=>resolve(null),{timeout:10000,enableHighAccuracy:false}); }); }
-            async function performLocation() { if(locateToastEl.classList.contains('show')) return; locateToastEl.classList.add('show'); locateButtonsEl.innerHTML=''; locateMessageEl.innerHTML='<span>📍 正在获取位置信息...</span>'; let location=await tryBrowserLocation(); if(!location||!location.lat){ locateMessageEl.innerHTML='<span>🌏 通过IP定位中...</span>'; location=await tryMultiIpLocation(); } if(location&&location.lat&&location.lng){ locateToastEl.classList.remove('show'); await setCity(location); window._autoLocated=true; } else { locateMessageEl.innerHTML='<span>⚠️ 定位失败，请重试或手动选择城市</span>'; locateButtonsEl.innerHTML=`<button class="locate-btn" id="locateRetryBtn">🔄 重试</button><button class="locate-btn primary" id="locateSelectCityBtn">📌 选择城市</button>`; document.getElementById('locateRetryBtn').addEventListener('click',()=>{ locateToastEl.classList.remove('show'); performLocation(); }); document.getElementById('locateSelectCityBtn').addEventListener('click',()=>{ locateToastEl.classList.remove('show'); openCityPicker(); }); } }
-            async function tryMultiIpLocation() { const timeoutMs=5000; const fetchWithTimeout=(url)=>{ const ctrl=new AbortController(); setTimeout(()=>ctrl.abort(),timeoutMs); return fetch(url,{signal:ctrl.signal}).finally(()=>{}); }; const services=[ async()=>{ try{ const r=await fetchWithTimeout('https://ip-api.com/json/?fields=status,lat,lon,city&lang=zh-CN'); const d=await r.json(); if(d.status==='success'&&d.lat&&d.lon&&d.city){ let city=d.city; if(city.endsWith('市')) city=city.slice(0,-1); return {city,lat:d.lat,lng:d.lon}; } }catch(e){} return null; }, async()=>{ try{ const r=await fetchWithTimeout('https://ipapi.co/json/'); const d=await r.json(); if(d&&d.latitude&&d.longitude){ let city=d.city||d.region||''; const cnName=await reverseGeocode(d.latitude,d.longitude); if(cnName) city=cnName; else if(city.endsWith('市')) city=city.slice(0,-1); return {city:city||'未知位置',lat:d.latitude,lng:d.longitude}; } }catch(e){} return null; } ]; const results=await Promise.allSettled(services.map(fn=>fn())); for(const r of results) if(r.status==='fulfilled'&&r.value&&r.value.lat) return r.value; return null; }
-
-            async function searchCitiesOpenMeteo(keyword) { if(!keyword.trim()||keyword.length<2) return []; try{ const url=`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(keyword)}&count=12&language=zh&format=json`; const resp=await fetch(url); const data=await resp.json(); if(data.results&&data.results.length){ return data.results.map(r=>({name:r.name||r.admin1||'',lat:r.latitude,lng:r.longitude,display:`${r.name}${r.admin1?' · '+r.admin1:''}${r.country?' · '+r.country:''}`})); } return []; }catch(e){return[];} }
-            let searchDebounce;
-            function renderCitySelector(filterText='') { if(filterText.length<2){ cityResultsList.innerHTML='<div class="loading-tip">请输入至少2个字符搜索</div>'; return; } cityResultsList.innerHTML='<div class="loading-tip">⏳ 检索中...</div>'; searchCitiesOpenMeteo(filterText).then(cities=>{ if(cities.length===0){ cityResultsList.innerHTML='<div class="loading-tip">未找到城市，试试其他名称</div>'; return; } cityResultsList.innerHTML=cities.map(c=>`<div class="city-result-item" data-name="${c.name}" data-lat="${c.lat}" data-lng="${c.lng}">${c.display}</div>`).join(''); document.querySelectorAll('.city-result-item').forEach(el=>el.addEventListener('click',()=>{ setCity({city:el.dataset.name,lat:parseFloat(el.dataset.lat),lng:parseFloat(el.dataset.lng)}); closeCityPicker(); })); }); }
 
             async function loadHolidaysForYear(year) { if(holidayMaps[year]) return holidayMaps[year]; if(holidayFetching[year]) return holidayFetching[year]; const promise=(async()=>{ let apiMap={}; try{ const url=`https://cdn.jsdelivr.net/gh/NateScarlet/holiday-cn@master/${year}.json`; const resp=await fetch(url); if(!resp.ok) throw new Error(`HTTP ${resp.status}`); const data=await resp.json(); if(data.days&&Array.isArray(data.days)){ for(const dayInfo of data.days){ const mmdd=dayInfo.date.slice(5); apiMap[mmdd]={name:dayInfo.name||'',isHoliday:dayInfo.isOffDay===true,isWorkday:dayInfo.isOffDay===false}; } } }catch(e){ console.warn(`holiday-cn 节假日数据加载失败 (${year}):`,e); } holidayMaps[year]=apiMap; delete holidayFetching[year]; return apiMap; })(); holidayFetching[year]=promise; return promise; }
             async function loadHolidays() { const nowYear=new Date().getFullYear(); await Promise.all([loadHolidaysForYear(nowYear-1),loadHolidaysForYear(nowYear),loadHolidaysForYear(nowYear+1)]); }
