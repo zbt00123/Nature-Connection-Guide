@@ -506,8 +506,10 @@
             function onPointerDown(e) {
                 if (!cityEditMode) return;
                 if (e.target.closest('.delete-city-btn')) return;
+                const index = parseInt(e.currentTarget.dataset.index);
+                if (isNaN(index)) return;
                 e.preventDefault();
-                dragIndex = parseInt(e.currentTarget.dataset.index);
+                dragIndex = index;
                 dragTarget = e.currentTarget;
                 dragTarget.style.opacity = '0.5';
                 document.addEventListener('pointermove', onPointerMove);
@@ -582,7 +584,10 @@
                     const addBtn = document.createElement('button');
                     addBtn.className = 'hot-city-btn add-city-btn';
                     addBtn.innerHTML = '+';
-                    addBtn.addEventListener('click', () => { showAddCityModal(); });
+                    addBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showAddCityModal();
+                    });
                     hotCitiesContainer.appendChild(addBtn);
                 }
             }
@@ -611,6 +616,59 @@
             });
             editCitiesBtn.addEventListener('click', toggleEditMode);
             closeCityPickerBtn.addEventListener('click', closeCityPicker);
+
+            function showAddCityModal() {
+                const modal = document.createElement('div');
+                modal.className = 'add-city-modal';
+                modal.innerHTML = `
+                    <input type="text" id="addCitySearch" placeholder="搜索城市名称">
+                    <div id="addCityResults" style="max-height:150px;overflow-y:auto;font-size:0.8rem;"></div>
+                    <input type="text" id="addCityDisplayName" placeholder="显示名称（可选）">
+                    <input type="text" id="addCityEmoji" placeholder="Emoji图标（可选）">
+                    <div style="display:flex;gap:8px;justify-content:flex-end;">
+                        <button id="addCityConfirmBtn" style="background:#6b8c5c;color:white;">添加</button>
+                        <button id="addCityCancelBtn">取消</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                const searchInput = modal.querySelector('#addCitySearch');
+                const resultsDiv = modal.querySelector('#addCityResults');
+                const displayNameInput = modal.querySelector('#addCityDisplayName');
+                const emojiInput = modal.querySelector('#addCityEmoji');
+                let selectedCity = null;
+
+                searchInput.addEventListener('input', async (e) => {
+                    const keyword = e.target.value;
+                    if (keyword.length < 2) { resultsDiv.innerHTML = ''; return; }
+                    resultsDiv.innerHTML = '搜索中...';
+                    const cities = await searchCitiesOpenMeteo(keyword);
+                    if (cities.length) {
+                        resultsDiv.innerHTML = cities.map(c => `<div class="city-result-item" data-name="${c.name}" data-lat="${c.lat}" data-lng="${c.lng}">${c.display}</div>`).join('');
+                        resultsDiv.querySelectorAll('.city-result-item').forEach(el => {
+                            el.addEventListener('click', () => {
+                                selectedCity = { name: el.dataset.name, lat: parseFloat(el.dataset.lat), lng: parseFloat(el.dataset.lng) };
+                                searchInput.value = el.dataset.name;
+                                resultsDiv.innerHTML = '';
+                            });
+                        });
+                    } else {
+                        resultsDiv.innerHTML = '未找到城市';
+                    }
+                });
+
+                modal.querySelector('#addCityConfirmBtn').addEventListener('click', () => {
+                    if (!selectedCity) { alert('请先搜索并选择一个城市'); return; }
+                    const displayName = displayNameInput.value.trim() || selectedCity.name;
+                    const emoji = emojiInput.value.trim() || '📍';
+                    hotCities.push({ city: displayName, lat: selectedCity.lat, lng: selectedCity.lng, emoji: emoji });
+                    saveHotCities();
+                    renderHotCities();
+                    document.body.removeChild(modal);
+                });
+                modal.querySelector('#addCityCancelBtn').addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                });
+            }
 
             const MATERIALS = [
                 { name: '🌱 草地', baseOffset: 0, absorptivity: 0.65, thermalInertia: 0.7, nightCooling: 0.5 },
@@ -686,7 +744,7 @@
 
             function setupTooltipEvents(canvas,tempProfile,materialName,tooltipEl) { function updateTooltipVisibility(){ const dark=isDarkMode(); if(dark){ tooltipEl.style.background='rgba(30,38,30,0.96)'; tooltipEl.style.color='#e8e4d8'; tooltipEl.style.borderColor='rgba(180,150,100,0.35)'; tooltipEl.querySelectorAll('.tooltip-value').forEach(el=>el.style.color='#e8e4d8'); } else { tooltipEl.style.background='rgba(255,255,245,0.96)'; tooltipEl.style.color='#2c5a2e'; tooltipEl.style.borderColor='rgba(180,150,100,0.5)'; tooltipEl.querySelectorAll('.tooltip-value').forEach(el=>el.style.color='#2f5e3a'); } } let hideTimeout=null; function updateFromClientX(clientX){ const rect=canvas.getBoundingClientRect(); const x=clientX-rect.left; const ratio=canvas.width/rect.width; const canvasX=x*ratio; const hourFloat=Math.max(0,Math.min(24,(canvasX/canvas.width)*24)); const tempAtPoint=interpolateProfile(tempProfile,hourFloat); const timeStr=formatHourFloat(hourFloat); const tempStr=tempAtPoint.toFixed(1)+'℃'; tooltipEl.querySelector('.time-value').textContent=timeStr; tooltipEl.querySelector('.temp-label').textContent=materialName; tooltipEl.querySelector('.temp-value').textContent=tempStr; const percentX=(hourFloat/24)*100; tooltipEl.style.left=percentX+'%'; updateTooltipVisibility(); if(hideTimeout) clearTimeout(hideTimeout); if(!tooltipEl.classList.contains('visible')) tooltipEl.classList.add('visible'); } function showTooltip(){ if(!tooltipEl.classList.contains('visible')) tooltipEl.classList.add('visible'); } function hideTooltip(){ hideTimeout=setTimeout(()=>{ tooltipEl.classList.remove('visible'); tooltipEl.style.transform=''; },50); } canvas.addEventListener('mousemove',function(e){ updateFromClientX(e.clientX); }); canvas.addEventListener('mouseleave',hideTooltip); canvas.addEventListener('mouseenter',function(){ if(hideTimeout) clearTimeout(hideTimeout); updateTooltipVisibility(); }); tooltipEl.addEventListener('mouseenter',function(){ if(hideTimeout) clearTimeout(hideTimeout); }); tooltipEl.addEventListener('mouseleave',hideTooltip); canvas.addEventListener('touchstart',function(e){ e.preventDefault(); const touch=e.touches[0]; if(touch){ updateFromClientX(touch.clientX); showTooltip(); } },{passive:false}); canvas.addEventListener('touchmove',function(e){ e.preventDefault(); const touch=e.touches[0]; if(touch) updateFromClientX(touch.clientX); },{passive:false}); canvas.addEventListener('touchend',function(e){ e.preventDefault(); hideTooltip(); },{passive:false}); canvas.addEventListener('touchcancel',function(e){ hideTooltip(); }); }
 
-            function drawMaterialTimelineWithProfile(canvasId,tempProfile,materialName) { const canvas=document.getElementById(canvasId); if(!canvas) return; const container=canvas.parentElement; const tooltipEl=container.querySelector('.timeline-tooltip'); const width=container.clientWidth; canvas.width=width; canvas.height=18; const ctxCanvas=canvas.getContext('2d'); const dark=isDarkMode(); ctxCanvas.save(); ctxCanvas.globalAlpha=0.2; for(let i=0;i<24;i++){ const x1=(i/24)*width,x2=((i+1)/24)*width; const grad=ctxCanvas.createLinearGradient(x1,0,x2,0); grad.addColorStop(0,getColorForTemp(tempProfile[i])); grad.addColorStop(1,getColorForTemp(tempProfile[i+1])); ctxCanvas.fillStyle=grad; ctxCanvas.fillRect(x1,0,x2-x1,18); } ctxCanvas.restore(); const minT=Math.min(...tempProfile),maxT=Math.max(...tempProfile); if(maxT>=28&&minT<=35){ let periods=[],inPeriod=false,startH=0; for(let h=0;h<=24;h++){ let suitable=(tempProfile[h]>=28&&tempProfile[h]<=35); if(suitable&&!inPeriod){ inPeriod=true; startH=h; } if(!suitable&&inPeriod){ periods.push({start:startH,end:h}); inPeriod=false; } } if(inPeriod) periods.push({start:startH,end:24}); const hlColor=dark?"#15803d":"#22c55e"; for(let p of periods){ let sx=(p.start/24)*width,ex=(p.end/24)*width,bw=ex-sx; if(bw<=0) continue; ctxCanvas.fillStyle=hlColor; ctxCanvas.beginPath(); if(ctxCanvas.roundRect) ctxCanvas.roundRect(sx,0,bw,18,9); else ctxCanvas.fillRect(sx,0,bw,18); ctxCanvas.fill(); } } if(tooltipEl){ if(!canvas._tooltipEventsSetup){ setupTooltipEvents(canvas,tempProfile,materialName,tooltipEl); canvas._tooltipEventsSetup=true; } } }
+            function drawMaterialTimelineWithProfile(canvasId,tempProfile,materialName) { const canvas=document.getElementById(canvasId); if(!canvas) return; const container=canvas.parentElement; const tooltipEl=container.querySelector('.timeline-tooltip'); const width=container.clientWidth; canvas.width=width; canvas.height=18; const ctxCanvas=canvas.getContext('2d'); const dark=isDarkMode(); ctxCanvas.save(); ctxCanvas.globalAlpha=0.2; for(let i=0;i<24;i++){ const x1=(i/24)*width,x2=((i+1)/24)*width; const grad=ctxCanvas.createLinearGradient(x1,0,x2,0); grad.addColorStop(0,getColorForTemp(tempProfile[i])); grad.addColorStop(1,getColorForTemp(tempProfile[i+1])); ctxCanvas.fillStyle=grad; ctxCanvas.fillRect(x1,0,x2-x1,18); } ctxCanvas.restore(); const minT=Math.min(...tempProfile),maxT=Math.max(...tempProfile); if(maxT>=28&&minT<=35){ let periods=[],inPeriod=false,startH=0; for(let h=0;h<=24;h++){ let suitable=(tempProfile[h]>=28&&tempProfile[h]<=35); if(suitable&&!inPeriod){ inPeriod=true; startH=h; } if(!suitable&&inPeriod){ periods.push({start:startH,end:h}); inPeriod=false; } } if(inPeriod) periods.push({start:startH,end:24}); const hlColor=dark?"#15803d":"#22c55e"; for(let p of periods){ let sx=(p.start/24)*width,ex=(p.end/24)*width,bw=ex-sx; if(bw<=0) continue; ctxCanvas.fillStyle=hlColor; ctxCanvas.beginPath(); if(ctxCanvas.roundRect) ctxCanvas.roundRect(sx,0,bw,18,9); else ctxCanvas.fillRect(sx,0,bw,18); ctxCanvas.fill(); } } else { ctxCanvas.font="bold 10px 'Segoe UI'"; ctxCanvas.textAlign="center"; ctxCanvas.textBaseline="middle"; ctxCanvas.fillStyle=dark?"#e0e0e0":"#4a5b44"; if(maxT<28) ctxCanvas.fillText("❄️ 全天偏冷",width/2,9); else if(minT>35) ctxCanvas.fillText("🔥 全天过热",width/2,9); } if(tooltipEl){ if(!canvas._tooltipEventsSetup){ setupTooltipEvents(canvas,tempProfile,materialName,tooltipEl); canvas._tooltipEventsSetup=true; } } }
 
             function updateLeftPanelAndTimeline(dayIdx) { let air=dailyTempCache[dayIdx]||{min:15,max:25,real:false,isHistory:false,weatherCode:3,hourlyTemps:null,hourlyCodes:null}; let airMin=air.min,airMax=air.max; let targetDate=getDateStrFromIdx(dayIdx); let useReal=(currentRealWeather.isReal&&currentRealWeather.dateStr===targetDate); let dataType=useReal?(new Date(targetDate)<new Date(new Date().toISOString().slice(0,10))?"历史数据":"预报数据"):"估算数据"; let weatherCode=useReal?currentRealWeather.weatherCode:(air.weatherCode||3); cityTitleEl.innerHTML=`📍 ${currentLocation.name} · 自然足感 <span class="data-tag">${dataType}</span>`; airTempRangeEl.innerHTML=`${airMin.toFixed(1)} ~ ${airMax.toFixed(1)} ℃`; feelsLikeTempEl.innerHTML=(useReal&&currentRealWeather.feelsMin)?`${currentRealWeather.feelsMin.toFixed(1)}~${currentRealWeather.feelsMax.toFixed(1)}℃`:`${(airMin+0.5).toFixed(1)}~${(airMax+2).toFixed(1)}℃`; const dayOfYear=getDayOfYearFromIndex(dayIdx); let html=''; const profilesForDraw=[]; MATERIALS.forEach((mat,idx)=>{ let hourlyTemps=(air.hourlyTemps&&air.hourlyTemps.length===24)?air.hourlyTemps:null; let hourlyCodes=(air.hourlyCodes&&air.hourlyCodes.length===24)?air.hourlyCodes:null; let profile; if(hourlyTemps&&hourlyCodes){ profile=new Array(25); let prev=hourlyTemps[0]; for(let h=0;h<=24;h++){ const hIdx=Math.min(h,23); profile[h]=computeMaterialTempForHour(idx,hourlyTemps[hIdx],hIdx,dayOfYear,currentLocation.lat,hourlyCodes[hIdx],prev); prev=profile[h]; } } else if(hourlyTemps){ profile=new Array(25); let prev=hourlyTemps[0]; for(let h=0;h<=24;h++){ const hIdx=Math.min(h,23); profile[h]=computeMaterialTempForHour(idx,hourlyTemps[hIdx],hIdx,dayOfYear,currentLocation.lat,weatherCode,prev); prev=profile[h]; } } else { profile=generateMaterialTempProfile(idx,airMin,airMax,dayOfYear,currentLocation.lat,weatherCode,null); } profilesForDraw.push(profile); const comfortPeriods = []; let inPeriod=false,startH=0; for(let h=0;h<=24;h++){ let suitable=(profile[h]>=28&&profile[h]<=35); if(suitable&&!inPeriod){ inPeriod=true; startH=h; } if(!suitable&&inPeriod){ comfortPeriods.push({start:startH,end:h}); inPeriod=false; } } if(inPeriod) comfortPeriods.push({start:startH,end:24}); let ticksHtml = ''; for(let h=0;h<=24;h++){ let isComfort = comfortPeriods.some(p=>h>=p.start&&h<=p.end); if(h===24){ ticksHtml += `<span class="${isComfort?'tick-comfort':''}">24</span>`; } else { ticksHtml += `<span class="${isComfort?'tick-comfort':''}">${h}</span>`; } } html+=`<div class="surface-row"><div class="surface-header"><span class="surface-name">${mat.name}</span><span class="surface-temp-range">${Math.min(...profile).toFixed(1)}~${Math.max(...profile).toFixed(1)}℃</span></div><div class="timeline-canvas-wrapper"><canvas id="timelineCanvas_${idx}" class="timeline-canvas" width="600" height="18"></canvas><div class="timeline-ticks">${ticksHtml}</div><div class="timeline-tooltip" id="tooltip_${idx}"><div class="tooltip-row"><span class="tooltip-label">⌚️ 时间</span><span class="tooltip-value time-value">00:00</span></div><div class="tooltip-row tooltip-temp-row"><span class="tooltip-label temp-label">${mat.name}</span><span class="tooltip-value temp-value">--℃</span></div></div></div></div>`; }); surfaceListEl.innerHTML=html; setTimeout(()=>{ MATERIALS.forEach((mat,idx)=>{ const canvas=document.getElementById(`timelineCanvas_${idx}`); if(canvas){ canvas._tooltipEventsSetup=false; } drawMaterialTimelineWithProfile(`timelineCanvas_${idx}`,profilesForDraw[idx],MATERIALS[idx].name); }); },10); }
 
@@ -722,59 +780,6 @@
             async function searchCitiesOpenMeteo(keyword) { if(!keyword.trim()||keyword.length<2) return []; try{ const url=`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(keyword)}&count=12&language=zh&format=json`; const resp=await fetch(url); const data=await resp.json(); if(data.results&&data.results.length){ return data.results.map(r=>({name:r.name||r.admin1||'',lat:r.latitude,lng:r.longitude,display:`${r.name}${r.admin1?' · '+r.admin1:''}${r.country?' · '+r.country:''}`})); } return []; }catch(e){return[];} }
             let searchDebounce;
             function renderCitySelector(filterText='') { if(filterText.length<2){ cityResultsList.innerHTML='<div class="loading-tip">请输入至少2个字符搜索</div>'; return; } cityResultsList.innerHTML='<div class="loading-tip">⏳ 检索中...</div>'; searchCitiesOpenMeteo(filterText).then(cities=>{ if(cities.length===0){ cityResultsList.innerHTML='<div class="loading-tip">未找到城市，试试其他名称</div>'; return; } cityResultsList.innerHTML=cities.map(c=>`<div class="city-result-item" data-name="${c.name}" data-lat="${c.lat}" data-lng="${c.lng}">${c.display}</div>`).join(''); document.querySelectorAll('.city-result-item').forEach(el=>el.addEventListener('click',()=>{ setCity({city:el.dataset.name,lat:parseFloat(el.dataset.lat),lng:parseFloat(el.dataset.lng)}); closeCityPicker(); })); }); }
-
-            function showAddCityModal() {
-                const modal = document.createElement('div');
-                modal.className = 'add-city-modal';
-                modal.innerHTML = `
-                    <input type="text" id="addCitySearch" placeholder="搜索城市名称">
-                    <div id="addCityResults" style="max-height:150px;overflow-y:auto;font-size:0.8rem;"></div>
-                    <input type="text" id="addCityDisplayName" placeholder="显示名称（可选）">
-                    <input type="text" id="addCityEmoji" placeholder="Emoji图标（可选）">
-                    <div style="display:flex;gap:8px;justify-content:flex-end;">
-                        <button id="addCityConfirmBtn" style="background:#6b8c5c;color:white;">添加</button>
-                        <button id="addCityCancelBtn">取消</button>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-                const searchInput = modal.querySelector('#addCitySearch');
-                const resultsDiv = modal.querySelector('#addCityResults');
-                const displayNameInput = modal.querySelector('#addCityDisplayName');
-                const emojiInput = modal.querySelector('#addCityEmoji');
-                let selectedCity = null;
-
-                searchInput.addEventListener('input', async (e) => {
-                    const keyword = e.target.value;
-                    if (keyword.length < 2) { resultsDiv.innerHTML = ''; return; }
-                    resultsDiv.innerHTML = '搜索中...';
-                    const cities = await searchCitiesOpenMeteo(keyword);
-                    if (cities.length) {
-                        resultsDiv.innerHTML = cities.map(c => `<div class="city-result-item" data-name="${c.name}" data-lat="${c.lat}" data-lng="${c.lng}">${c.display}</div>`).join('');
-                        resultsDiv.querySelectorAll('.city-result-item').forEach(el => {
-                            el.addEventListener('click', () => {
-                                selectedCity = { name: el.dataset.name, lat: parseFloat(el.dataset.lat), lng: parseFloat(el.dataset.lng) };
-                                searchInput.value = el.dataset.name;
-                                resultsDiv.innerHTML = '';
-                            });
-                        });
-                    } else {
-                        resultsDiv.innerHTML = '未找到城市';
-                    }
-                });
-
-                modal.querySelector('#addCityConfirmBtn').addEventListener('click', () => {
-                    if (!selectedCity) { alert('请先搜索并选择一个城市'); return; }
-                    const displayName = displayNameInput.value.trim() || selectedCity.name;
-                    const emoji = emojiInput.value.trim() || '📍';
-                    hotCities.push({ city: displayName, lat: selectedCity.lat, lng: selectedCity.lng, emoji: emoji });
-                    saveHotCities();
-                    renderHotCities();
-                    document.body.removeChild(modal);
-                });
-                modal.querySelector('#addCityCancelBtn').addEventListener('click', () => {
-                    document.body.removeChild(modal);
-                });
-            }
 
             async function loadHolidaysForYear(year) { if(holidayMaps[year]) return holidayMaps[year]; if(holidayFetching[year]) return holidayFetching[year]; const promise=(async()=>{ let apiMap={}; try{ const url=`https://cdn.jsdelivr.net/gh/NateScarlet/holiday-cn@master/${year}.json`; const resp=await fetch(url); if(!resp.ok) throw new Error(`HTTP ${resp.status}`); const data=await resp.json(); if(data.days&&Array.isArray(data.days)){ for(const dayInfo of data.days){ const mmdd=dayInfo.date.slice(5); apiMap[mmdd]={name:dayInfo.name||'',isHoliday:dayInfo.isOffDay===true,isWorkday:dayInfo.isOffDay===false}; } } }catch(e){ console.warn(`holiday-cn 节假日数据加载失败 (${year}):`,e); } holidayMaps[year]=apiMap; delete holidayFetching[year]; return apiMap; })(); holidayFetching[year]=promise; return promise; }
             async function loadHolidays() { const nowYear=new Date().getFullYear(); await Promise.all([loadHolidaysForYear(nowYear-1),loadHolidaysForYear(nowYear),loadHolidaysForYear(nowYear+1)]); }
